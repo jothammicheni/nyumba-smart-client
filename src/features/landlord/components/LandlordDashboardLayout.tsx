@@ -4,17 +4,7 @@ import { useTheme } from "../../../components/ThemeProvider.js"
 import { useAuth } from "../../../context/AuthContext.js"
 import { useNavigate } from "react-router-dom"
 
-import {
-  Home,
-  Building,
-  Users,
-  CreditCard,
-  Settings,
-  X,
-  LogOut,
-  Menu,
-  Bell,
-} from "lucide-react"
+import { Home, Building, Users, CreditCard, Settings, X, LogOut, Menu, Bell, BellRing } from "lucide-react"
 
 export default function LandlordDashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -85,11 +75,11 @@ export default function LandlordDashboardLayout() {
               </Link>
 
                <Link
-                to="mentainances"
+                to="maintenance"
                 onClick={handleNavClick}
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/maintenance")}`}
               >
-                <CreditCard className="w-5 h-5 mr-3" /> Maintenance Requests
+                <BellRing className="w-5 h-5 mr-3" /> Maintenance Requests
               </Link>
 
 
@@ -162,11 +152,12 @@ export default function LandlordDashboardLayout() {
                 <CreditCard className="w-5 h-5 mr-3" /> Payments
               </Link>
               
-               <Link
-                to="mentainances"
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
+              <Link
+                to="maintenance"
+                onClick={handleNavClick}
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/maintenance")}`}
               >
-                <CreditCard className="w-5 h-5 mr-3" /> Maintainance Requests
+                <BellRing className="w-5 h-5 mr-3" /> Maintenance Requests
               </Link>
 
                 <Link

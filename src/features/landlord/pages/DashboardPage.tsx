@@ -12,10 +12,7 @@ import RecentActivity from "../components/dashboardComponents/RecentActivity.js"
 import UpcomingPayments from "../components/dashboardComponents/UpcomingPayments.js"
 import MaintenanceRequests from "../components/dashboardComponents/MaintananceRequests.js"
 
-
 const LandlordDashboard: React.FC = () => {
- 
-
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
      
@@ -65,11 +62,13 @@ const LandlordDashboard: React.FC = () => {
 
                 {/* Upcoming Payments */}
                <UpcomingPayments/> 
-
-               {/* mantanance claims */}
-               <MaintenanceRequests/> 
-
               </div>
+
+               <div className="mt-8">
+                {/* mantanance claims */}
+               <MaintenanceRequests/>
+               </div>
+
             </div>
           </div>
         </main>
