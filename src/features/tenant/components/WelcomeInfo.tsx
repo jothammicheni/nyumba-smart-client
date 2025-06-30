@@ -14,7 +14,7 @@ function WelcomeInfo() {
   useEffect(() => {
     const fetchTenantInfo = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/tenants/info", {
+        const response = await axios.get("https://nyumba-smart-server.onrender.com/api/tenants/info", {
           headers: getAuthHeaders(),
         });
         setTenantInfo(response.data);
@@ -39,7 +39,7 @@ function WelcomeInfo() {
 
   //   try {
   //     const response = await axios.post(
-  //       "http://localhost:5000/api/payment/pay",
+  //       "https://nyumba-smart-server.onrender.com/api/payment/pay",
   //       {
   //         sender_id: tenantInfo._id,
   //         phone,
@@ -76,7 +76,7 @@ const initiatePayment = async () => {
   try {
     // Initiate the payment
     const response = await axios.post(
-      "http://localhost:5000/api/payment/pay",
+      "https://nyumba-smart-server.onrender.com/api/payment/pay",
       {
         sender_id: tenantInfo._id, // Use tenant's ID
         phone,
@@ -113,7 +113,7 @@ const initiatePayment = async () => {
 
         // Check the payment status using the payment ID
         const statusRes = await axios.get(
-          `http://localhost:5000/api/payment/status/${paymentId}`, // Include payment ID in the URL
+          `https://nyumba-smart-server.onrender.com/api/payment/status/${paymentId}`, // Include payment ID in the URL
           {
             headers: getAuthHeaders(), // Include authorization headers
           }
