@@ -2,7 +2,7 @@
 
 import axios from "axios"
 
-const API_URL = "http://localhost:5000/api"
+const API_URL = "https://nyumba-smart-server.onrender.com/api"
 
 // Types
 interface RegisterData {
@@ -113,20 +113,44 @@ export const logoutUser = async (): Promise<AuthResponse> => {
 }
 
 // Get auth headers for API requests
-export const getAuthHeaders = () => {
-  const token = localStorage.getItem("token") || sessionStorage.getItem("token")
-    console.log("Token in getAuthHeaders:", token ? "found" : "not found"); // Add this line
+// export const getAuthHeaders = () => {
+//   const token = localStorage.getItem("token") || sessionStorage.getItem("token")
+//     console.log("Token in getAuthHeaders:", token ? "found" : "not found"); // Add this line
+
+//   if (token) {
+//     return {
+//       Authorization: `Bearer ${token}`,
+//       "Content-Type": "application/json",
+//     }
+
+//   }
+//   return {
+//     "Content-Type": "application/json",
+//   }
+// }
+
+// Get auth headers for API requests
+// Get auth headers for API requests
+export const getAuthHeaders = (isMultipart: boolean = false): Record<string, string> => {
+ const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+ 
+
+
+  console.log("Token in getAuthHeaders:", token ? "found" : "not found"); // Add this line
+
+  // Create headers object with a flexible type
+  const headers: Record<string, string> = {
+    "Content-Type": isMultipart ? "multipart/form-data" : "application/json",
+  };
 
   if (token) {
-    return {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    }
+    headers.Authorization = `Bearer ${token}`;
   }
-  return {
-    "Content-Type": "application/json",
-  }
+
+  return headers;
 }
+
+
 
 export default {
   registerUser,

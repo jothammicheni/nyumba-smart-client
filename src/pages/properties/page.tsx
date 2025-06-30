@@ -1,13 +1,14 @@
+"use client"
+
 import type React from "react"
 import { useState, useEffect } from "react"
 import axios from "axios"
 import { Home } from "lucide-react"
-import PropertyCard from "./components/PropertyCard.js"
-import SearchFilters from "./components/SearchFilters.js"
-import Pagination from "./components/Pagination.js"
-import PropertyModal from "./components/PropertyModal.js"
-import type { Property, Filters } from "../types/properties.js"
-import { trackImpression, trackClick } from "../services/listingService.js"; // Adjust the import path as necessary
+import PropertyCard from "../components/PropertyCard.js"
+import SearchFilters from "../components/SearchFilters.js"
+import Pagination from "../components/Pagination.js"
+import PropertyModal from "../components/PropertyModal.js"
+import type { Property, Filters } from "../../types/properties.js"
 
 const PropertiesPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -37,16 +38,9 @@ const PropertiesPage = () => {
     setLoading(true)
     try {
       const response = await axios.get("http://localhost:5000/api/listings")
-      const fetchedProperties = response.data.listings || []
-      setProperties(fetchedProperties)
+      setProperties(response.data.listings || [])
       setError(null)
-
-      // Track impressions for all fetched properties
-      fetchedProperties.forEach((property: Property) => {
-        trackImpression(property._id); // Ensure property._id is available for tracking
-      });
-
-      console.log("Properties fetched:", fetchedProperties)
+      console.log("Properties fetched:", response.data)
     } catch (err) {
       console.error("Error fetching listings:", err)
       setError("Failed to load properties")
@@ -129,7 +123,6 @@ const PropertiesPage = () => {
 
   const openPropertyModal = (property: Property) => {
     setSelectedProperty(property)
-    trackClick(property._id); // Track the click when the property is viewed
     setIsModalOpen(true)
   }
 

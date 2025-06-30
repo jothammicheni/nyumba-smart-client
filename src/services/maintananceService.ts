@@ -3,9 +3,9 @@
 // maintananceService.ts
 
 import axios from "axios"
-import { getAuthHeaders } from "./authService"
+import { getAuthHeaders } from "./authService.js"
 
-const API_URL = "http://localhost:5000/api"
+const API_URL = "https://nyumba-smart-server.onrender.com/api"
 
 // Create new maintenance request
 export const createMaintananceRequests = async (propertyData: any) => {

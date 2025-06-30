@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import type React from "react"
 import { useState, useEffect } from "react"
 import { ArrowRight, Building, Plus, RefreshCw } from "lucide-react"
-import { getProperties, createProperty } from "../../../services/propertyService"
-import PropertyCard from "../components/PropertyCard"
-import AddPropertyModal from "../components/AddPropertyModal"
+import { getProperties, createProperty } from "../../../services/propertyService.js"
+import PropertyCard from "../components/PropertyCard.js"
+import AddPropertyModal from "../components/AddPropertyModal.js"
 
 interface Property {
   _id: string
