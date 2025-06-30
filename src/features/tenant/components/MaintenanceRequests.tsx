@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { AlertTriangle, CheckCircle, Clock } from "lucide-react";
 import NewRequestModal from "./NewRequestModal.js";
 import { getMaintananceRequests } from "../../../services/maintananceService.js";
-import { getCurrentUser } from "../../../services/authService.js";
 
 interface MaintenanceRequest {
   _id: string;
