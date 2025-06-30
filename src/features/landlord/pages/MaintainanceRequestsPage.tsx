@@ -10,6 +10,8 @@ import { fetchLandlordMaintenanceRequests } from "../../../services/maintananceS
 import ServiceProviderAssignment from "../../../components/service/ServiceProviderAssignment.js"
 import { Link } from "react-router-dom"
 import { Toaster, toast } from "sonner"
+import { getAuthHeaders } from "../../../services/authService.js"
+import axios from "axios"
 
 interface MaintenanceRequest {
   _id: string
@@ -105,21 +107,21 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = ({ landlordI
 
   const handleAssignServiceProvider = async (requestId: string, serviceProviderId: string, serviceType: string) => {
     try {
-      const response = await fetch(`/api/maintenance-requests/${requestId}/assign`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await axios.put(
+        `http://localhost:5000/api/service-requests/${requestId}/assign-provider`,
+        { 
+          headers: getAuthHeaders()
         },
-        body: JSON.stringify({
-          serviceProviderId,
-          serviceType,
-          landlordId,
-        }),
-      })
+        {
+          data: {
+            serviceProviderId,
+            landlordId,
+            serviceType,
+            notes: ''
+          }
+        });
 
-      const result = await response.json()
-
-      if (result.success) {
+      if (response.data.success) {
         toast.success("Service provider assigned successfully")
         setAssignDialogOpen(false)
         setSelectedRequest(null)
@@ -128,7 +130,7 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = ({ landlordI
         const updatedRequests = await fetchLandlordMaintenanceRequests()
         setRequests(updatedRequests)
       } else {
-        throw new Error(result.error || "Failed to assign service provider")
+        throw new Error(response.data.error || "Failed to assign service provider")
       }
     } catch (error) {
       console.error("Failed to assign service provider:", error)
