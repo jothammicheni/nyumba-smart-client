@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import type React from "react";
-import { useTheme } from "../../../components/ThemeProvider";
+import { useTheme } from "../../../components/ThemeProvider.js";
 
-import WelcomeInfo from "../components/WelcomeInfo";
-import RentSummary from "../components/RentSummary";
-import PaymentHistory from "../components/PaymentHistory";
-import MaintananceRequests from "../components/MaintananceRequests";
-import Announcements from "../components/Announcements";
+import WelcomeInfo from "../components/WelcomeInfo.js";
+import RentSummary from "../components/RentSummary.js";
+import PaymentHistory from "../components/PaymentHistory.js";
+import MaintananceRequests from "../components/MaintenanceRequests.js";
+import Announcements from "../components/Announcements.js";
 
 const TenantDashboardPage: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
