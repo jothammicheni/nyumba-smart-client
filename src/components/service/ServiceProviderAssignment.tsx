@@ -11,26 +11,6 @@ import { Star, MapPin, Phone, Mail, CheckCircle } from 'lucide-react'
 import axios from 'axios'
 import { getAuthHeaders } from '../../services/authService.js'
 
-// interface ServiceProvider {
-//   _id: string
-//   userId: {
-//     _id: string
-//     name: string
-//     email: string
-//     phone?: string
-//     isVerified: boolean
-//   }
-//   services: string[]
-//   location: {
-//     city: string
-//   }
-//   availability: {
-//     isAvailable: boolean
-//   }
-//   isActive?: boolean
-//   rating?: number
-//   completedJobs?: number
-// }
 interface ServiceProvider {
   _id: string
   userId: string | null
@@ -44,14 +24,9 @@ interface ServiceProvider {
   services: string[]
   location: {
     city: string
-    coordinates?: any[]
   }
   isActive: boolean
   completedJobs: string | number
-  availability?: {
-    isAvailable: boolean
-    schedule?: any[]
-  }
   rating?: number
   createdAt?: string
   updatedAt?: string
@@ -62,21 +37,32 @@ interface MaintenanceRequest {
   _id: string
   tenant: {
     name: string
+    email: string
+    phone: string
   }
   room: {
     property_id: {
+      _id: string
       name: string
       address?: string
     }
   }
   description: string
-  status: string
-  priority?: string
+  status: "pending" | "assigned" | "in_progress" | "completed" | "cancelled"
+  priority: "low" | "medium" | "high" | "urgent"
+  serviceType?: "plumbing" | "electrical" | "cleaning" | "security" | "wifi" | "other"
+  assignedTo?: {
+    _id: string
+    name: string
+    services: string[]
+  }
+  notes: string
+  createdAt: string
 }
 
 interface ServiceProviderAssignmentProps {
-  request: MaintenanceRequest
-  onAssign: (requestId: string, serviceProviderId: string, serviceType: string) => void
+  maintenanceRequest: MaintenanceRequest
+  onAssign: (serviceProviderId: string, serviceType: string, notes: string) => void
   onCancel: () => void
 }
 
@@ -101,10 +87,10 @@ const detectServiceType = (description: string): string => {
   return 'other'
 }
 
-export default function ServiceProviderAssignment({ request, onAssign, onCancel }: ServiceProviderAssignmentProps) {
+export default function ServiceProviderAssignment({ maintenanceRequest, onAssign, onCancel }: ServiceProviderAssignmentProps) {
   const [providers, setProviders] = useState<ServiceProvider[]>([])
   const [selectedProvider, setSelectedProvider] = useState<ServiceProvider | null>(null)
-  const [serviceType, setServiceType] = useState<string>('')
+  const [serviceType, setServiceType] = useState<string>(maintenanceRequest.serviceType || '')
   const [loading, setLoading] = useState(false)
   const [searchFilters, setSearchFilters] = useState({
     city: '',
@@ -124,10 +110,10 @@ export default function ServiceProviderAssignment({ request, onAssign, onCancel 
 
   // Auto-detect service type from description
   useEffect(() => {
-    const detectedType = detectServiceType(request.description)
+    const detectedType = detectServiceType(maintenanceRequest.description)
     setServiceType(detectedType)
     setSearchFilters((prev) => ({ ...prev, serviceType: detectedType }))
-  }, [request.description])
+  }, [maintenanceRequest.description])
 
   const searchProviders = useCallback(async () => {
     setLoading(true)
@@ -157,9 +143,23 @@ export default function ServiceProviderAssignment({ request, onAssign, onCancel 
     searchProviders()
   }, [searchFilters, searchProviders])
 
-  const handleAssign = () => {
-    if (selectedProvider && serviceType) {
-      onAssign(request._id, selectedProvider._id, serviceType)
+  // const handleAssign = () => {
+  //   if (selectedProvider && serviceType) {
+  //     onAssign(maintenanceRequest._id, selectedProvider._id, serviceType)
+  //   }
+  // }
+  const handleAssign = async () => {
+    if (!selectedProvider || !serviceType) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      onAssign(selectedProvider._id, serviceType, notes)
+    } catch (error) {
+      console.error("Assignment failed:", error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -175,21 +175,21 @@ export default function ServiceProviderAssignment({ request, onAssign, onCancel 
             <CardContent className='space-y-2 text-sm'>
               <div className='flex items-center justify-between'>
                 <strong className='text-muted-foreground'>Tenant:</strong>
-                <span className='font-medium'>{request.tenant.name}</span>
+                <span className='font-medium'>{maintenanceRequest.tenant.name}</span>
               </div>
               <div className='flex items-center justify-between'>
                 <strong className='text-muted-foreground'>Property:</strong>
-                <span className='font-medium truncate ml-2'>{request.room.property_id.name}</span>
+                <span className='font-medium truncate ml-2'>{maintenanceRequest.room.property_id.name}</span>
               </div>
               <div className='space-y-1'>
                 <strong className='text-muted-foreground'>Issue:</strong>
-                <span className='text-sm bg-muted/50 p-2 rounded'>{request.description}</span>
+                <span className='text-sm bg-muted/50 p-2 rounded'>{maintenanceRequest.description}</span>
               </div>
-              {request.priority && (
+              {maintenanceRequest.priority && (
                 <div className='flex items-center justify-between'>
                   <strong className='text-muted-foreground'>Priority:</strong>
-                  <Badge className='ml-2' variant={request.priority === 'urgent' ? 'destructive' : 'secondary'}>
-                    {request.priority}
+                  <Badge className='ml-2' variant={maintenanceRequest.priority === 'urgent' ? 'destructive' : 'secondary'}>
+                    {maintenanceRequest.priority}
                   </Badge>
                 </div>
               )}
@@ -330,8 +330,8 @@ export default function ServiceProviderAssignment({ request, onAssign, onCancel 
                             </div>
                           )}
                           <div className='text-xs text-muted-foreground'>{provider.completedJobs || 0} jobs completed</div>
-                          <Badge variant={provider.availability?.isAvailable ? 'default' : 'secondary'} className='mt-1'>
-                            {provider.availability?.isAvailable ? 'Available' : 'Busy'}
+                          <Badge variant={provider.isActive ? 'default' : 'secondary'} className='mt-1'>
+                            {provider.isActive ? 'Available' : 'Busy'}
                           </Badge>
                         </div>
                       </div>
