@@ -155,7 +155,7 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Advertise Property</h2>
           <button
@@ -174,7 +174,7 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
 
         <div className="space-y-4">
           {/* Property Info Display */}
-          <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+          <div className="bg-gray-50 dark:bg-gray-950/50 p-4 rounded-lg">
             <h3 className="font-medium text-gray-900 dark:text-white mb-2">Property Information</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
@@ -189,12 +189,12 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Property Type *</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Property Type <span className="text-primary-600">*</span> </label>
             <select
               name="type"
               value={formData.type}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >
               <option value="">Select Property Type</option>
               <option value="Single">Single</option>
@@ -208,12 +208,12 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bathrooms *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bathrooms <span className="text-primary-600">*</span> </label>
               <select
                 name="bathrooms"
                 value={formData.bathrooms}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               >
                 <option value="">Select Bathrooms</option>
                 <option value="1">1</option>
@@ -223,7 +223,7 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Area (m²) *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Area (m²) <span className="text-primary-600">*</span> </label>
               <input
                 type="number"
                 name="propertyArea"
@@ -231,7 +231,7 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
                 onChange={handleInputChange}
                 placeholder="e.g., 50"
                 min="1"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
           </div>
@@ -244,13 +244,13 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
               value={formData.specific_location}
               onChange={handleInputChange}
               placeholder="e.g., Near shopping mall, Main road"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-900 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Price (KES) *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Price (KES) <span className="text-primary-600">*</span> </label>
               <input
                 type="number"
                 name="price"
@@ -258,11 +258,11 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
                 onChange={handleInputChange}
                 placeholder="e.g., 25000"
                 min="1"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-900 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deposit (KES) *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deposit (KES) <span className="text-primary-600">*</span> </label>
               <input
                 type="number"
                 name="deposit"
@@ -270,7 +270,7 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
                 onChange={handleInputChange}
                 placeholder="e.g., 25000"
                 min="0"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-900 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
           </div>
@@ -283,7 +283,7 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
               onChange={handleInputChange}
               rows={3}
               placeholder="Describe the property features, location benefits, etc..."
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-900 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
 
@@ -297,20 +297,20 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
               value={formData.amenities}
               onChange={handleInputChange}
               placeholder="e.g., WiFi, Parking, Security, Water, Electricity"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-900 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Images * (Max 5 images, JPEG/PNG)
+              Images <span className="text-primary-600">*</span> (Max 5 images, JPEG/PNG)
             </label>
             <input
               type="file"
               accept="image/jpeg,image/png,image/jpg"
               multiple
               onChange={handleImageUpload}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
             {images.length > 0 && (
               <div className="mt-2">

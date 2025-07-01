@@ -15,7 +15,7 @@ interface PropertyCardProps {
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+    <div className="bg-white dark:bg-gray-900 overflow-hidden shadow rounded-lg">
       <div className="p-5">
         <div className="flex items-center mb-4">
           <div className="flex-shrink-0">

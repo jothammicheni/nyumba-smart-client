@@ -82,8 +82,8 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md shadow-lg">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-950 p-6 rounded-lg w-full max-w-md shadow-lg">
         <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Add New Tenant</h2>
         {error && <div className="text-red-500 mb-2 text-sm">{error}</div>}
 
@@ -92,27 +92,27 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Tenant name"
-          className="mb-3 w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:text-white"
+          className="mb-3 w-full border rounded px-3 py-2 text-sm dark:bg-gray-900 dark:border-gray-800/50 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
         />
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email address"
-          className="mb-3 w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:text-white"
+          className="mb-3 w-full border rounded px-3 py-2 text-sm dark:bg-gray-900 dark:border-gray-800/50 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
         />
         <input
           type="text"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="Phone number"
-          className="mb-3 w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:text-white"
+          className="mb-3 w-full border rounded px-3 py-2 text-sm dark:bg-gray-900 dark:border-gray-800/50 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
         />
 
         <select
           value={propertyId}
           onChange={(e) => setPropertyId(e.target.value)}
-          className="mb-3 w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:text-white"
+          className="mb-3 w-full border rounded px-3 py-2 text-sm dark:bg-gray-900 dark:border-gray-800/50 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
         >
           <option value="">Select Property</option>
           {properties.map((prop) => (
@@ -123,7 +123,7 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
         <select
           value={roomId}
           onChange={(e) => setRoomId(e.target.value)}
-          className="mb-3 w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:text-white"
+          className="mb-3 w-full border rounded px-3 py-2 text-sm dark:bg-gray-900 dark:border-gray-800/50 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           disabled={!propertyId}
         >
           <option value="">Select Vacant Room</option>
@@ -132,8 +132,8 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
           ))}
         </select>
 
-        <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 rounded bg-gray-300 text-sm">Cancel</button>
+        <div className="flex justify-end gap-2 dark:bg-primary-600/20 p-3 rounded">
+          <button onClick={onClose} className="px-4 py-2 rounded bg-gray-900 text-sm">Cancel</button>
           <button onClick={handleSubmit} disabled={loading} className="px-4 py-2 rounded bg-primary-600 text-white text-sm">
             {loading ? 'Saving...' : 'Save Tenant'}
           </button>

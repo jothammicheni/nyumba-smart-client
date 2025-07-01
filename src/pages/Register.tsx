@@ -162,11 +162,6 @@ const Register: React.FC = () => {
       newErrors.serviceType = "Service type is required"
     }
 
-    // Validate referral code for landlords
-    // if (formData.role === "landlord" && !formData.referredBy) {
-    //   newErrors.referredBy = "Agent Referral code is required for landlords"
-    // }
-
     // Validate terms agreement
     if (!formData.agreeTerms) {
       newErrors.agreeTerms = "You must agree to the terms and conditions"
@@ -193,7 +188,7 @@ const Register: React.FC = () => {
           city: formData.city,
           service_category: formData.serviceType,
         }
-        
+
         console.log("Registration response:", userData)
         const response = await register(userData)
 
@@ -231,7 +226,7 @@ const Register: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
       <div className="max-w-2xl mx-auto">
         <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg overflow-hidden">
           <div className="px-6 py-8 sm:p-10">
@@ -252,7 +247,7 @@ const Register: React.FC = () => {
               {/* User Role Selection */}
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">I am a:</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Register As:</label>
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                     {[
                       { value: "landlord", label: "Landlord" },
@@ -353,8 +348,8 @@ const Register: React.FC = () => {
                     onChange={handleChange}
                     className={`
                       block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm
-                      ${errors.firstName ? "border-red-500" : "border-gray-300 dark:border-gray-600"}
-                      bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                      ${errors.firstName ? "border-red-500" : "border-gray-300 dark:border-gray-800/50"}
+                      bg-white dark:bg-gray-800/30 text-gray-900 dark:text-gray-100
                     `}
                   />
                   {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>}
@@ -372,8 +367,8 @@ const Register: React.FC = () => {
                     onChange={handleChange}
                     className={`
                       block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm
-                      ${errors.lastName ? "border-red-500" : "border-gray-300 dark:border-gray-600"}
-                      bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                      ${errors.lastName ? "border-red-500" : "border-gray-300 dark:border-gray-800/50"}
+                      bg-white dark:bg-gray-800/30 text-gray-900 dark:text-gray-100
                     `}
                   />
                   {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
@@ -395,8 +390,8 @@ const Register: React.FC = () => {
                     onChange={handleChange}
                     className={`
                       block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm
-                      ${errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-600"}
-                      bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                      ${errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-800/50"}
+                       bg-white dark:bg-gray-800/30 text-gray-900 dark:text-gray-100
                     `}
                   />
                   {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
