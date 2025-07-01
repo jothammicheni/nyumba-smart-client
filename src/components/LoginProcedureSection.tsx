@@ -4,7 +4,7 @@ import { UserPlus, LogIn, LayoutDashboard, CheckCircle, ArrowBigRight, ArrowRigh
 
 const LoginProcedureSection: React.FC = () => {
   return (
-    <section className="py-10 py-16 bg-white dark:bg-gray-800/20 relative overflow-hidden">
+    <section className="py-10 py-16 relative overflow-hidden bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-6">
@@ -18,12 +18,12 @@ const LoginProcedureSection: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           {/* Step 1 */}
           <div className="relative group">
-            <div className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:border-gray-700/50 h-full transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-white dark:hover:bg-gray-800">
+            <div className="group bg-white dark:bg-gray-950 shadow-xl backdrop-blur-sm rounded-2xl p-8 transform transition-all duration-500 hover:scale-105 hover:shadow-xl border border-blue-100/50 dark:border-primary-600/5">
               <div className="absolute -top-6 -left-6 bg-primary-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl shadow-lg transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                 1
               </div>
               <div className="flex flex-col items-center pt-6">
-                <div className="p-4 bg-primary-300/30 dark:bg-primary-600/20 rounded-2xl mb-6 transform transition-transform duration-300 group-hover:scale-110">
+                <div className="p-4 bg-primary-300/30 dark:bg-primary-600/30 rounded-2xl mb-6 transform transition-transform duration-300 group-hover:scale-110">
                   <UserPlus className="h-8 w-8 text-primary-500 dark:text-primary-500" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-3">Register</h3>
@@ -39,7 +39,7 @@ const LoginProcedureSection: React.FC = () => {
 
           {/* Step 2 */}
           <div className="relative group">
-            <div className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:border-gray-700/50 h-full transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-white dark:hover:bg-gray-800">
+            <div className="group bg-white dark:bg-gray-950 shadow-xl backdrop-blur-sm rounded-2xl p-8 transform transition-all duration-500 hover:scale-105 hover:shadow-xl border border-blue-100/50 dark:border-primary-600/5">
               <div className="absolute -top-6 -left-6 bg-primary-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl shadow-lg transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                 2
               </div>
@@ -60,7 +60,7 @@ const LoginProcedureSection: React.FC = () => {
 
           {/* Step 3 */}
           <div className="relative group">
-            <div className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:border-gray-700/50 h-full transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-white dark:hover:bg-gray-800">
+            <div className="group bg-white dark:bg-gray-950 shadow-xl backdrop-blur-sm rounded-2xl p-8 transform transition-all duration-500 hover:scale-105 hover:shadow-xl border border-blue-100/50 dark:border-primary-600/5">
               <div className="absolute -top-6 -left-6 bg-primary-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl shadow-lg transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                 3
               </div>
@@ -81,12 +81,12 @@ const LoginProcedureSection: React.FC = () => {
 
           {/* Step 4 */}
           <div className="relative group">
-            <div className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:border-gray-700/50 h-full transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-white dark:hover:bg-gray-800">
+            <div className="group bg-white dark:bg-gray-950 shadow-xl backdrop-blur-sm rounded-2xl p-8 transform transition-all duration-500 hover:scale-105 hover:shadow-xl border border-blue-100/50 dark:border-primary-600/5">
               <div className="absolute -top-6 -left-6 bg-primary-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl shadow-lg transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                 4
               </div>
               <div className="flex flex-col items-center pt-6">
-                <div className="p-4 bg-primary-300/20 dark:bg-primary-600/30 rounded-2xl mb-6 transform transition-transform duration-300 group-hover:scale-110">
+                <div className="p-4 bg-primary-600/30 dark:bg-primary-600/30 rounded-2xl mb-6 transform transition-transform duration-300 group-hover:scale-110">
                   <CheckCircle className="h-8 w-8 text-primary-500 dark:text-primary-500" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-3">Start Using</h3>
@@ -100,7 +100,7 @@ const LoginProcedureSection: React.FC = () => {
 
         {/* Enhanced CTA Section */}
         <div className="text-center">
-          <div className="inline-flex flex-col items-center space-y-4 p-8 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-3xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl">
+          <div className="inline-flex flex-col items-center space-y-4 p-8 bg-white/60 dark:bg-gray-950 backdrop-blur-sm rounded-3xl border border-gray-200/50 dark:border-primary-600/5 shadow-2xl">
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Ready to get started?
             </h3>

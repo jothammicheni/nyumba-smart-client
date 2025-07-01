@@ -20,7 +20,7 @@ const LandlordDashboard: React.FC = () => {
       <div className=" flex flex-col flex-1">
         {/* Main content area */}
         <main className="flex-1 pb-8">
-          <div className="bg-white dark:bg-gray-800 shadow">
+          <div className="shadow rounded-xs">
             <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
               <div className="py-6 md:flex md:items-center md:justify-between">
                 <div className="flex-1 min-w-0">

@@ -41,7 +41,7 @@ const MaintenanceRequests: React.FC = () => {
   }, []);
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
+      <div className="bg-white/30 dark:bg-transparent shadow rounded-lg">
         <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
             Maintenance Requests

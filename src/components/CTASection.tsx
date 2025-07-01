@@ -4,7 +4,7 @@ import { Building, CreditCard, Users, Shield, Wifi, Wrench, Zap, ArrowRight, Sta
 
 const CTASection: React.FC = () => {
   return (
-    <section className="relative py-16 bg-white dark:bg-gray-900 overflow-hidden">
+    <section className="relative py-16 overflow-hidden bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-20">
@@ -32,7 +32,7 @@ const CTASection: React.FC = () => {
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 mb-24">
           {/* Feature 1: smart room */}
-          <div className="group relative bg-[#FBFBFB] dark:bg-gray-900/80 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl p-8 transform transition-all duration-700 hover:scale-105 hover:-translate-y-2 border border-white/50 dark:border-gray-700/50 overflow-hidden">
+          <div className="group relative bg-[#FBFBFB] dark:bg-gray-900 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl p-8 transform transition-all duration-700 hover:scale-105 hover:-translate-y-2 border border-white/50 dark:border-gray-800 overflow-hidden">
             <div className="relative">
               <div className="flex justify-center mb-6">
                 <div className="p-4 bg-gradient-to-br from-blue-500/10 to-blue-600/20 rounded-2xl group-hover:from-blue-500/20 group-hover:to-blue-600/30 transition-all duration-500 group-hover:scale-110">
@@ -49,7 +49,7 @@ const CTASection: React.FC = () => {
           </div>
 
           {/* Feature 2: mpesa payment */}
-          <div className="group relative bg-[#FBFBFB] dark:bg-gray-900/80 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl p-8 transform transition-all duration-700 hover:scale-105 hover:-translate-y-2 border border-white/50 dark:border-gray-700/50 overflow-hidden">
+          <div className="group relative bg-[#FBFBFB] dark:bg-gray-900 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl p-8 transform transition-all duration-700 hover:scale-105 hover:-translate-y-2 border border-white/50 dark:border-gray-800 overflow-hidden">
             <div className="relative">
               <div className="flex justify-center mb-6">
                 <div className="p-4 bg-gradient-to-br from-green-500/10 to-green-600/20 rounded-2xl group-hover:from-green-500/20 group-hover:to-green-600/30 transition-all duration-500 group-hover:scale-110">
@@ -66,7 +66,7 @@ const CTASection: React.FC = () => {
           </div>
 
           {/* Feature 3: tenant portal */}
-          <div className="group relative bg-[#FBFBFB] dark:bg-gray-900/80 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl p-8 transform transition-all duration-700 hover:scale-105 hover:-translate-y-2 border border-white/50 dark:border-gray-700/50 overflow-hidden">
+          <div className="group relative bg-[#FBFBFB] dark:bg-gray-900 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl p-8 transform transition-all duration-700 hover:scale-105 hover:-translate-y-2 border border-white/50 dark:border-gray-800 overflow-hidden">
             <div className="relative">
               <div className="flex justify-center mb-6">
                 <div className="p-4 bg-gradient-to-br from-purple-500/10 to-purple-600/20 rounded-2xl group-hover:from-purple-500/20 group-hover:to-purple-600/30 transition-all duration-500 group-hover:scale-110">
@@ -83,7 +83,7 @@ const CTASection: React.FC = () => {
           </div>
 
           {/* Feature 4: referral system */}
-          <div className="group relative bg-[#FBFBFB] dark:bg-gray-900/80 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl p-8 transform transition-all duration-700 hover:scale-105 hover:-translate-y-2 border border-white/50 dark:border-gray-700/50 overflow-hidden">
+          <div className="group relative bg-[#FBFBFB] dark:bg-gray-900 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl p-8 transform transition-all duration-700 hover:scale-105 hover:-translate-y-2 border border-white/50 dark:border-gray-800 overflow-hidden">
             <div className="relative">
               <div className="flex justify-center mb-6">
                 <div className="p-4 bg-gradient-to-br from-orange-500/10 to-orange-600/20 rounded-2xl group-hover:from-orange-500/20 group-hover:to-orange-600/30 transition-all duration-500 group-hover:scale-110">
@@ -101,7 +101,7 @@ const CTASection: React.FC = () => {
         </div>
 
         {/* Service Providers Section */}
-        <div className="relative bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-800/90 dark:to-gray-900/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700/50 p-12 mb-20 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-900 dark:to-gray-950/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 dark:border-gray-800 p-12 mb-20 overflow-hidden">
           <div className="relative text-center mb-12">
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Connect with Our Vetted Service Providers</h3>
             <p className="max-w-2xl text-lg text-gray-600 dark:text-gray-300 mx-auto mb-8">
@@ -111,46 +111,46 @@ const CTASection: React.FC = () => {
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* WiFi Provider */}
-            <div className="group bg-primary-600 dark:from-gray-900/70 dark:to-gray-900/90 backdrop-blur-sm rounded-2xl p-8 transform transition-all duration-500 hover:scale-105 hover:shadow-xl border border-blue-100/50 dark:border-blue-500/20">
+            <div className="group bg-white dark:bg-gray-950 shadow-xl backdrop-blur-sm rounded-2xl p-8 transform transition-all duration-500 hover:scale-105 hover:shadow-xl border border-blue-100/50 dark:border-primary-600/5">
               <div className="flex justify-center mb-6">
-                <div className="p-4 bg-gradient-to-br from-blue-500/10 to-cyan-600/20 rounded-2xl group-hover:from-blue-500/20 group-hover:to-cyan-600/30 transition-all duration-500 group-hover:scale-110">
-                  <Wifi className="h-8 w-8 text-blue-600 group-hover:text-blue-700 transition-colors duration-300" />
+                <div className="p-4 bg-primary-600/30 dark:bg-primary-600/30 rounded-2xl group-hover:from-blue-500/20 group-hover:to-cyan-600/30 transition-all duration-500 group-hover:scale-110">
+                  <Wifi className="h-8 w-8 text-primary-600 group-hover:text-blue-700 transition-colors duration-300" />
                 </div>
               </div>
-              <h4 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-3 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors duration-300">
+              <h4 className="text-xl font-bold text-gray-950 dark:text-white text-center mb-3 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors duration-300">
                 WiFi & Internet Solutions
               </h4>
-              <p className="text-gray-300 dark:text-gray-300 text-center leading-relaxed">
+              <p className="text-gray-900 dark:text-gray-300 text-center leading-relaxed">
                 High-speed internet providers with competitive rates, reliable service, and dedicated property management support.
               </p>
             </div>
 
             {/* Plumbing Services */}
-            <div className="group bg-primary-600 dark:from-gray-900/70 dark:to-gray-900/90 backdrop-blur-sm rounded-2xl p-8 transform transition-all duration-500 hover:scale-105 hover:shadow-xl border border-blue-100/50 dark:border-blue-500/20">
+            <div className="group bg-white dark:bg-gray-950 shadow-xl backdrop-blur-sm rounded-2xl p-8 transform transition-all duration-500 hover:scale-105 hover:shadow-xl border border-blue-100/50 dark:border-primary-600/5">
               <div className="flex justify-center mb-6">
-                <div className="p-4 bg-gradient-to-br from-blue-500/10 to-cyan-600/20 rounded-2xl group-hover:from-blue-500/20 group-hover:to-cyan-600/30 transition-all duration-500 group-hover:scale-110">
-                  <Wrench className="h-8 w-8 text-blue-600 group-hover:text-blue-700 transition-colors duration-300" />
+                <div className="p-4 bg-primary-600/30 dark:bg-primary-600/30 rounded-2xl group-hover:from-blue-500/20 group-hover:to-cyan-600/30 transition-all duration-500 group-hover:scale-110">
+                  <Wrench className="h-8 w-8 text-primary-600 group-hover:text-blue-700 transition-colors duration-300" />
                 </div>
               </div>
-              <h4 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-3 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors duration-300">
+              <h4 className="text-xl font-bold text-gray-950 dark:text-white text-center mb-3 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors duration-300">
                 Expert Plumbing Services
               </h4>
-              <p className="text-gray-300 dark:text-gray-300 text-center leading-relaxed">
+              <p className="text-gray-900 dark:text-gray-300 text-center leading-relaxed">
                 Licensed plumbers available for emergency repairs, installations, and routine maintenance with transparent pricing.
               </p>
             </div>
 
             {/* Electrical Services */}
-            <div className="group bg-primary-600 dark:from-gray-900/70 dark:to-gray-900/90 backdrop-blur-sm rounded-2xl p-8 transform transition-all duration-500 hover:scale-105 hover:shadow-xl border border-blue-100/50 dark:border-blue-500/20">
+            <div className="group bg-white dark:bg-gray-950 shadow-xl backdrop-blur-sm rounded-2xl p-8 transform transition-all duration-500 hover:scale-105 hover:shadow-xl border border-blue-100/50 dark:border-primary-600/5">
               <div className="flex justify-center mb-6">
-                <div className="p-4 bg-gradient-to-br from-blue-500/10 to-cyan-600/20 rounded-2xl group-hover:from-blue-500/20 group-hover:to-cyan-600/30 transition-all duration-500 group-hover:scale-110">
-                  <Zap className="h-8 w-8 text-blue-600 group-hover:text-blue-700 transition-colors duration-300" />
+                <div className="p-4 bg-primary-600/30 dark:bg-primary-600/30 rounded-2xl group-hover:from-blue-500/20 group-hover:to-cyan-600/30 transition-all duration-500 group-hover:scale-110">
+                  <Zap className="h-8 w-8 text-primary-600 group-hover:text-blue-700 transition-colors duration-300" />
                 </div>
               </div>
-              <h4 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-3 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors duration-300">
+              <h4 className="text-xl font-bold text-gray-950 dark:text-white text-center mb-3 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors duration-300">
                 Certified Electrical Work
               </h4>
-              <p className="text-gray-300 dark:text-gray-300 text-center leading-relaxed">
+              <p className="text-gray-900 dark:text-gray-300 text-center leading-relaxed">
                 Professional electricians for safe installations, repairs, and upgrades with full compliance and warranty coverage.
               </p>
             </div>

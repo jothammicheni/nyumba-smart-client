@@ -195,9 +195,10 @@ const PropertyDetailPage: React.FC = () => {
         </button>
       </div>
 
-      <div className="sm:flex-row bg-white dark:bg-gray-800 rounded-lg shadow mb-6">
+      <div className="sm:flex-row bg-white dark:bg-gray-900 rounded-lg shadow mb-6">
         <div className="p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white dark:bg-gray-800 p-4 rounded-lg shadow mb-4">
+          
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white dark:bg-gray-950/80 p-4 rounded-lg shadow-md mb-4">
             <div className="flex items-center">
               <Building className="h-10 w-10 text-primary-600 dark:text-primary-500 mr-4" />
               <div>
@@ -219,7 +220,7 @@ const PropertyDetailPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
+            <div className="bg-gray-50 dark:bg-gray-950/80 p-4 rounded-md">
               <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 Total Units
               </div>
@@ -227,7 +228,7 @@ const PropertyDetailPage: React.FC = () => {
                 {property.rooms.length}
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
+            <div className="bg-gray-50 dark:bg-gray-950/80 p-4 rounded-md">
               <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 Vacant Units
               </div>
@@ -242,8 +243,8 @@ const PropertyDetailPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-primary-600/30 flex justify-between items-center">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white">
             Rooms
           </h2>
@@ -266,8 +267,8 @@ const PropertyDetailPage: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-primary-600/30">
+            <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
                 <th
                   scope="col"
@@ -293,7 +294,7 @@ const PropertyDetailPage: React.FC = () => {
               </tr>
             </thead>
 
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-primary-600/10">
               {property.rooms.map((room) => (
                 <tr key={room._id}>
                   <td className="px-6 py-4 whitespace-nowrap">
