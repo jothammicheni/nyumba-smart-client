@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { getAuthHeaders } from "../../../services/authService.ts";
+import { getAuthHeaders } from "../../../services/authService.js";
 
 function WelcomeInfo() {
   const [tenantInfo, setTenantInfo] = useState<any>(null);
@@ -156,7 +156,9 @@ const initiatePayment = async () => {
     // Handle errors during payment initiation
     setMessage({
       type: "error",
-      text: error.response?.data?.error || "Payment initiation failed.",
+      text: axios.isAxiosError(error) && error.response?.data?.error
+        ? error.response.data.error
+        : "Payment initiation failed.",
     });
   } finally {
     setPaying(false); // Reset the paying state

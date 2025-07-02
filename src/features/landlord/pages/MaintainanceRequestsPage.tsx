@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Badge } from '../../../components/ui/badge.js'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '../../../components/ui/dialog.js'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select.js'
-import { Wrench, Calendar, MapPin, User, AlertCircle, Phone, ChevronRight } from 'lucide-react'
+import { Wrench, Calendar, MapPin, User, AlertCircle, ChevronRight } from 'lucide-react'
 import { fetchLandlordMaintenanceRequests } from '../../../services/maintananceService.js'
 import ServiceProviderAssignment from '../../../components/service/ServiceProviderAssignment.js'
 import { Link } from 'react-router-dom'
@@ -204,7 +204,7 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
         </div>
       </CardHeader>
 
-      {/* <CardContent className='px-6 pb-6 shadow-xl rounded'>
+      <CardContent className='px-6 pb-6 shadow-xl rounded'>
         {requests.length > 0 ? (
           <div className='space-y-5 p-10'>
             {requests.map((request) => (
@@ -231,8 +231,7 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                       {request.serviceType && (
                         <Badge
                           variant='outline'
-                          className='px-3 py-1 rounded-full font-medium bg-gray-50 text-gray-800 border-gray-200'
-                        >
+                          className='px-3 py-1 rounded-full font-medium bg-gray-50 text-gray-800 border-gray-200'>
                           {request.serviceType}
                         </Badge>
                       )}
@@ -240,9 +239,9 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
 
                     <div className='grid grid-cols-1 lg:grid-cols-2 gap-5'>
                       <div className='space-y-3'>
-                        <div className='flex items-center gap-3'>
-                          <div className='p-2 rounded-full bg-gray-100'>
-                            <User className='h-4 w-4 text-gray-600' />
+                        <div className='flex items-center gap-3 p-3 rounded hover:bg-gray-950/50'>
+                          <div className='p-2 rounded-full bg-primary-600/30 dark:bg-primary-600/30'>
+                            <User className='h-4 w-4 text-primary-600 dark:text-primary-600' />
                           </div>
                           <div>
                             <p className='font-medium dark:text-gray-400 text-gray-900'>
@@ -251,16 +250,15 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
 
                             {request.tenant?.phone && (
                               <p className='flex items-center gap-2 text-sm text-gray-500 mt-1'>
-                                <Phone className='h-4 w-4' />
                                 {request.tenant.phone}
                               </p>
                             )}
                           </div>
                         </div>
 
-                        <div className='flex items-center gap-3'>
-                          <div className='p-2 rounded-full bg-gray-100'>
-                            <MapPin className='h-4 w-4 text-gray-600' />
+                        <div className='flex items-center gap-3 p-3 rounded hover:bg-gray-950/50'>
+                          <div className='p-2 rounded-full bg-primary-600/30 dark:bg-primary-600/30'>
+                            <MapPin className='h-4 w-4 text-primary-600 dark:text-primary-600' />
                           </div>
                           <div>
                             <p className='text-sm text-gray-500'>Property</p>
@@ -270,9 +268,9 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                       </div>
 
                       <div className='space-y-3'>
-                        <div className='flex items-center gap-3'>
-                          <div className='p-2 rounded-full bg-gray-100'>
-                            <Calendar className='h-4 w-4 text-gray-600' />
+                        <div className='flex items-center gap-3 p-3 rounded hover:bg-gray-950/50'>
+                          <div className='p-2 rounded-full bg-primary-600/30 dark:bg-primary-600/30'>
+                            <Calendar className='h-4 w-4 text-primary-600 dark:text-primary-600' />
                           </div>
                           <div>
                             <p className='text-sm text-gray-500'>Reported on</p>
@@ -281,9 +279,9 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                         </div>
 
                         {request.assignedTo && (
-                          <div className='flex items-center gap-3'>
-                            <div className='p-2 rounded-full bg-blue-100'>
-                              <User className='h-4 w-4 text-blue-600' />
+                          <div className='flex items-center gap-3 p-3 rounded hover:bg-gray-950/50'>
+                            <div className='p-2 rounded-full bg-primary-600/30 dark:bg-primary-600/30'>
+                              <User className='h-4 w-4 text-primary-600 dark:text-primary-600' />
                             </div>
                             <div>
                               <p className='text-sm text-gray-500'>Assigned to</p>
@@ -366,11 +364,11 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
 
                 <div className='mt-4 pt-4 border-t border-primary-600/10'>
                   <div className='flex items-start gap-3'>
-                    <div className='p-2 rounded-full bg-amber-100 mt-0.5'>
-                      <AlertCircle className='h-4 w-4 text-amber-600' />
+                    <div className='p-2 rounded-full bg-primary-600/30 dark:bg-primary-600/30 mt-0.5'>
+                      <AlertCircle className='h-4 w-4 text-primary-600 dark:text-primary-600' />
                     </div>
                     <div>
-                      <p className='font-medium dark:text-gray-400  text-gray-900'>Issue Description</p>
+                      <p className='font-medium dark:text-gray-400 text-gray-900'>Issue Description</p>
                       <p className='text-gray-600 mt-1'>{request.description}</p>
                     </div>
                   </div>
@@ -403,217 +401,217 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
             </Button>
           </div>
         )}
-      </CardContent> */}
-      <CardContent className="px-4 pb-6 sm:px-6">
-  {requests.length > 0 ? (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {requests.map((request) => (
-        <div
-          key={request._id}
-          className="border dark:border-gray-700 rounded-lg p-4 hover:shadow-sm dark:hover:shadow-gray-700/20 transition-all duration-200 bg-white dark:bg-gray-900"
-        >
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-            <div className="flex-1 space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                {request.status && (
-                  <Badge
-                    variant="outline"
-                    className={`${getStatusColor(request.status)} px-2.5 py-0.5 rounded-full text-xs font-medium flex items-center gap-1`}
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-current opacity-80"></span>
-                    {request.status}
-                  </Badge>
-                )}
-                {request.priority && (
-                  <Badge
-                    variant="outline"
-                    className={`${getPriorityColor(request.priority)} px-2.5 py-0.5 rounded-full text-xs font-medium`}
-                  >
-                    {request.priority}
-                  </Badge>
-                )}
-                {request.serviceType && (
-                  <Badge
-                    variant="outline"
-                    className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700"
-                  >
-                    {request.serviceType}
-                  </Badge>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                      <User className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Tenant</p>
-                      <p className="font-medium dark:text-gray-200">
-                        {request.tenant?.name || 'Not Specified'}
-                      </p>
-                      {request.tenant?.phone && (
-                        <p className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          <Phone className="h-3.5 w-3.5" />
-                          {request.tenant.phone}
-                        </p>
+      </CardContent>
+      {/* <CardContent className="px-4 pb-6 sm:px-6">
+        {requests.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {requests.map((request) => (
+              <div
+                key={request._id}
+                className="border dark:border-gray-700 rounded-lg p-4 hover:shadow-sm dark:hover:shadow-gray-700/20 transition-all duration-200 bg-white dark:bg-gray-900"
+              >
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                  <div className="flex-1 space-y-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {request.status && (
+                        <Badge
+                          variant="outline"
+                          className={`${getStatusColor(request.status)} px-2.5 py-0.5 rounded-full text-xs font-medium flex items-center gap-1`}
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-current opacity-80"></span>
+                          {request.status}
+                        </Badge>
+                      )}
+                      {request.priority && (
+                        <Badge
+                          variant="outline"
+                          className={`${getPriorityColor(request.priority)} px-2.5 py-0.5 rounded-full text-xs font-medium`}
+                        >
+                          {request.priority}
+                        </Badge>
+                      )}
+                      {request.serviceType && (
+                        <Badge
+                          variant="outline"
+                          className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700"
+                        >
+                          {request.serviceType}
+                        </Badge>
                       )}
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                      <MapPin className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Property</p>
-                      <p className="font-medium dark:text-gray-200">{request.room.property_id.name}</p>
-                    </div>
-                  </div>
-                </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                            <User className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Tenant</p>
+                            <p className="font-medium dark:text-gray-200">
+                              {request.tenant?.name || 'Not Specified'}
+                            </p>
+                            {request.tenant?.phone && (
+                              <p className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                <Phone className="h-3.5 w-3.5" />
+                                {request.tenant.phone}
+                              </p>
+                            )}
+                          </div>
+                        </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                      <Calendar className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Reported on</p>
-                      <p className="font-medium dark:text-gray-200">{formatDate(request.createdAt)}</p>
-                    </div>
-                  </div>
-
-                  {request.assignedTo && (
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
-                        <User className="h-4 w-4 text-blue-600 dark:text-blue-300" />
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                            <MapPin className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Property</p>
+                            <p className="font-medium dark:text-gray-200">{request.room.property_id.name}</p>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Assigned to</p>
-                        <p className="font-medium dark:text-gray-200">{request.assignedTo.name}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          Services: {request.assignedTo.services.join(', ')}
-                        </p>
+
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                            <Calendar className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Reported on</p>
+                            <p className="font-medium dark:text-gray-200">{formatDate(request.createdAt)}</p>
+                          </div>
+                        </div>
+
+                        {request.assignedTo && (
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
+                              <User className="h-4 w-4 text-blue-600 dark:text-blue-300" />
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">Assigned to</p>
+                              <p className="font-medium dark:text-gray-200">{request.assignedTo.name}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                Services: {request.assignedTo.services.join(', ')}
+                              </p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
+                  </div>
 
-            <div className="flex flex-col gap-2 w-full md:w-auto">
-              {request.status === 'pending' && (
-                <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      onClick={() => setSelectedRequest(request)}
-                      className="w-full md:w-40 h-9 bg-primary-600 hover:bg-primary-700"
-                    >
-                      Assign Provider
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-4xl">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl">Assign Service Provider</DialogTitle>
-                      <DialogDescription className="text-base">
-                        Select a service provider for: <span className="font-medium">{request.description}</span>
-                      </DialogDescription>
-                    </DialogHeader>
-                    {selectedRequest && (
-                      <ServiceProviderAssignment
-                        maintenanceRequest={selectedRequest}
-                        onAssign={handleAssignServiceProvider}
-                        onCancel={() => {
-                          setAssignDialogOpen(false)
-                          setSelectedRequest(null)
-                        }}
-                      />
+                  <div className="flex flex-col gap-2 w-full md:w-auto">
+                    {request.status === 'pending' && (
+                      <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            onClick={() => setSelectedRequest(request)}
+                            className="w-full md:w-40 h-9 bg-primary-600 hover:bg-primary-700"
+                          >
+                            Assign Provider
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl">
+                          <DialogHeader>
+                            <DialogTitle className="text-xl">Assign Service Provider</DialogTitle>
+                            <DialogDescription className="text-base">
+                              Select a service provider for: <span className="font-medium">{request.description}</span>
+                            </DialogDescription>
+                          </DialogHeader>
+                          {selectedRequest && (
+                            <ServiceProviderAssignment
+                              maintenanceRequest={selectedRequest}
+                              onAssign={handleAssignServiceProvider}
+                              onCancel={() => {
+                                setAssignDialogOpen(false)
+                                setSelectedRequest(null)
+                              }}
+                            />
+                          )}
+                        </DialogContent>
+                      </Dialog>
                     )}
-                  </DialogContent>
-                </Dialog>
-              )}
 
-              {request.status === 'assigned' && (
-                <Select onValueChange={(value: string) => handleUpdateRequestState(request._id, value)}>
-                  <SelectTrigger className="w-full md:w-40 h-9">
-                    <SelectValue placeholder="Update status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="in_progress" className="hover:bg-gray-50">
-                      <div className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-indigo-500"></span>
-                        Start Work
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="cancelled" className="hover:bg-gray-50">
-                      <div className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-gray-500"></span>
-                        Cancel Request
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
+                    {request.status === 'assigned' && (
+                      <Select onValueChange={(value: string) => handleUpdateRequestState(request._id, value)}>
+                        <SelectTrigger className="w-full md:w-40 h-9">
+                          <SelectValue placeholder="Update status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="in_progress" className="hover:bg-gray-50">
+                            <div className="flex items-center gap-2">
+                              <span className="h-2 w-2 rounded-full bg-indigo-500"></span>
+                              Start Work
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="cancelled" className="hover:bg-gray-50">
+                            <div className="flex items-center gap-2">
+                              <span className="h-2 w-2 rounded-full bg-gray-500"></span>
+                              Cancel Request
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
 
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full md:w-40 h-9"
-                onClick={() => {
-                  window.location.href = `/properties/requests/${request._id}`
-                }}
-              >
-                View Details
-              </Button>
-            </div>
-          </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full md:w-40 h-9"
+                      onClick={() => {
+                        window.location.href = `/properties/requests/${request._id}`
+                      }}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </div>
 
-          <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/50">
-                <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-300" />
+                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/50">
+                      <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-300" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Issue Description</p>
+                      <p className="text-gray-700 dark:text-gray-300 mt-1">{request.description}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Issue Description</p>
-                <p className="text-gray-700 dark:text-gray-300 mt-1">{request.description}</p>
-              </div>
-            </div>
+            ))}
           </div>
-        </div>
-      ))}
-    </div>
-  ) : (
-    <div className="flex flex-col items-center justify-center py-12 space-y-4">
-      <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-800">
-        <Wrench className="h-8 w-8 text-gray-400" />
-      </div>
-      <p className="text-lg font-medium text-gray-600 dark:text-gray-300">No maintenance requests found</p>
-      <p className="text-sm text-gray-500 dark:text-gray-400">When tenants submit requests, they'll appear here</p>
-      <Button
-        variant="outline"
-        className="mt-4"
-        onClick={() => (window.location.href = '/maintenance-requests')}
-      >
-        View All Requests
-      </Button>
-    </div>
-  )}
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 space-y-4">
+            <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-800">
+              <Wrench className="h-8 w-8 text-gray-400" />
+            </div>
+            <p className="text-lg font-medium text-gray-600 dark:text-gray-300">No maintenance requests found</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">When tenants submit requests, they'll appear here</p>
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => (window.location.href = '/maintenance-requests')}
+            >
+              View All Requests
+            </Button>
+          </div>
+        )}
 
-  {requests.length > 0 && (
-    <div className="mt-6 flex justify-center sm:hidden">
-      <Button
-        variant="outline"
-        className="flex items-center gap-2"
-        onClick={() => (window.location.href = '/maintenance-requests')}
-      >
-        View All Requests
-        <ChevronRight className="h-4 w-4" />
-      </Button>
-    </div>
-  )}
-</CardContent>
+        {requests.length > 0 && (
+          <div className="mt-6 flex justify-center sm:hidden">
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={() => (window.location.href = '/maintenance-requests')}
+            >
+              View All Requests
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </CardContent> */}
     </Card>
   )
 }

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// Subscriptions.tsx
 import React, { useState, useEffect } from "react";
 import {
   Home,
@@ -19,6 +18,7 @@ import {
   createSubscription,
   getSubscription,
 } from "../../../services/subscriptionService.js";
+import { toast, Toaster } from "sonner";
 
 const Subscriptions = () => {
   const [selectedTier, setSelectedTier] = useState<any>(null);
@@ -117,7 +117,7 @@ const Subscriptions = () => {
       ],
     },
     {
-      name: "Gold",
+      name: "Silver",
       icon: <Star className="w-6 h-6" />,
       priceMonthly: 1200,
       priceYearly: 6000,
@@ -135,7 +135,7 @@ const Subscriptions = () => {
       ],
     },
     {
-      name: "Silver",
+      name: "Gold",
       icon: <Gem className="w-6 h-6" />,
       priceMonthly: 3000,
       priceYearly: 9000,
@@ -155,8 +155,8 @@ const Subscriptions = () => {
     {
       name: "Diamond",
       icon: <Crown className="w-6 h-6" />,
-      priceMonthly: 5000, 
-      priceYearly: 15000, 
+      priceMonthly: 5000,
+      priceYearly: 15000,
       properties: 4,
       rooms: 1000,
       vacancyListings: "Unlimited",
@@ -190,6 +190,7 @@ const Subscriptions = () => {
         setActiveSub(res.data);
         setAcceptedTerms(false);
         setCountdown("45d 0h 0m 0s");
+        toast.success('Your trial has started')
         console.log("✅ Trial started:", res.data);
       }
     } catch (err) {
@@ -198,11 +199,11 @@ const Subscriptions = () => {
   };
 
   const handleMpesaPayment = () => {
-    alert("💰 Redirecting to M-Pesa payment...");
-    // TODO: integrate actual M-Pesa logic
+    toast.success('Redirecting to M-pesa payment...')
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-primary-600/5 dark:via-gray-900/70 dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 py-12 px-4 sm:px-6 lg:px-8">
+      <Toaster richColors position="top-right" />
       <div className="max-w-7xl mx-auto">
         {/* Hero Section */}
 
@@ -226,7 +227,7 @@ const Subscriptions = () => {
           </div>
         )}
         <div className="relative pt-8 pb-12 mb-16 text-center">
-          <div className="absolute inset-0 bg-[#FBFBFB]/10 shadow-xl dark:bg-gray-900"></div>
+          <div className="absolute inset-0 bg-[#FBFBFB]/10 shadow-xl dark:bg-gray-900/60"></div>
           <div className="relative">
             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
               Nyumba Smart <span className="text-primary-600">Plans</span>
@@ -238,21 +239,20 @@ const Subscriptions = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-12 mb-20">
           {tiers.map((tier, index) => (
             <div
               key={index}
               className={`group relative rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl
-                ${
-                  tier.current
-                    ? "ring-4 ring-primary-600 dark:ring-primary-500 transform scale-[1.02] border-primary-600"
-                    : "border border-gray-100 dark:border-gray-700"
+                ${tier.current
+                  ? "ring-2 ring-primary-600 dark:ring-primary-500 transform scale-[1.02] border-primary-600"
+                  : "border border-gray-100 dark:border-gray-800"
                 }
-                bg-[#FBFBFB] dark:bg-gray-900/70 shadow-lg`}
-            >
+                bg-[#FBFBFB] dark:bg-gray-900/60 shadow-lg`}>
+
               {/* Trial Days Counter */}
               {countdown !== null && tier.current && (
-                <div className="absolute top-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full flex items-center text-sm font-medium">
+                <div className="absolute top-4 left-24 bg-yellow-500/90 text-white px-3 py-1 rounded-full flex items-center text-sm font-medium">
                   <Clock className="w-4 h-4 mr-1" />
                   <span>{countdown} days left</span>
                 </div>
@@ -262,15 +262,15 @@ const Subscriptions = () => {
               {tier.current && (
                 <div className="absolute top-4 right-4 bg-primary-600 dark:bg-primary-600/50 text-white px-3 py-1 rounded-full flex items-center text-sm font-medium">
                   <BadgeCheck className="w-4 h-4 mr-1" />
-                  {/* <span>Current Plan</span> */}
+                  <span>Current Plan</span>
                 </div>
               )}
 
               <div className="p-8">
                 {/* Tier Header */}
                 <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center mr-4">
-                    <div className="text-white">{tier.icon}</div>
+                  <div className="w-12 h-12 bg-primary-600/30 dark:bg-primary-600/30 rounded-xl flex items-center justify-center mr-4">
+                    <div className="text-primary-600 dark:text-primary-600">{tier.icon}</div>
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                     {tier.name}
@@ -296,7 +296,7 @@ const Subscriptions = () => {
                         (Save{" "}
                         {Math.round(
                           (1 - tier.priceYearly / (tier.priceMonthly * 12)) *
-                            100
+                          100
                         )}
                         %)
                       </span>
@@ -310,39 +310,39 @@ const Subscriptions = () => {
                 </p>
 
                 {/* Features */}
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mb-8">
+                <div className="border-t border-gray-200 dark:border-primary-600/20 pt-6 mb-8">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     Plan Features
                   </h3>
                   <ul className="space-y-3">
                     <li className="flex items-center">
-                      <DoorOpen className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2" />
+                      <DoorOpen className="w-5 h-5 text-primary-600 dark:text-primary-600 mr-2" />
                       <span className="text-gray-600 dark:text-gray-300">
-                        {tier.properties} properties
+                        {tier.properties} propertie(s)
                       </span>
                     </li>
                     <li className="flex items-center">
-                      <Home className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2" />
+                      <Home className="w-5 h-5 text-primary-600 dark:text-primary-600 mr-2" />
                       <span className="text-gray-600 dark:text-gray-300">
                         Up to {tier.rooms} rooms
                       </span>
                     </li>
                     <li className="flex items-center">
-                      <ClipboardList className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2" />
+                      <ClipboardList className="w-5 h-5 text-primary-600 dark:text-primary-600 mr-2" />
                       <span className="text-gray-600 dark:text-gray-300">
                         {tier.vacancyListings} vacancy listings
                       </span>
                     </li>
                     <li className="flex items-center">
-                      <Star className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2" />
+                      <Star className="w-5 h-5 text-primary-600 dark:text-primary-600 mr-2" />
                       <span className="text-gray-600 dark:text-gray-300">
                         {tier.topOffers} top listing offers
                       </span>
                     </li>
                     {tier.features.map((feature, idx) => (
                       <li key={idx} className="flex items-center">
-                        <div className="w-5 h-5 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mr-2">
-                          <div className="w-2 h-2 rounded-full bg-primary-600 dark:bg-primary-400"></div>
+                        <div className="w-5 h-5 rounded-full bg-primary-100 dark:bg-primary-600/30 flex items-center justify-center mr-2">
+                          <div className="w-2 h-2 rounded-full bg-primary-600 dark:bg-primary-600"></div>
                         </div>
                         <span className="text-gray-600 dark:text-gray-300">
                           {feature}
@@ -359,18 +359,17 @@ const Subscriptions = () => {
                     !tier.current &&
                     setSelectedTier(tier)
                   }
-                  className={`w-full py-3 px-4 rounded-xl font-bold transition-all duration-300 ${
-                    tier.current
+                  className={`w-full py-3 px-4 rounded-xl font-bold transition-all duration-300 ${tier.current
                       ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
                       : "bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 hover:scale-105"
-                  }`}
+                    }`}
                   disabled={tier.current}
                 >
                   {tier.current
                     ? "Current Plan"
                     : tier.priceMonthly === 0
-                    ? "Get Started"
-                    : "Start Free Trial"}
+                      ? "Get Started"
+                      : "Start Free Trial"}
                 </button>
 
                 {/* Trial Notice */}
@@ -585,11 +584,10 @@ const Subscriptions = () => {
                 >
                   <div
                     className={`flex items-center justify-center w-6 h-6 rounded border mr-3 mt-0.5 transition-colors
-                    ${
-                      acceptedTerms
+                    ${acceptedTerms
                         ? "bg-primary-600 border-primary-600"
                         : "border-gray-300 dark:border-gray-600 hover:border-primary-600"
-                    }`}
+                      }`}
                   >
                     {acceptedTerms && <Check className="w-4 h-4 text-white" />}
                   </div>
@@ -622,11 +620,10 @@ const Subscriptions = () => {
                 <button
                   disabled={!acceptedTerms}
                   onClick={startTrial}
-                  className={`w-full py-3 mt-2 rounded-md text-white font-bold ${
-                    acceptedTerms
+                  className={`w-full py-3 mt-2 rounded-md text-white font-bold ${acceptedTerms
                       ? "bg-primary-600 hover:bg-primary-700"
                       : "bg-gray-400 cursor-not-allowed"
-                  }`}
+                    }`}
                 >
                   Start Free Trial
                 </button>

@@ -2,6 +2,7 @@ import { CheckCircle, Copy } from 'lucide-react'
 import React, { useEffect } from 'react'
 import axios from 'axios'
 import { getAuthHeaders } from '../../../services/authService.js'
+import { Loader } from '../../../components/Loader.js'
 
 function Referralcode() {
     const [showCopiedMessage, setShowCopiedMessage] = React.useState(false)
@@ -50,21 +51,21 @@ function Referralcode() {
         fetchAgentInfo();
     }, []);
 
-    if (loading) return <div className="text-center p-4">Loading...</div>;
+    if (loading) return <Loader />
     return (
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg mb-8">
+        <div className="bg-white dark:bg-gray-900 shadow rounded-lg mb-8">
             <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">
                     Your Agent Referral Code
                 </h3>
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md flex items-center justify-between">
-                    <div className="text-xl font-mono font-medium text-primary-600 dark:text-primary-400">
+                <div className="bg-gray-50 dark:bg-gray-950/40 p-4 rounded-md flex items-center justify-between">
+                    <div className="text-xl font-mono font-medium text-primary-600 dark:text-primary-500">
                         {agentInfo.agentProfile.referralCode || 'No referral code available!'}
                     </div>
                     <button
                         type="button"
                         onClick={copyReferralCode}
-                        className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-800 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-900 focus:outline-none focus:ring focus:ring-offset focus:ring-primary-500"
                     >
                         {showCopiedMessage ? (
                             <>
