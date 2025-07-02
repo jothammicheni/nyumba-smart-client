@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getAuthHeaders } from "../../../services/authService.js";
 import { MapPin, Share2 } from "lucide-react";
+import { Loader } from "../../../components/Loader.js";
 
 function WelcomeInfo() {
     const [agentInfo, setAgentInfo] = useState({
@@ -40,7 +41,7 @@ function WelcomeInfo() {
             navigator.share({
                 title: "NyumbaSmart Referral",
                 text: referralMessage,
-                url: window.location.origin, // Or a specific referral link if you have one
+                url: window.location.origin,
             })
                 .then(() => console.log("Referral link shared successfully"))
                 .catch((error) => console.error("Error sharing referral link:", error));
@@ -51,15 +52,15 @@ function WelcomeInfo() {
     };
 
 
-    if (loading) return <div className="text-center p-4">Loading...</div>;
+    if (loading) return <Loader />
 
     if (!agentInfo) return <div className="text-center capitalize p-4">No agent information available.</div>;
     console.log(agentInfo)
     return (
-        <div className="bg-white dark:bg-gray-800 shadow">
+        <div className="bg-white dark:bg-gray-900 rounded shadow-md">
             <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
                 <div className="py-6 md:flex md:items-center md:justify-between">
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 space-y-3">
                         <h2 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
                             Hi, Welcome {agentInfo.agentProfile.name}
                         </h2>

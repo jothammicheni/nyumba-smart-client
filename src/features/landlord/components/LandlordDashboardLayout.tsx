@@ -18,9 +18,14 @@ export default function LandlordDashboardLayout() {
   }
 
   function isActive(path: string) {
-    return location.pathname === path
+    const currentPath = location.pathname.replace(/\/+$/, '');
+    const normalizedPath = path.replace(/\/+$/, '');
+
+    return currentPath === normalizedPath ||
+      (path === '' && currentPath === '/landlord/dashboard') ||
+      (path !== '' && currentPath.startsWith(`/landlord/dashboard/${normalizedPath}`))
       ? "bg-primary-600 text-white"
-      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-primary-600/20";
   }
 
   // Close sidebar on mobile when clicking a nav link
@@ -29,12 +34,13 @@ export default function LandlordDashboardLayout() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
       {/* Mobile sidebar */}
       <div className={`fixed inset-0 z-40 lg:hidden ${sidebarOpen ? "block" : "hidden"}`}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)}></div>
-        <div className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col z-50">
-          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-75" onClick={() => setSidebarOpen(false)}></div>
+
+        <div className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-primary-600/20 flex flex-col z-50">
+          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-primary-600/20">
             <span className="text-xl font-bold text-primary-600 dark:text-primary-500">NyumbaSmart</span>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -44,7 +50,7 @@ export default function LandlordDashboardLayout() {
             </button>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <nav className="px-2 py-4 space-y-1">
+            <nav className="px-2 py-4 space-y-5">
               <Link
                 to=""
                 onClick={handleNavClick}
@@ -74,7 +80,7 @@ export default function LandlordDashboardLayout() {
                 <CreditCard className="w-5 h-5 mr-3" /> Payments
               </Link>
 
-               <Link
+              <Link
                 to="maintenance"
                 onClick={handleNavClick}
                 className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/maintenance")}`}
@@ -82,8 +88,7 @@ export default function LandlordDashboardLayout() {
                 <BellRing className="w-5 h-5 mr-3" /> Maintenance Requests
               </Link>
 
-
-                <Link
+              <Link
                 to="advertiseproperty"
                 onClick={handleNavClick}
                 className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
@@ -91,7 +96,7 @@ export default function LandlordDashboardLayout() {
                 <CreditCard className="w-5 h-5 mr-3" /> Advertise Property
               </Link>
 
-               <Link
+              <Link
                 to="subscriptions"
                 onClick={handleNavClick}
                 className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
@@ -108,7 +113,7 @@ export default function LandlordDashboardLayout() {
               </Link>
             </nav>
           </div>
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="p-4 border-t border-gray-200 dark:border-primary-600/20">
             <button
               onClick={handleLogout}
               className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500"
@@ -121,12 +126,12 @@ export default function LandlordDashboardLayout() {
 
       {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex flex-col flex-1 min-h-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-          <div className="flex items-center h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col flex-1 min-h-0 border-r border-gray-200 dark:border-primary-600/20 bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+          <div className="flex items-center h-16 px-4 border-b border-gray-200 dark:border-primary-600/20">
             <span className="text-xl font-bold text-primary-600 dark:text-primary-500">NyumbaSmart</span>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <nav className="px-2 py-4 space-y-1">
+            <nav className="px-2 py-4 space-y-5">
               <Link
                 to=""
                 className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/dashboard")}`}
@@ -135,8 +140,7 @@ export default function LandlordDashboardLayout() {
               </Link>
               <Link
                 to="properties"
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/properties")}`}
-              >
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/properties")}`}>
                 <Building className="w-5 h-5 mr-3" /> Properties
               </Link>
               <Link
@@ -151,7 +155,7 @@ export default function LandlordDashboardLayout() {
               >
                 <CreditCard className="w-5 h-5 mr-3" /> Payments
               </Link>
-              
+
               <Link
                 to="maintenance"
                 onClick={handleNavClick}
@@ -160,14 +164,14 @@ export default function LandlordDashboardLayout() {
                 <BellRing className="w-5 h-5 mr-3" /> Maintenance Requests
               </Link>
 
-                <Link
-                to="advertiseproperty"                
+              <Link
+                to="advertiseproperty"
                 className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
               >
                 <CreditCard className="w-5 h-5 mr-3" /> Advertise Property
               </Link>
 
-               <Link
+              <Link
                 to="subscriptions"
                 className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
               >
@@ -184,11 +188,10 @@ export default function LandlordDashboardLayout() {
               </Link>
             </nav>
           </div>
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="p-4 border-t border-gray-200 dark:border-primary-600/20">
             <button
               onClick={handleLogout}
-              className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500"
-            >
+              className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500">
               <LogOut className="w-5 h-5 mr-3" /> Sign out
             </button>
           </div>
@@ -197,8 +200,8 @@ export default function LandlordDashboardLayout() {
 
       {/* Main content area */}
       <div className="flex flex-col flex-1 lg:pl-64">
-         {/* Moble devivice topbar */}
-        <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white dark:bg-gray-800 shadow">
+        {/* Moble device topbar */}
+        <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 shadow">
           <button
             type="button"
             className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 lg:hidden"

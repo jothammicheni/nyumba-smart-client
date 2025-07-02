@@ -36,7 +36,7 @@ const TenantsPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
-   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true
@@ -101,27 +101,27 @@ const TenantsPage: React.FC = () => {
       </div>
 
       {/* Search input */}
-     <div className="mb-4 max-w-5xl w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-  <div className="relative w-full sm:max-w-md">
-    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-      <Search className="h-5 w-5 text-gray-400" />
-    </div>
-    <input
-      type="text"
-      className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-      placeholder="Search tenants by name, email, property, or room..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-    />
-  </div>
+      <div className="mb-4 max-w-5xl w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="relative w-full sm:max-w-md">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-800/50 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            placeholder="Search tenants by name, email, property, or room..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
 
-  <button
-    onClick={() => setIsAddModalOpen(true)}
-    className="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-md shadow-sm hover:bg-primary-700 transition w-full sm:w-auto"
-  >
-    Add New Tenant
-  </button>
-</div>
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-md shadow-sm hover:bg-primary-700 transition w-full sm:w-auto"
+        >
+          Add New Tenant
+        </button>
+      </div>
 
 
       {/* Error message */}
@@ -130,7 +130,7 @@ const TenantsPage: React.FC = () => {
       )}
 
       {/* Content */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow">
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
@@ -154,8 +154,8 @@ const TenantsPage: React.FC = () => {
 
             {/* TABLE on md+ screens */}
             <div className="hidden md:block overflow-x-auto">
-              <table className="min-w-[700px] w-full divide-y divide-gray-200 dark:divide-gray-700 table-auto">
-                <thead className="bg-gray-50 dark:bg-gray-700">
+              <table className="min-w-[700px] w-full divide-y divide-gray-200 dark:divide-primary-600/20 table-auto">
+                <thead className="bg-gray-50 dark:bg-gray-950">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Tenant
@@ -174,7 +174,7 @@ const TenantsPage: React.FC = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-primary-600/10">
                   {filteredTenants.map((tenant) => (
                     <tr key={tenant._id}>
                       <td className="px-4 py-3 whitespace-nowrap">
@@ -210,15 +210,14 @@ const TenantsPage: React.FC = () => {
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            tenant.lease_status === "active"
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${tenant.lease_status === "active"
                               ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
                               : tenant.lease_status === "pending"
-                              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                              : tenant.lease_status === "expired"
-                              ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                              : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-                          }`}
+                                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                                : tenant.lease_status === "expired"
+                                  ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                                  : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                            }`}
                         >
                           {tenant.lease_status.charAt(0).toUpperCase() +
                             tenant.lease_status.slice(1)}
@@ -273,15 +272,14 @@ const TenantsPage: React.FC = () => {
                     <div>
                       <span className="font-semibold">Lease:</span>{" "}
                       <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          tenant.lease_status === "active"
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${tenant.lease_status === "active"
                             ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
                             : tenant.lease_status === "pending"
-                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                            : tenant.lease_status === "expired"
-                            ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                            : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-                        }`}
+                              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                              : tenant.lease_status === "expired"
+                                ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                                : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                          }`}
                       >
                         {tenant.lease_status.charAt(0).toUpperCase() +
                           tenant.lease_status.slice(1)}
@@ -298,17 +296,17 @@ const TenantsPage: React.FC = () => {
         )}
       </div>
       <AddTenantModal
-  isOpen={isAddModalOpen}
-  onClose={() => setIsAddModalOpen(false)}
-  onSuccess={() => {
-    // Refresh tenants after successful addition
-    getTenants()
-      .then((response) => setTenants(response.data))
-      .catch((err: any) =>
-        setError(err.response?.data?.error || "Failed to fetch tenants")
-      );
-  }}
-/>
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={() => {
+          // Refresh tenants after successful addition
+          getTenants()
+            .then((response) => setTenants(response.data))
+            .catch((err: any) =>
+              setError(err.response?.data?.error || "Failed to fetch tenants")
+            );
+        }}
+      />
     </div>
   )
 }

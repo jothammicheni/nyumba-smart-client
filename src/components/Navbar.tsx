@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { useTheme } from "./ThemeProvider"
+import { useTheme } from "./ThemeProvider.js"
 import { Sun, Moon, Menu, X, LogIn } from "lucide-react"
 
 const Navbar: React.FC = () => {
@@ -25,12 +25,6 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              {/* <img src="/logo.png" alt="NyumbaSmart Logo"
-              width={40}
-              height={40}
-              className="h-14 w-14 mr-2 object-cover dark:bg-gray-800"
-              loading="lazy"
-               /> */}
               <Link to="/" className="lg:text-2xl sm:text-xl font-bold pl-4 text-primary-500 dark:text-primary-400">
                 𝙽𝚢𝚞𝚖𝚋𝚊𝚂𝚖𝚊𝚛𝚝
               </Link>

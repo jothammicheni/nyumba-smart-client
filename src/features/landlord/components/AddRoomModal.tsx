@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import type React from "react"
@@ -79,14 +80,14 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onSubmit, 
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+          <div className="absolute inset-0 bg-gray-900 opacity-75"></div>
         </div>
 
         <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
           &#8203;
         </span>
 
-        <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div className="inline-block align-bottom bg-white dark:bg-gray-950 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
           <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white">Add New Room</h3>
             <button type="button" className="text-gray-400 hover:text-gray-500 focus:outline-none" onClick={onClose}>
@@ -110,8 +111,9 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onSubmit, 
                   value={formData.room_number}
                   onChange={handleChange}
                   className={`block w-full px-3 py-2 border ${
-                    errors.room_number ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-                  } rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
+                    errors.room_number ? "border-red-500" : "border-gray-300 dark:border-gray-800/50"} 
+                    rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white`
+                  }
                   placeholder="Enter room number"
                 />
                 {errors.room_number && <p className="mt-1 text-sm text-red-500">{errors.room_number}</p>}
@@ -132,8 +134,8 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onSubmit, 
                   value={formData.price}
                   onChange={handleChange}
                   className={`block w-full px-3 py-2 border ${
-                    errors.price ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-                  } rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
+                    errors.price ? "border-red-500" : "border-gray-300 dark:border-gray-800/50"
+                  } rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white`}
                   placeholder="Enter price"
                 />
                 {errors.price && <p className="mt-1 text-sm text-red-500">{errors.price}</p>}
@@ -153,8 +155,8 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onSubmit, 
                   value={formData.type}
                   onChange={handleChange}
                   className={`block w-full px-3 py-2 border ${
-                    errors.type ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-                  } rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
+                    errors.type ? "border-red-500" : "border-gray-300 dark:border-gray-800/50"
+                  } rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white`}
                 >
                   <option value="bedsitter">Bedsitter</option>
                   <option value="1 bedroom">1 Bedroom</option>
@@ -179,7 +181,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onSubmit, 
                   min="1"
                   value={formData.bathrooms}
                   onChange={handleChange}
-                  className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-800/50 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white"
                   placeholder="Number of bathrooms"
                 />
               </div>
@@ -194,7 +196,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onSubmit, 
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-800/50 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white"
                 >
                   <option value="vacant">Vacant</option>
                   <option value="maintenance">Maintenance</option>
@@ -203,7 +205,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onSubmit, 
               </div>
             </div>
 
-            <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end">
+            <div className="px-6 py-4 bg-gray-50 dark:bg-primary-600/10 flex justify-end">
               <button
                 type="button"
                 className="mr-3 px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"

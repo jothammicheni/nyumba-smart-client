@@ -31,10 +31,10 @@ const AboutPage: React.FC = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-primary-600/5 dark:via-gray-900/70 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
       {/* Hero Section */}
       <div className="relative pt-20 pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[#FBFBFB]/10 shadow-xl dark:bg-gray-900"></div>
+        <div className="absolute inset-0 bg-[#FBFBFB]/10 shadow-xl dark:bg-gray-950/70"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center animate-fade-in">
             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
@@ -90,7 +90,7 @@ const AboutPage: React.FC = () => {
         {/* Vision & Mission */}
         <div className="grid md:grid-cols-2 gap-8 mb-20">
           <div className="group">
-            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 h-full">
+            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 h-full">
               <div className="flex items-center mb-6">
                 <div className="w-12 h-12 bg-primary-600/30 dark:bg-primary-600/30 rounded-xl flex items-center justify-center mr-4">
                   <Eye className="w-6 h-6 text-primary-600 dark:text-primary-600" />
@@ -105,7 +105,7 @@ const AboutPage: React.FC = () => {
           </div>
 
           <div className="group">
-            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 h-full">
+            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 h-full">
               <div className="flex items-center mb-6">
                 <div className="w-12 h-12 bg-primary-600/30 dark:bg-primary-600/30 rounded-xl flex items-center justify-center mr-4">
                   <Target className="w-6 h-6 text-primary-600 dark:text-primary-600" />

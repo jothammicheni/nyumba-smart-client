@@ -151,7 +151,7 @@ const PropertiesPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950/60 pt-20 pb-12">
+      <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-gray-950 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-16">
             <Home className="mx-auto h-16 w-16 text-gray-400" />

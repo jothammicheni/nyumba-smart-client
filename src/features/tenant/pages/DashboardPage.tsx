@@ -14,13 +14,9 @@ const TenantDashboardPage: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-     
 
       {/* Main content */}
       <div className=" flex flex-col flex-1">
-        {/* Top navigation */}
- 
-        {/* Main content area */}
         <main className="flex-1 pb-8">
           {/* tenant info */}
           <WelcomeInfo />

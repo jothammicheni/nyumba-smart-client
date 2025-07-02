@@ -10,8 +10,8 @@ import {
   Bell,
   X,
 } from "lucide-react"
-import { useTheme } from "../../../components/ThemeProvider"
-import { useAuth } from "../../../context/AuthContext"
+import { useTheme } from "../../../components/ThemeProvider.js"
+import { useAuth } from "../../../context/AuthContext.js"
 
 export default function TenantDashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -26,9 +26,14 @@ export default function TenantDashboardLayout() {
   }
 
   function isActive(path: string) {
-    return location.pathname === path
+    const currentPath = location.pathname.replace(/\/+$/, '');
+    const normalizedPath = path.replace(/\/+$/, '');
+
+    return currentPath === normalizedPath ||
+      (path === '' && currentPath === '/tenant/dashboard') ||
+      (path !== '' && currentPath.startsWith(`/tenant/dashboard/${normalizedPath}`))
       ? "bg-primary-600 text-white"
-      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-primary-600/20";
   }
 
   const handleNavClick = () => {
@@ -36,7 +41,7 @@ export default function TenantDashboardLayout() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen bg-gradient-to-br from-gray-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
       {/* Mobile Sidebar */}
       <div className={`fixed inset-0 z-40 lg:hidden ${sidebarOpen ? "block" : "hidden"}`}>
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)}></div>
@@ -119,28 +124,76 @@ export default function TenantDashboardLayout() {
 
       {/* Main Content */}
       <div className="flex flex-col flex-1 lg:pl-64">
-        <div className="sticky top-0 z-10 flex h-16 bg-white dark:bg-gray-800 shadow">
-          <button type="button" className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 lg:hidden" onClick={() => setSidebarOpen(true)}>
+        <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950">
+          <button
+            type="button"
+            className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 lg:hidden"
+            onClick={() => setSidebarOpen(true)}>
             <Menu className="h-6 w-6" />
           </button>
           <div className="flex-1 flex justify-between px-4">
-            <div className="flex-1 flex items-center"></div>
+            <div className="flex-1 flex items-center">
+              <div className="max-w-lg w-full lg:max-w-xs relative">
+                <label htmlFor="search" className="sr-only">
+                  Search
+                </label>
+              </div>
+            </div>
             <div className="ml-4 flex items-center md:ml-6">
-              <button type="button" className="p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300" onClick={toggleTheme}>
+              <button
+                type="button"
+                className="p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                onClick={toggleTheme}>
+                {theme === "dark" ? (
+                  <span className="sr-only">Switch to light mode</span>
+                ) : (
+                  <span className="sr-only">Switch to dark mode</span>
+                )}
                 {theme === "dark" ? (
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3..." />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
                   </svg>
                 ) : (
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646..." />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                    />
                   </svg>
                 )}
               </button>
+
+              {/* Notification dropdown */}
               <div className="ml-3 relative">
-                <button type="button" className="p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                <button
+                  type="button"
+                  className="p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                  <span className="sr-only">View notifications</span>
                   <Bell className="h-6 w-6" />
                 </button>
+              </div>
+
+              {/* Profile dropdown */}
+              <div className="ml-3 relative">
+                <div>
+                  <button
+                    type="button"
+                    className="max-w-xs flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <span className="sr-only">Open user menu</span>
+                    <img
+                      className="h-8 w-8 rounded-full"
+                      src="https://randomuser.me/api/portraits/women/44.jpg"
+                      alt="User profile"
+                    />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
