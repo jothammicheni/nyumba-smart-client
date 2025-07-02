@@ -6,7 +6,7 @@ import { DollarSign, UserPlus, UserCheck, Clock, Wallet } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Loader } from "../../../components/Loader.js";
 
-function Referrals() {
+function ReferralsPage() {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
         totalReferrals: 0,
@@ -60,7 +60,7 @@ function Referrals() {
     if (loading) return <Loader />
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 p-6 bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
                 {/* Total Referrals */}
@@ -322,4 +322,4 @@ function Referrals() {
     );
 }
 
-export default Referrals;
+export default ReferralsPage;
