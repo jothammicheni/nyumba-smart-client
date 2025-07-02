@@ -1,152 +1,168 @@
+"use client";
+
 import axios from "axios";
 import { AlertTriangle, CheckCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { getAuthHeaders } from "../../../services/authService";
+import { getAuthHeaders } from "../../../services/authService.js";
+import ReceiptModal from "../components/ReceiptModal.js";
 
-interface Payment {
-  id: number;
-  date: string;
-  amount: string;
-  status: "Paid" | "Pending";
+interface PaymentRecord {
+  _id: string;
+  status: "pending" | "success" | "failed" | "refunded";
+  mpesa_code?: string;
+  payerPhone?: string;
+  paidAmount?: number;
+  timestamp: string;
+  amount: number;
+}
+
+interface TenantInfo {
+  balance: number;
+  tenantName: string;
+  propertyName: string;
+  roomNumber: string;
 }
 
 const TenantPaymentsPage: React.FC = () => {
-  const [tenantInfo, setTenantInfo] = useState<any>(null);
+  const [tenantInfo, setTenantInfo] = useState<TenantInfo | null>(null);
+  const [payments, setPayments] = useState<PaymentRecord[]>([]);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentRecord | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const payments: Payment[] = [
-    { id: 1, date: "2024-07-01", amount: "KSh 35,000", status: "Paid" },
-    { id: 2, date: "2024-08-01", amount: "KSh 35,000", status: "Pending" },
-    { id: 3, date: "2024-08-01", amount: "KSh 95,000", status: "Paid" },
-  ];
-
-  const handleViewReceipt = (id: number) => {
-    alert(`Viewing receipt for payment ID: ${id}`);
-  };
-
-  const handleMakePayment = (id: number) => {
-    alert(`Redirecting to payment portal for payment ID: ${id}`);
-  };
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchTenantInfo = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "https://nyumba-smart-server.onrender.com/api/tenants/info",
-          {
+        const [tenantRes, paymentsRes] = await Promise.all([
+          axios.get("https://nyumba-smart-server.onrender.com/api/tenants/info", {
             headers: getAuthHeaders(),
-          }
-        );
-        setTenantInfo(response.data);
-      } catch (error) {
-        console.error("Error fetching tenant info:", error);
+          }),
+          axios.get("http://localhost:5000/api/payment/history", {
+            headers: getAuthHeaders(),
+          }),
+        ]);
+        setTenantInfo(tenantRes.data);
+        setPayments(paymentsRes.data.data);
+      } catch (err: any) {
+        console.error(err);
+        setError("Failed to load your payment information.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTenantInfo();
+    fetchData();
   }, []);
 
   if (loading) return <div className="text-center p-4">Loading...</div>;
-
-  if (!tenantInfo)
-    return (
-      <div className="text-center p-4">No tenant information available.</div>
-    );
-  console.log(tenantInfo);
+  if (error) return <div className="text-center p-4 text-red-600">{error}</div>;
+  if (!tenantInfo) return <div className="text-center p-4">No tenant info found.</div>;
 
   return (
-    <div className="p-2 space-y-1">
-      <div className="lg:flex  md:flex items-center justify-between grid grid-cols-1">
-        <h1 className="text-2xl font-semibold text-primary ">My Payments</h1>
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            {tenantInfo.balance > 0 ? (
-              <AlertTriangle className="h-6 w-6 text-red-500" />
-            ) : (
-              <CheckCircle className="h-6 w-6 text-green-500" />
-            )}
-          </div>
-          <div className="ml-5 w-0 flex-1 sm:pt-5">
-            <dl>
-              <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                Current Balance
-              </dt>
-              <dd>
-                <div
-                  className={`text-lg font-medium  ${
-                    tenantInfo.balance > 0
-                      ? "text-red-600 dark:text-red-400"
-                      : "text-green-600 dark:text-green-400"
-                  }`}
-                >
-                  ksh {tenantInfo.balance}
-                </div>
-              </dd>
-            </dl>
+    <div className="p-4 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6 text-primary text-center sm:text-left">
+        My Payments
+      </h1>
+
+      <div className="flex items-center justify-between mb-6 flex-col sm:flex-row gap-4">
+        <div className="flex items-center gap-3">
+          {tenantInfo.balance > 0 ? (
+            <AlertTriangle className="h-8 w-8 text-red-600" />
+          ) : (
+            <CheckCircle className="h-8 w-8 text-green-600" />
+          )}
+          <div>
+            <dt className="text-sm text-gray-500">Current Balance</dt>
+            <dd
+              className={`text-xl font-semibold ${
+                tenantInfo.balance > 0 ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              Ksh {tenantInfo.balance}
+            </dd>
           </div>
         </div>
-        {tenantInfo.balance>0?(
-          <button className="sm:mt-2 md:mt-2 inline-flex items-center gap-2 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-          Lipa Rent na M-Pesa
-        </button>
-        ):(<p></p>
+
+        {tenantInfo.balance > 0 && (
+          <button className="px-6 py-2 rounded-md bg-green-600 text-white text-lg font-medium hover:bg-green-700 transition w-full sm:w-auto">
+            Lipa Rent na M-Pesa
+          </button>
         )}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-3   ">
-        {payments.map((payment) => (
-          <div
-            key={payment.id}
-            className=" flex gap-5  bg-white shadow rounded-xl border border-gray-100 p-5 space-y-2"
-          >
-            <div>
-              <div className="text-sm text-gray-500">Date</div>
-              <div className="font-medium">{payment.date}</div>
 
-              <div className="text-sm text-gray-500">Amount</div>
+      {payments.length === 0 ? (
+        <p className="text-center text-gray-500">No payment history available.</p>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {payments.map((payment) => {
+            const paymentDate = new Date(payment.timestamp).toLocaleDateString();
+            const paymentAmount =
+              payment.paidAmount !== undefined
+                ? `Ksh ${payment.paidAmount.toLocaleString()}`
+                : `Ksh ${payment.amount.toLocaleString()}`;
+
+            const statusClass =
+              payment.status === "success"
+                ? "text-green-600"
+                : payment.status === "pending"
+                ? "text-yellow-600"
+                : "text-red-600";
+
+            const displayStatus =
+              payment.status === "success"
+                ? "Paid"
+                : payment.status === "pending"
+                ? "Pending"
+                : "Failed";
+
+            return (
               <div
-                className={`font-semibold text-lg text-gray-900 ${
-                  payment.status === "Paid" ? "text-black" : "text-primary-600"
-                }`}
+                key={payment._id}
+                className="bg-white p-4 rounded-lg shadow-md flex flex-col justify-between"
               >
-                {payment.amount}
-              </div>
-            </div>
+                <div>
+                  <p className="text-sm text-gray-500">Date</p>
+                  <p className="font-semibold mb-2 truncate">{paymentDate}</p>
 
-            <div className=" ml-6">
-              <div className="text-sm text-gray-500">Status</div>
-              <div
-                className={`font-medium ${
-                  payment.status === "Paid"
-                    ? "text-green-600"
-                    : "text-yellow-600"
-                }`}
-              >
-                {payment.status}
-              </div>
+                  <p className="text-sm text-gray-500">Amount</p>
+                  <p className={`font-bold text-lg ${statusClass} truncate`}>
+                    {paymentAmount}
+                  </p>
 
-              <div className="pt-2">
-                {payment.status === "Paid" ? (
-                  <button
-                    onClick={() => handleViewReceipt(payment.id)}
-                    className="text-sm text-primary-600 hover:underline"
-                  >
-                    View Receipt
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleMakePayment(payment.id)}
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    Pay Now
-                  </button>
-                )}
+                  <p className="text-sm text-gray-500 mt-3">Status</p>
+                  <p className={`font-semibold ${statusClass} mb-3`}>{displayStatus}</p>
+                </div>
+
+                <div>
+                  {payment.status === "success" ? (
+                    <button
+                      onClick={() => setSelectedPayment(payment)}
+                      className="text-sm text-primary-600 hover:underline w-full text-center py-2 border border-primary-600 rounded-md"
+                    >
+                      View Receipt
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => alert("Redirecting to M-Pesa…")}
+                      className="text-sm text-blue-600 hover:underline w-full text-center py-2 border border-blue-600 rounded-md"
+                    >
+                      Pay Now
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
+
+      {selectedPayment && tenantInfo && (
+        <ReceiptModal
+          payment={selectedPayment}
+          tenantInfo={tenantInfo}
+          onClose={() => setSelectedPayment(null)}
+        />
+      )}
     </div>
   );
 };

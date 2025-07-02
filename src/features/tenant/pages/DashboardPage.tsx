@@ -27,8 +27,8 @@ const TenantDashboardPage: React.FC = () => {
               {/* Payment History and Maintenance Requests */}
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {/* Payment History */}
-                <PaymentHistory />
-                {/* Maintenance Requests */}
+                {/* <PaymentHistory /> */} 
+                {/* Maintenance Requests */} 
                 <MaintananceRequests />
               </div>
 

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
+console.log(">>> Loaded: registers the component file (top-level)");
 
 import type React from "react"
 import { useState, useEffect } from "react"
@@ -42,6 +43,7 @@ const Register: React.FC = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isReferralFromStorage, setIsReferralFromStorage] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     referredBy: "",
     firstName: "",
@@ -59,6 +61,9 @@ const Register: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
 
+useEffect(() => {
+  console.log("Register component mounted")
+}, [])
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -70,6 +75,64 @@ const Register: React.FC = () => {
       }
     }
   }, [isAuthenticated, user, navigate])
+
+//check for the refferal code
+// Check for referral code when role becomes landlord
+useEffect(() => {
+  try {
+    if (formData.role === "landlord") {
+      const code = localStorage.getItem("referralCode");
+      console.log("Referral code found from localstorage:", code);
+
+      if (code) {
+        setFormData(prev => ({
+          ...prev,
+          referredBy: code
+        }));
+        setIsReferralFromStorage(true);
+        localStorage.removeItem("referralCode");
+      }
+    }
+  } catch (err) {
+    console.error("Failed to read from localStorage:", err);
+  }
+}, [formData.role]);
+
+
+//handle role sellection
+const handleRoleSelection = (newRole: UserRole) => {
+  if (newRole === "landlord") {
+    const referral = localStorage.getItem("referralCode")
+
+    if (referral) {
+      setFormData(prev => ({
+        ...prev,
+        role: newRole,
+        referredBy: referral
+      }))
+      setIsReferralFromStorage(true)
+      localStorage.removeItem("referralCode")
+      console.log("Referral code set from localStorage:", referral)
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        role: newRole,
+        referredBy: ""
+      }))
+      setIsReferralFromStorage(false)
+      console.log("No referral code found in localStorage.")
+    }
+  } else {
+    setFormData(prev => ({
+      ...prev,
+      role: newRole,
+      referredBy: ""
+    }))
+    setIsReferralFromStorage(false)
+  }
+}
+
+
 
   // Password strength indicators
   const hasMinLength = formData.password.length >= 8
@@ -176,6 +239,7 @@ const Register: React.FC = () => {
     if (validateForm()) {
       setIsSubmitting(true)
       setErrors({})
+console.log(4556)
 
       try {
         const userData = {
@@ -264,7 +328,7 @@ const Register: React.FC = () => {
                             : "border-gray-200 dark:border-gray-700 hover:border-primary-200 dark:hover:border-primary-800"
                           }
                         `}
-                        onClick={() => setFormData({ ...formData, role: role.value as UserRole })}
+onClick={() => handleRoleSelection(role.value as UserRole)}
                       >
                         {role.label}
                       </div>
@@ -306,30 +370,36 @@ const Register: React.FC = () => {
               )}
 
               {/* Referral Code for Landlords */}
-              {formData.role === "landlord" && (
-                <div>
-                  <label
-                    htmlFor="referredBy"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                  >
-                    Agent Referral Code
-                  </label>
-                  <input
-                    id="referredBy"
-                    name="referredBy"
-                    type="text"
-                    value={formData.referredBy}
-                    onChange={handleChange}
-                    placeholder="Enter agent referral code"
-                    className={`
+            {formData.role === "landlord" && (
+  <div>
+    <label
+      htmlFor="referredBy"
+      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+    >
+      Agent Referral Code {isReferralFromStorage && "(Auto-detected)"}
+    </label>
+    <input
+      id="referredBy"
+      name="referredBy"
+      type="text"
+      value={formData.referredBy}
+      onChange={handleChange}
+      readOnly={isReferralFromStorage}
+      placeholder="Enter agent referral code"
+      className={`
         block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm
         ${errors.referredBy ? "border-red-500" : "border-gray-300 dark:border-gray-600"}
-        bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+        ${isReferralFromStorage 
+          ? "bg-gray-100 dark:bg-gray-700 cursor-not-allowed" 
+          : "bg-white dark:bg-gray-700"
+        }
+        text-gray-900 dark:text-gray-100
       `}
-                  />
-                  {errors.referredBy && <p className="mt-1 text-sm text-red-500">{errors.referredBy}</p>}
-                </div>
-              )}
+    />
+    {errors.referredBy && <p className="mt-1 text-sm text-red-500">{errors.referredBy}</p>}
+  </div>
+)}
+
 
               {/* Personal Information */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

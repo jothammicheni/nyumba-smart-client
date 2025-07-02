@@ -70,8 +70,8 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
         onSuccess();
         onClose();
       } else {
-        setError(res.message || 'Failed to create tenant');
-      }
+console.error("Create tenant failed:", error);
+  return res.status(400).json({ message: error });      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create tenant');
     } finally {
