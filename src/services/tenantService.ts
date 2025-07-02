@@ -3,7 +3,7 @@
 import axios from "axios";
 import { getAuthHeaders } from "./authService.js";
 
-const API_URL = "https://nyumba-smart-server.onrender.com/api";
+const API_URL = "http://localhost:5000/api";
 
 // ✅ Create a new tenant
 export const createTenant = async (tenantData:any) => {
@@ -44,3 +44,4 @@ export const fetchPropertyIdByName = async (propertyName: string) => {
   );
   return response.data.data; // property ID
 };
+

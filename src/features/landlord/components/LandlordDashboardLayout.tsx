@@ -67,11 +67,11 @@ export default function LandlordDashboardLayout() {
                 <Users className="w-5 h-5 mr-3" /> Tenants
               </Link>
               <Link
-                to="payments"
+                to="payments-revenue"
                 onClick={handleNavClick}
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments-revenue")}`}
               >
-                <CreditCard className="w-5 h-5 mr-3" /> Payments
+                <CreditCard className="w-5 h-5 mr-3" /> Payments And
               </Link>
 
                <Link
@@ -86,7 +86,7 @@ export default function LandlordDashboardLayout() {
                 <Link
                 to="advertiseproperty"
                 onClick={handleNavClick}
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/advertiseproperty")}`}
               >
                 <CreditCard className="w-5 h-5 mr-3" /> Advertise Property
               </Link>
@@ -94,7 +94,7 @@ export default function LandlordDashboardLayout() {
                <Link
                 to="subscriptions"
                 onClick={handleNavClick}
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/subscriptions")}`}
               >
                 <CreditCard className="w-5 h-5 mr-3" /> Subscriptions
               </Link>
@@ -146,10 +146,10 @@ export default function LandlordDashboardLayout() {
                 <Users className="w-5 h-5 mr-3" /> Tenants
               </Link>
               <Link
-                to="payments"
-                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
+                to="payments-revenue"
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments-revenue")}`}
               >
-                <CreditCard className="w-5 h-5 mr-3" /> Payments
+                <CreditCard className="w-5 h-5 mr-3" /> Payments And Revenue
               </Link>
               
               <Link

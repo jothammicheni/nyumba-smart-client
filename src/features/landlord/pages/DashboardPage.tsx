@@ -58,7 +58,7 @@ const LandlordDashboard: React.FC = () => {
               {/* Recent Activity and Upcoming Payments */}
               <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
                 {/* Recent Activity */}
-              <RecentActivity/>
+                <RecentActivity/>
 
                 {/* Upcoming Payments */}
                <UpcomingPayments/> 

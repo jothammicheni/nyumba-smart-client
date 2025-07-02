@@ -12,13 +12,12 @@ function WelcomeInfo() {
             city: '',
             referralCode: ''
         },
-    })
+    });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchAgentInfo = async () => {
             try {
-                console.log("Auth headers:", getAuthHeaders())
                 const response = await axios.get("https://nyumba-smart-server.onrender.com/api/agents/info", {
                     headers: getAuthHeaders(),
                 });
@@ -34,13 +33,14 @@ function WelcomeInfo() {
     }, []);
 
     const handleShare = () => {
-        const referralMessage = `Join NyumbaSmart using my referral code: ${agentInfo.agentProfile.referralCode}`;
+        const referralLink = `${window.location.origin}/?ref=${agentInfo.agentProfile.referralCode}`;
+        const referralMessage = `Join NyumbaSmart using my referral code! Register here: ${referralLink}`;
 
         if (navigator.share) {
             navigator.share({
                 title: "NyumbaSmart Referral",
                 text: referralMessage,
-                url: window.location.origin, // Or a specific referral link if you have one
+                url: referralLink,
             })
                 .then(() => console.log("Referral link shared successfully"))
                 .catch((error) => console.error("Error sharing referral link:", error));
@@ -50,11 +50,10 @@ function WelcomeInfo() {
         }
     };
 
-
     if (loading) return <div className="text-center p-4">Loading...</div>;
 
     if (!agentInfo) return <div className="text-center capitalize p-4">No agent information available.</div>;
-    console.log(agentInfo)
+
     return (
         <div className="bg-white dark:bg-gray-800 shadow">
             <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
@@ -70,12 +69,16 @@ function WelcomeInfo() {
                             <MapPin />
                             {agentInfo.agentProfile.city}
                         </p>
+                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            <strong>Referral Code:</strong> {agentInfo.agentProfile.referralCode}
+                        </p>
                     </div>
                     <div className="mt-4 flex md:mt-0 md:ml-4">
                         <button
                             type="button"
                             onClick={handleShare}
-                            className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                            className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        >
                             <Share2 className="h-4 w-4 mr-2" />
                             Share Referral Link
                         </button>

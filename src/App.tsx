@@ -49,6 +49,7 @@ import AdminDashboard from "./features/admin/pages/DashboardPage.js"
 import Subscriptions from "./features/landlord/pages/Subscriptions.js"
 import AdvertiseRooms from "./features/landlord/pages/AdvertiseRooms.js"
 import MaintainanceRequestsPage from "./features/landlord/pages/MaintainanceRequestsPage.js"
+import PaymentsAndRevenue from "./features/landlord/pages/PaymentsAndRevenue.js"
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) => {
@@ -135,6 +136,7 @@ function App() {
               <Route path="maintenance" element={<MaintainanceRequestsPage landlordId={""} />} />
               <Route path="subscriptions" element={<Subscriptions/>} />
              <Route path="advertiseproperty" element={<AdvertiseRooms/>} />
+              <Route path="payments-revenue" element={<PaymentsAndRevenue/>} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
 

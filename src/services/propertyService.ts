@@ -2,7 +2,7 @@
 import axios from "axios"
 import { getAuthHeaders } from "./authService.js"
 
-const API_URL = "https://nyumba-smart-server.onrender.com/api"
+const API_URL = "http://localhost:5000/api"
 
 // Get all properties
 export const getProperties = async () => {
@@ -62,7 +62,7 @@ export const getRooms = async (propertyId: string) => {
 
 // Create room
 export const createRoom = async (propertyId: string, roomData: any) => {
-  const response = await axios.post(`${API_URL}/properties/${propertyId}/rooms`, roomData, {
+  const response = await axios.post(`${API_URL}/rooms/${propertyId}/rooms`, roomData, {
     headers: getAuthHeaders(),
   })
   return response.data
