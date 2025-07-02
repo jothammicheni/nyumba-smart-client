@@ -28,41 +28,6 @@ function WelcomeInfo() {
     fetchTenantInfo();
   }, []);
 
-  // const initiatePayment = async () => {
-  //   if (!phone) {
-  //     setMessage({ type: "error", text: "Please enter your phone number" });
-  //     return;
-  //   }
-
-  //   setPaying(true);
-  //   setMessage(null);
-
-  //   try {
-  //     const response = await axios.post(
-  //       "https://nyumba-smart-server.onrender.com/api/payment/pay",
-  //       {
-  //         sender_id: tenantInfo._id,
-  //         phone,
-  //         amount: tenantInfo.amountDue || 100, // fallback if no due amount
-  //       },
-  //       {
-  //         headers: getAuthHeaders(),
-  //       }
-  //     );
-  //     console.log(response)
-  //     setMessage({ type: "success", text: "STK push sent. Check your phone to complete payment." });
-  //     setShowModal(false);
-  //     setPhone("");
-  //   } catch (error: any) {
-  //     setMessage({
-  //       type: "error",
-  //       text: error.response?.data?.error || "Payment initiation failed.",
-  //     });
-  //   } finally {
-  //     setPaying(false);
-  //   }
-  // };
-
 const initiatePayment = async () => {
   // Check if the phone number is provided
   if (!phone) {
@@ -162,8 +127,6 @@ const initiatePayment = async () => {
     setPaying(false); // Reset the paying state
   }
 };
-
-
 
 
   if (loading) return <div className="text-center p-4">Loading...</div>;

@@ -41,7 +41,7 @@ function PropertyOverview() {
       <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white mt-8 mb-4">
         Property Overview
       </h3>
-      
+
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {/* Card 1 */}
         <div className="bg-white dark:bg-gray-950/50 overflow-hidden shadow rounded-lg">

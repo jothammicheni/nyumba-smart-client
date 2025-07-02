@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import { AlertTriangle, CheckCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { getAuthHeaders } from "../../../services/authService";
+import { getAuthHeaders } from "../../../services/authService.js";
+import { Loader } from "../../../components/Loader.js";
 
 interface Payment {
   id: number;
@@ -48,7 +50,7 @@ const TenantPaymentsPage: React.FC = () => {
     fetchTenantInfo();
   }, []);
 
-  if (loading) return <div className="text-center p-4">Loading...</div>;
+  if (loading) return <div><Loader /></div>
 
   if (!tenantInfo)
     return (
