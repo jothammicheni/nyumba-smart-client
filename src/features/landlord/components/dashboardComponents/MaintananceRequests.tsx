@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchLandlordMaintenanceRequests } from "../../../../services/maintananceService";
+import { fetchLandlordMaintenanceRequests } from "../../../../services/maintananceService.js";
 import { Wrench } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -41,7 +41,7 @@ const MaintenanceRequests: React.FC = () => {
   }, []);
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
+      <div className="bg-white/30 dark:bg-transparent shadow rounded-lg">
         <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
             Maintenance Requests
@@ -96,9 +96,8 @@ const MaintenanceRequests: React.FC = () => {
           </div>
           <div className="mt-6">
             <a
-              href="#"
-              className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-            >
+              href="/landlord/dashboard/maintenance"
+              className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
               View all
             </a>
           </div>

@@ -12,10 +12,7 @@ import RecentActivity from "../components/dashboardComponents/RecentActivity.js"
 import UpcomingPayments from "../components/dashboardComponents/UpcomingPayments.js"
 import MaintenanceRequests from "../components/dashboardComponents/MaintananceRequests.js"
 
-
 const LandlordDashboard: React.FC = () => {
- 
-
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
      
@@ -23,7 +20,7 @@ const LandlordDashboard: React.FC = () => {
       <div className=" flex flex-col flex-1">
         {/* Main content area */}
         <main className="flex-1 pb-8">
-          <div className="bg-white dark:bg-gray-800 shadow">
+          <div className="shadow rounded-xs">
             <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
               <div className="py-6 md:flex md:items-center md:justify-between">
                 <div className="flex-1 min-w-0">
@@ -65,11 +62,13 @@ const LandlordDashboard: React.FC = () => {
 
                 {/* Upcoming Payments */}
                <UpcomingPayments/> 
-
-               {/* mantanance claims */}
-               <MaintenanceRequests/> 
-
               </div>
+
+               <div className="mt-8">
+                {/* mantanance claims */}
+               <MaintenanceRequests/>
+               </div>
+
             </div>
           </div>
         </main>

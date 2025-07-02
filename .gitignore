@@ -3,3 +3,30 @@ dist/
 .env
 .DS_Store
 .vscode/
+
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+/.yarn/cache
+/.yarn/unplugged
+/.yarn/install-state.gz
+/pnpm-lock.yaml
+package-lock.json  # Only if using Yarn/pnpm
+
+# ====== [2] BUILD & CACHE ======
+/.next/
+/out/
+/build
+.next/cache/  # Next.js cache
+.turbo/       # Turborepo cache
+
+# ====== [3] ENVIRONMENT FILES ======
+.env*.local
+.env.local
+.env
+.env.developme
+>>>>>>> origin/main

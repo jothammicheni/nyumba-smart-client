@@ -4,6 +4,7 @@ import { getAuthHeaders } from "../../../services/authService.js";
 import axios from "axios";
 import { DollarSign, UserPlus, UserCheck, Clock, Wallet } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { Loader } from "../../../components/Loader.js";
 
 function Referrals() {
     const [loading, setLoading] = useState(true);
@@ -21,14 +22,14 @@ function Referrals() {
     useEffect(() => {
         const fetchReferralInfo = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/agents/referrals", {
+                const response = await axios.get("https://nyumba-smart-server.onrender.com/api/agents/referrals", {
                     headers: getAuthHeaders(),
                 });
-                
+
                 setStats(response.data.stats);
                 setActiveReferrals(response.data.activeReferrals);
                 setPendingReferrals(response.data.pendingReferrals);
-                
+
             } catch (error) {
                 console.error("Error fetching agent info:", error);
             } finally {
@@ -48,25 +49,25 @@ function Referrals() {
     };
 
     const formatDate = (dateString: string) => {
-        const options: Intl.DateTimeFormatOptions = { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
+        const options: Intl.DateTimeFormatOptions = {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
         };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
-    if (loading) return <div className="text-center p-4">Loading...</div>;
-    
+    if (loading) return <Loader />
+
     return (
         <div className="space-y-6">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
                 {/* Total Referrals */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div className="bg-white dark:bg-gray-900 overflow-hidden shadow rounded-lg">
                     <div className="p-5">
                         <div className="flex items-center">
-                            <div className="flex-shrink-0">
+                            <div className="flex-shrink-0 p-1.5 rounded-full bg-blue-500/20">
                                 <UserPlus className="h-6 w-6 text-blue-500" />
                             </div>
                             <div className="ml-5 w-0 flex-1">
@@ -86,10 +87,10 @@ function Referrals() {
                 </div>
 
                 {/* Active Referrals */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div className="bg-white dark:bg-gray-900 overflow-hidden shadow rounded-lg">
                     <div className="p-5">
                         <div className="flex items-center">
-                            <div className="flex-shrink-0">
+                            <div className="flex-shrink-0 p-1.5 bg-green-500/20 rounded-full">
                                 <UserCheck className="h-6 w-6 text-green-500" />
                             </div>
                             <div className="ml-5 w-0 flex-1">
@@ -109,10 +110,10 @@ function Referrals() {
                 </div>
 
                 {/* Pending Referrals */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div className="bg-white dark:bg-gray-900 overflow-hidden shadow rounded-lg">
                     <div className="p-5">
                         <div className="flex items-center">
-                            <div className="flex-shrink-0">
+                            <div className="flex-shrink-0 p-1.5 rounded-full bg-yellow-500/20">
                                 <Clock className="h-6 w-6 text-yellow-500" />
                             </div>
                             <div className="ml-5 w-0 flex-1">
@@ -132,10 +133,10 @@ function Referrals() {
                 </div>
 
                 {/* Total Earnings */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div className="bg-white dark:bg-gray-900 overflow-hidden shadow rounded-lg">
                     <div className="p-5">
                         <div className="flex items-center">
-                            <div className="flex-shrink-0">
+                            <div className="flex-shrink-0 p-1.5 rounded-full bg-purple-500/20">
                                 <DollarSign className="h-6 w-6 text-purple-500" />
                             </div>
                             <div className="ml-5 w-0 flex-1">
@@ -156,10 +157,10 @@ function Referrals() {
                 </div>
 
                 {/* Available Balance */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div className="bg-white dark:bg-gray-900 overflow-hidden shadow rounded-lg">
                     <div className="p-5">
                         <div className="flex items-center">
-                            <div className="flex-shrink-0">
+                            <div className="flex-shrink-0 p-1.5 rounded-full bg-teal-500/20">
                                 <Wallet className="h-6 w-6 text-teal-500" />
                             </div>
                             <div className="ml-5 w-0 flex-1">
@@ -169,7 +170,7 @@ function Referrals() {
                                     </dt>
                                     <dd>
                                         <div className="text-lg font-medium text-gray-900 dark:text-white">
-                                           {formatCurrency(0)}
+                                            {formatCurrency(0)}
                                         </div>
                                     </dd>
                                 </dl>
@@ -180,10 +181,10 @@ function Referrals() {
             </div>
 
             {/* Financial Summary */}
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <div className="bg-white dark:bg-gray-900 shadow rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-4">Financial Summary</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                    <div className="border border-gray-200 dark:border-gray-800/50 dark:bg-gray-950/40 rounded-lg p-4">
                         <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
                             Active Referrals Value
                         </div>
@@ -194,8 +195,8 @@ function Referrals() {
                             {stats.activeReferrals} referrals × KES 500 each
                         </div>
                     </div>
-                    
-                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+
+                    <div className="border border-gray-200 dark:border-gray-800/50 dark:bg-gray-950/40 rounded-lg p-4">
                         <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
                             Pending Referrals Value
                         </div>
@@ -206,8 +207,8 @@ function Referrals() {
                             {stats.pendingReferrals} referrals × KES 500 each
                         </div>
                     </div>
-                    
-                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+
+                    <div className="border border-gray-200 dark:border-gray-800/50 dark:bg-gray-950/40 rounded-lg p-4">
                         <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
                             Total Potential Value
                         </div>
@@ -222,7 +223,7 @@ function Referrals() {
             </div>
 
             {/* Active Referrals Table */}
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <div className="bg-white dark:bg-gray-900 shadow rounded-lg p-6">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">Active Referrals</h2>
                     <div className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">
@@ -231,8 +232,8 @@ function Referrals() {
                 </div>
                 {activeReferrals.length > 0 ? (
                     <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead className="bg-gray-50 dark:bg-gray-700">
+                        <table className="min-w-full divide-y divide-gray-200 dark:divide-primary-600/30">
+                            <thead className="bg-gray-50 dark:bg-gray-950/40">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
@@ -241,7 +242,7 @@ function Referrals() {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Commission</th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <tbody className="bg-white dark:bg-gray-950/50 divide-y divide-gray-200 dark:divide-primary-600/30">
                                 {activeReferrals.map((referral) => (
                                     <tr key={referral._id}>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
@@ -270,10 +271,10 @@ function Referrals() {
             </div>
 
             {/* Pending Referrals Table */}
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <div className="bg-white dark:bg-gray-900 shadow rounded-lg p-6">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">Pending Referrals</h2>
-                    <div className="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="bg-yellow-100 dark:bg-yellow-700 text-yellow-400 dark:text-yellow-100 px-3 py-1 rounded-full text-sm font-medium">
                         Potential: {formatCurrency(stats.pendingReferrals * 500)}
                     </div>
                 </div>

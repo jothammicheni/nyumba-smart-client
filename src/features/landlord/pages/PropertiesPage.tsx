@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import type React from "react"
 import { useState, useEffect } from "react"
 import { ArrowRight, Building, Plus, RefreshCw } from "lucide-react"
-import { getProperties, createProperty } from "../../../services/propertyService"
-import PropertyCard from "../components/PropertyCard"
-import AddPropertyModal from "../components/AddPropertyModal"
+import { getProperties, createProperty } from "../../../services/propertyService.js"
+import PropertyCard from "../components/PropertyCard.js"
+import AddPropertyModal from "../components/AddPropertyModal.js"
 
 interface Property {
   _id: string
@@ -39,20 +40,20 @@ const PropertiesPage: React.FC = () => {
     }
   }
 
- const handleAddProperty = async (propertyData: any) => {
-  try {
-    await createProperty(propertyData);
-    setIsAddModalOpen(false);
-    fetchProperties();
-  } catch (err: any) {
-    const errorMsg =
-      err?.response?.data?.message || // Custom middleware error
-      err?.response?.data?.error ||  // Generic error
-      "Failed to add property";
+  const handleAddProperty = async (propertyData: any) => {
+    try {
+      await createProperty(propertyData);
+      setIsAddModalOpen(false);
+      fetchProperties();
+    } catch (err: any) {
+      const errorMsg =
+        err?.response?.data?.message || // Custom middleware error
+        err?.response?.data?.error ||  // Generic error
+        "Failed to add property";
 
-    setError(errorMsg);
-  }
-};
+      setError(errorMsg);
+    }
+  };
 
 
   return (
@@ -77,20 +78,20 @@ const PropertiesPage: React.FC = () => {
         </div>
       </div>
 
-{error && (
-  <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded">
-    ⚠️ {error}
-    <div className="mt-3 text-right">
-      <button
-        onClick={() => window.location.href = '/subscriptions'} // or navigate('/subscriptions') if using react-router
-        className="inline-flex items-center px-4 py-2 bg-yellow-500 text-white text-sm font-semibold rounded-md hover:bg-yellow-600 transition"
-      >
-        Upgrade Plan
-        <ArrowRight className="w-4 h-4 ml-2" />
-      </button>
-    </div>
-  </div>
-)}
+      {error && (
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded">
+          ⚠️ {error}
+          <div className="mt-3 text-right">
+            <button
+              onClick={() => window.location.href = '/subscriptions'}
+              className="inline-flex items-center px-4 py-2 bg-yellow-500 text-white text-sm font-semibold rounded-md hover:bg-yellow-600 transition"
+            >
+              Upgrade Plan
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex justify-center items-center min-h-[16rem]">

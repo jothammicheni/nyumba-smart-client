@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { getAuthHeaders } from "../../../services/authService.ts";
+import { getAuthHeaders } from "../../../services/authService.js";
 
 function WelcomeInfo() {
   const [tenantInfo, setTenantInfo] = useState<any>(null);
@@ -14,7 +14,7 @@ function WelcomeInfo() {
   useEffect(() => {
     const fetchTenantInfo = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/tenants/info", {
+        const response = await axios.get("https://nyumba-smart-server.onrender.com/api/tenants/info", {
           headers: getAuthHeaders(),
         });
         setTenantInfo(response.data);
@@ -39,7 +39,7 @@ function WelcomeInfo() {
 
   //   try {
   //     const response = await axios.post(
-  //       "http://localhost:5000/api/payment/pay",
+  //       "https://nyumba-smart-server.onrender.com/api/payment/pay",
   //       {
   //         sender_id: tenantInfo._id,
   //         phone,
@@ -76,7 +76,7 @@ const initiatePayment = async () => {
   try {
     // Initiate the payment
     const response = await axios.post(
-      "http://localhost:5000/api/payment/pay",
+      "https://nyumba-smart-server.onrender.com/api/payment/pay",
       {
         sender_id: tenantInfo._id, // Use tenant's ID
         phone,
@@ -113,7 +113,7 @@ const initiatePayment = async () => {
 
         // Check the payment status using the payment ID
         const statusRes = await axios.get(
-          `http://localhost:5000/api/payment/status/${paymentId}`, // Include payment ID in the URL
+          `https://nyumba-smart-server.onrender.com/api/payment/status/${paymentId}`, // Include payment ID in the URL
           {
             headers: getAuthHeaders(), // Include authorization headers
           }
@@ -154,7 +154,9 @@ const initiatePayment = async () => {
     // Handle errors during payment initiation
     setMessage({
       type: "error",
-      text: error.response?.data?.error || "Payment initiation failed.",
+      text: axios.isAxiosError(error) && error.response?.data?.error
+        ? error.response.data.error
+        : "Payment initiation failed.",
     });
   } finally {
     setPaying(false); // Reset the paying state

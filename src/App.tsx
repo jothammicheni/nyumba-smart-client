@@ -39,13 +39,20 @@ import SettingsPage from "./features/landlord/pages/PropertiesPage.js"
 import AgentDashboard from "./features/agent/pages/DashboardPage.js"
 
 // Service Provider Dashboard
-import ServiceProviderDashboard from "./features/service-provider/pages/DashboardPage.js"
+import { ServicetDashboardLayout } from "./features/service-provider/components/ServiceDashboardLayout.js"
+import { ProviderDashboard } from "./features/service-provider/pages/DashboardPage.js"
+import TasksPage from "./features/service-provider/pages/TasksPage.js"
+import { ProviderSettings } from "./features/service-provider/pages/Settings.js"
 
 // Admin Dashboard
 import AdminDashboard from "./features/admin/pages/DashboardPage.js"
-import MaintainanceRequests from "./features/landlord/pages/MaintainanceRequests.js"
 import Subscriptions from "./features/landlord/pages/Subscriptions.js"
 import AdvertiseRooms from "./features/landlord/pages/AdvertiseRooms.js"
+import MaintainanceRequestsPage from "./features/landlord/pages/MaintainanceRequestsPage.js"
+import { AgentDashboardLayout } from "./features/agent/components/AgentDashboardLayout.js"
+import { AgentSettings } from "./features/agent/pages/Settings.js"
+import ReferralsPage from "./features/agent/pages/Referrals.js"
+import EarningsPage from "./features/agent/pages/Earnings.js"
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) => {
@@ -129,31 +136,40 @@ function App() {
               <Route path="properties/:id" element={<PropertyDetailPage />} />
               <Route path="tenants" element={<TenantsPage />} />
               <Route path="payments" element={<PaymentsPage />} />
-              <Route path="mentainances" element={<MaintainanceRequests />} />
-              <Route path="subscriptions" element={<Subscriptions/>} />
-             <Route path="advertiseproperty" element={<AdvertiseRooms/>} />
+              <Route path="maintenance" element={<MaintainanceRequestsPage landlordId={""} />} />
+              <Route path="subscriptions" element={<Subscriptions />} />
+              <Route path="advertiseproperty" element={<AdvertiseRooms />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
 
             {/* Agent Dashboard */}
             <Route
-              path="/agent/dashboard"
+              path="/agent/dashboard/*"
               element={
                 <ProtectedRoute allowedRoles={["agent"]}>
-                  <AgentDashboard />
+                  <AgentDashboardLayout />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<AgentDashboard />} />
+              <Route path="settings" element={<AgentSettings />}/>
+              <Route path="referrals" element={<ReferralsPage />}/>
+              <Route path="earnings" element={<EarningsPage />}/>
+            </Route>
 
             {/* Service Provider Dashboard */}
             <Route
-              path="/service-provider/dashboard"
+              path="/service-provider/dashboard/*"
               element={
                 <ProtectedRoute allowedRoles={["service-provider"]}>
-                  <ServiceProviderDashboard />
+                  <ServicetDashboardLayout />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<ProviderDashboard />} />
+              <Route path="tasks" element={<TasksPage />} />
+              <Route path="settings" element={<ProviderSettings />} />
+            </Route>
 
             {/* Admin Dashboard */}
             <Route
