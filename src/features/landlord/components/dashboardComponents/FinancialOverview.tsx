@@ -3,6 +3,7 @@ import { AlertTriangle, CreditCard, DollarSign, Percent } from 'lucide-react'
 import React, { useState } from 'react'
 
 const FinancialOverview = () => {
+  const [loading, setLoading] = useState(true)
 
   const financialStats = {
     totalRevenue: 1250000,
@@ -27,7 +28,6 @@ const FinancialOverview = () => {
     occupancyRate: 0,
   })
 
-  const [loading, setLoading] = useState(true)
 
   return (
     <>

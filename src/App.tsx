@@ -53,6 +53,7 @@ import { AgentDashboardLayout } from "./features/agent/components/AgentDashboard
 import { AgentSettings } from "./features/agent/pages/Settings.js"
 import ReferralsPage from "./features/agent/pages/Referrals.js"
 import EarningsPage from "./features/agent/pages/Earnings.js"
+import ProviderAssignmentPage from "./features/service-provider/pages/ProviderAssignmentPage.js"
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) => {
@@ -129,8 +130,7 @@ function App() {
                 <ProtectedRoute allowedRoles={["landlord"]}>
                   <LandlordDashboardLayout />
                 </ProtectedRoute>
-              }
-            >
+              }>
               <Route index element={<LandlordDashboard />} />
               <Route path="properties" element={<LandlordPropertiesPage />} />
               <Route path="properties/:id" element={<PropertyDetailPage />} />
@@ -149,12 +149,11 @@ function App() {
                 <ProtectedRoute allowedRoles={["agent"]}>
                   <AgentDashboardLayout />
                 </ProtectedRoute>
-              }
-            >
+              }>
               <Route index element={<AgentDashboard />} />
-              <Route path="settings" element={<AgentSettings />}/>
-              <Route path="referrals" element={<ReferralsPage />}/>
-              <Route path="earnings" element={<EarningsPage />}/>
+              <Route path="settings" element={<AgentSettings />} />
+              <Route path="referrals" element={<ReferralsPage />} />
+              <Route path="earnings" element={<EarningsPage />} />
             </Route>
 
             {/* Service Provider Dashboard */}
@@ -164,11 +163,14 @@ function App() {
                 <ProtectedRoute allowedRoles={["service-provider"]}>
                   <ServicetDashboardLayout />
                 </ProtectedRoute>
-              }
-            >
+              }>
               <Route index element={<ProviderDashboard />} />
               <Route path="tasks" element={<TasksPage />} />
               <Route path="settings" element={<ProviderSettings />} />
+              <Route
+                path="assign-provider"
+                element={<ProviderAssignmentPage /> }
+              />
             </Route>
 
             {/* Admin Dashboard */}

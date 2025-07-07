@@ -7,11 +7,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select.js'
 import { Wrench, Calendar, MapPin, User, AlertCircle, ChevronRight } from 'lucide-react'
 import { fetchLandlordMaintenanceRequests } from '../../../services/maintananceService.js'
-import ServiceProviderAssignment from '../../../components/service/ServiceProviderAssignment.js'
+import ProviderAssignmentPage from '../../service-provider/pages/ProviderAssignmentPage.js'
 import { Link } from 'react-router-dom'
 import { Toaster, toast } from 'sonner'
 import { getAuthHeaders } from '../../../services/authService.js'
 import axios from 'axios'
+// import { Loader } from '../../../components/Loader.js'
 
 interface MaintenanceRequest {
   _id: string
@@ -90,15 +91,19 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
   const [requests, setRequests] = useState<MaintenanceRequest[]>([])
   const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null)
   const [assignDialogOpen, setAssignDialogOpen] = useState(false)
+  // const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchRequests = async () => {
+      // setLoading(true)
       try {
         const data = await fetchLandlordMaintenanceRequests()
         setRequests(data)
       } catch (error) {
         console.error('Failed to fetch maintenance requests', error)
         toast.error('Failed to load maintenance requests')
+      } finally {
+        // setLoading(false)
       }
     }
 
@@ -176,6 +181,8 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
       toast.error('Failed to update request state')
     }
   }
+
+  // if (loading) return <div><Loader/></div>
 
   return (
     <Card className='border-none shadow-md'>
@@ -300,11 +307,13 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                     {request.status === 'pending' && (
                       <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
                         <DialogTrigger asChild>
+                          <Link to='/assign-provider'>
+                          </Link>
                           <Button
                             size='sm'
                             onClick={() => setSelectedRequest(request)}
                             className='w-full md:w-48 h-10 bg-primary-600 hover:bg-primary/90'>
-                            Assign Provider
+                            Assign Providersssss
                           </Button>
                         </DialogTrigger>
                         <DialogContent className='max-w-4xl'>
@@ -315,7 +324,7 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                             </DialogDescription>
                           </DialogHeader>
                           {selectedRequest && (
-                            <ServiceProviderAssignment
+                            <ProviderAssignmentPage
                               maintenanceRequest={selectedRequest}
                               onAssign={handleAssignServiceProvider}
                               onCancel={() => {

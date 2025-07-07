@@ -111,11 +111,11 @@ export default function Tasks() {
     <>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {/* Card 1 */}
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div className="bg-slate-100 dark:bg-gray-950/50 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <Briefcase className="h-6 w-6 text-primary-500" />
+              <div className="w-10 h-10 bg-primary-600/30 dark:bg-primary-600/30 rounded-full flex items-center justify-center mr-4">
+                <Briefcase className="w-6 h-6 text-primary-600 dark:text-primary-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
@@ -132,11 +132,11 @@ export default function Tasks() {
         </div>
 
         {/* Card 2 */}
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-950/50 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckCircle className="h-6 w-6 text-primary-500" />
+              <div className="w-10 h-10 bg-primary-600/30 dark:bg-primary-600/30 rounded-full flex items-center justify-center mr-4">
+                <CheckCircle className="w-6 h-6 text-primary-600 dark:text-primary-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
@@ -155,11 +155,11 @@ export default function Tasks() {
         </div>
 
         {/* Card 3 */}
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-950/50 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <Clock className="h-6 w-6 text-primary-500" />
+              <div className="w-10 h-10 bg-primary-600/30 dark:bg-primary-600/30 rounded-full flex items-center justify-center mr-4">
+                <Clock className="w-6 h-6 text-primary-600 dark:text-primary-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
@@ -178,16 +178,18 @@ export default function Tasks() {
         </div>
       </div>
 
-      <div className="mt-8 bg-white dark:bg-gray-800 shadow rounded-lg">
-        <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+      {/* Active jobs */}
+      <div className="mt-8 bg-slate-100 dark:bg-gray-950/50 shadow rounded-lg">
+        <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-primary-600/20 flex justify-between items-center">
           <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Active Jobs</h3>
-          <a href="#" className="text-sm font-medium text-primary-600 hover:text-primary-500">
+          <a href="#"
+            className="text-sm font-medium text-primary-600 hover:text-primary-600 dark:hover:bg-primary-600/20 p-2 rounded">
             View all
           </a>
         </div>
         <div className="px-4 py-5 sm:p-6">
           <div className="flow-root">
-            <ul className="-my-5 divide-y divide-gray-200 dark:divide-gray-700">
+            <ul className="-my-5 divide-y divide-gray-200 dark:divide-primary-600/10">
               {activeJobs.map((job) => (
                 <li key={job.id} className="py-5">
                   <div className="flex flex-col md:flex-row md:items-center">
@@ -210,7 +212,7 @@ export default function Tasks() {
                         <span className="font-medium">Client:</span> {job.client}
                       </p>
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <MapPin className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" />
+                        <MapPin className="flex-shrink-0 mr-1.5 h-4 w-4 text-primary-600 dark:text-primary-600" />
                         {job.address}
                       </div>
                     </div>
@@ -239,18 +241,19 @@ export default function Tasks() {
       {/* Recent Completed Jobs and Client Reviews */}
       <div className="my-8 grid grid-cols-1 gap-8  lg:grid-cols-1">
         {/* Recent Completed Jobs */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
-          <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <div className="bg-slate-100 dark:bg-gray-950/50 shadow-md rounded-lg">
+          <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-primary-600/20 flex justify-between items-center">
             <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
               Recent Completed Jobs
             </h3>
-            <a href="#" className="text-sm font-medium text-primary-600 hover:text-primary-500">
+            <a href="#"
+              className="text-sm font-medium text-primary-600 hover:text-primary-600 dark:hover:bg-primary-600/20 p-2 rounded">
               View all
             </a>
           </div>
           <div className="px-4 py-5 sm:p-6">
             <div className="flow-root">
-              <ul className="-my-5 divide-y divide-gray-200 dark:divide-gray-700">
+              <ul className="-my-5 divide-y divide-gray-200 dark:divide-primary-600/10">
                 {completedJobs.map((job) => (
                   <li key={job.id} className="py-4">
                     <div className="flex items-center space-x-4">

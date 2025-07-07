@@ -7,6 +7,7 @@ import { ArrowRight, Building, Plus, RefreshCw } from "lucide-react"
 import { getProperties, createProperty } from "../../../services/propertyService.js"
 import PropertyCard from "../components/PropertyCard.js"
 import AddPropertyModal from "../components/AddPropertyModal.js"
+import { Loader } from "../../../components/Loader.js"
 
 interface Property {
   _id: string
@@ -55,6 +56,7 @@ const PropertiesPage: React.FC = () => {
     }
   };
 
+  if (loading) return <div><Loader/></div>
 
   return (
     <div className="px-4 sm:px-6 py-6">

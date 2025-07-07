@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react"
 import { Users, Search, RefreshCw, User } from "lucide-react"
 import { getTenants } from "../../../services/propertyService.js"
 import AddTenantModal from "../components/AddTenantModal.js"
+import { Loader } from "../../../components/Loader.js"
 
 interface Tenant {
   _id: string
@@ -75,6 +76,8 @@ const TenantsPage: React.FC = () => {
       day: "numeric",
     })
   }
+
+  if (loading) return <div><Loader/></div>
 
   return (
     <div className="p-4 max-w-7xl mx-auto">

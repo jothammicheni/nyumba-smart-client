@@ -4,6 +4,7 @@
 import { getPropertyStats } from "../../../../services/propertyService.js"
 import { AlertTriangle, Building, Home, Users } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
+import { Loader } from "../../../../components/Loader.js"
 
 function PropertyOverview() {
 
@@ -36,6 +37,9 @@ function PropertyOverview() {
       setLoading(false)
     }
   }
+
+  if (loading) return <div><Loader/></div>
+  
   return (
     <>
       <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white mt-8 mb-4">

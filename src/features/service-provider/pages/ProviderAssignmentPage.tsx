@@ -2,14 +2,15 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Button } from '../ui/button.js'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card.js'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select.js'
-import { Badge } from '../ui/badge.js'
-import { Input } from '../ui/input.js'
+// import { Button } from '../../ui/button.js'
+import { Button } from '../../../components/ui/button.js'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card.js'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select.js'
+import { Badge } from '../../../components/ui/badge.js'
+import { Input } from '../../../components/ui/input.js'
 import { Star, MapPin, Phone, Mail, CheckCircle } from 'lucide-react'
 import axios from 'axios'
-import { getAuthHeaders } from '../../services/authService.js'
+import { getAuthHeaders } from '../../../services/authService.js'
 
 interface ServiceProvider {
   _id: string
@@ -87,7 +88,7 @@ const detectServiceType = (description: string): string => {
   return 'other'
 }
 
-export default function ServiceProviderAssignment({ maintenanceRequest, onAssign, onCancel }: ServiceProviderAssignmentProps) {
+export default function ProviderAssignmentPage({ maintenanceRequest, onAssign, onCancel }: ServiceProviderAssignmentProps) {
   const [providers, setProviders] = useState<ServiceProvider[]>([])
   const [selectedProvider, setSelectedProvider] = useState<ServiceProvider | null>(null)
   const [serviceType, setServiceType] = useState<string>(maintenanceRequest.serviceType || '')

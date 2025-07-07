@@ -201,6 +201,7 @@ const Subscriptions = () => {
   const handleMpesaPayment = () => {
     toast.success('Redirecting to M-pesa payment...')
   };
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 py-12 px-4 sm:px-6 lg:px-8">
       <Toaster richColors position="top-right" />
