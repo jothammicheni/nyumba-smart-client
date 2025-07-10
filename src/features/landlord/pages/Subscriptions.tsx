@@ -17,9 +17,17 @@ import {
 import {
   createSubscription,
   getSubscription,
+  validateSubscription,
 } from "../../../services/subscriptionService.js";
 import { toast, Toaster } from "sonner";
-
+import TrialModal from "../components/TrialModal.js";
+import InitiatePaymentModal from "../components/paymentsModals/InitiatePaymentModal.js";
+import ConfirmPaymentModal from "../components/paymentsModals/ConfirmPaymentModal.js";
+import PaymentResultModal from "../components/paymentsModals/PaymentResultModal.js";
+import {
+  initiateMpesaPayment,
+  checkMpesaPaymentStatus, // ✅ correct name
+} from "../../../services/payment.service/subscriptions/subscription.payment.service.js"
 const Subscriptions = () => {
   const [selectedTier, setSelectedTier] = useState<any>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -28,6 +36,16 @@ const Subscriptions = () => {
   const [showPayment, setShowPayment] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState<string>("");
+
+    // Payment modal states
+  const [showInitiate, setShowInitiate] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [paymentResult, setPaymentResult] = useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
+
 
   // Fetch active subscription from backend
   useEffect(() => {
@@ -96,6 +114,21 @@ const Subscriptions = () => {
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
   }, [activeSub]);
+
+// validate tier
+
+useEffect(() => {
+  const check = async () => {
+    try {
+      await validateSubscription();
+    } catch (err) {
+      console.error('Validation failed:', err);
+    }
+  };
+
+  check();
+}, []);
+
 
   const tiers = [
     {
@@ -198,9 +231,59 @@ const Subscriptions = () => {
     }
   };
 
-  const handleMpesaPayment = () => {
-    toast.success('Redirecting to M-pesa payment...')
-  };
+ const confirmPayment = async () => {
+  setLoading(true);
+  setShowInitiate(false);
+  setShowConfirm(true);
+
+  try {
+    const phone = "254113730593"; // Ideally get from user profile or input
+    // const amount = selectedTier?.priceMonthly || 0;
+    const amount=1
+
+    const initRes = await initiateMpesaPayment(phone, amount, "subscription");
+    console.log("📤 Payment initiated:", initRes);
+
+    let retries = 0;
+    let statusResponse = null;
+
+    while (retries < 6) {
+      await new Promise((res) => setTimeout(res, 5000)); // Wait 5s between checks
+      statusResponse = await checkMpesaPaymentStatus(initRes.checkoutRequestId);
+      console.log("📥 Payment status:", statusResponse);
+
+      if (statusResponse.status === "success" || statusResponse.status === "failed") break;
+      retries++;
+    }
+
+    const paymentSuccess = statusResponse?.status === "success";
+
+    setPaymentResult({
+      success: paymentSuccess,
+      message: paymentSuccess
+        ? "✅ Payment successful. Subscription activated."
+        : "❌ Payment failed or expired.",
+    });
+
+    if (paymentSuccess) {
+      const res = await getSubscription();
+      if (res.success) setActiveSub(res.data);
+    }
+  } catch (error: any) {
+    setPaymentResult({
+      success: false,
+      message: error.message || "Something went wrong.",
+    });
+  } finally {
+    setLoading(false);
+    setShowConfirm(false);
+  }
+};
+
+const handleMpesaPayment = () => {
+  setShowInitiate(true);
+};
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 py-12 px-4 sm:px-6 lg:px-8">
       <Toaster richColors position="top-right" />
@@ -208,13 +291,13 @@ const Subscriptions = () => {
         {/* Hero Section */}
 
         {/* 🔔 Alert Banner */}
+       {/* Alert Banner */}
         {showAlert && (
           <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 px-4 py-4 rounded-lg mb-6 shadow-md">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
               <div className="text-sm sm:text-base font-medium flex items-center">
                 ⏳ {alertMessage}
               </div>
-
               {showPayment && (
                 <button
                   onClick={handleMpesaPayment}
@@ -226,6 +309,8 @@ const Subscriptions = () => {
             </div>
           </div>
         )}
+
+
         <div className="relative pt-8 pb-12 mb-16 text-center">
           <div className="absolute inset-0 bg-[#FBFBFB]/10 shadow-xl dark:bg-gray-900/60"></div>
           <div className="relative">
@@ -263,6 +348,7 @@ const Subscriptions = () => {
                 <div className="absolute top-4 right-4 bg-primary-600 dark:bg-primary-600/50 text-white px-3 py-1 rounded-full flex items-center text-sm font-medium">
                   <BadgeCheck className="w-4 h-4 mr-1" />
                   <span>Current Plan</span>
+                  
                 </div>
               )}
 
@@ -472,181 +558,36 @@ const Subscriptions = () => {
 
       {/* Trial Modal */}
       {selectedTier && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-gray-800">
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-white dark:bg-gray-900 p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Start Your{" "}
-                <span className="text-primary-600">{selectedTier.name}</span>{" "}
-                Trial
-              </h2>
-              <button
-                onClick={() => setSelectedTier(null)}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              >
-                <X className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-6 space-y-8">
-              {/* Tier Summary */}
-              <div className="bg-blue-50 dark:bg-gray-800/50 rounded-xl p-6 flex items-center">
-                <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center mr-4">
-                  <div className="text-white">{selectedTier.icon}</div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {selectedTier.name}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    {selectedTier.priceMonthly === 0
-                      ? "Free"
-                      : `Ksh ${selectedTier.priceMonthly.toLocaleString()}/month`}
-                  </p>
-                </div>
-              </div>
-
-              {/* How It Works */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                  <ArrowRight className="w-5 h-5 mr-2 text-primary-600" />
-                  How Your Trial Works
-                </h3>
-                <div className="space-y-6">
-                  <div className="flex">
-                    <div className="flex flex-col items-center mr-4">
-                      <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-primary-600 dark:bg-primary-400"></div>
-                      </div>
-                      <div className="w-0.5 h-full bg-gray-200 dark:bg-gray-700 mt-1"></div>
-                    </div>
-                    <div className="pb-6">
-                      <h4 className="font-medium text-gray-900 dark:text-white">
-                        Instant Access
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300 mt-1">
-                        Get full access to all {selectedTier.name} tier features
-                        immediately
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex">
-                    <div className="flex flex-col items-center mr-4">
-                      <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-primary-600 dark:bg-primary-400"></div>
-                      </div>
-                      <div className="w-0.5 h-full bg-gray-200 dark:bg-gray-700 mt-1"></div>
-                    </div>
-                    <div className="pb-6">
-                      <h4 className="font-medium text-gray-900 dark:text-white">
-                        45-Day Trial Period
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300 mt-1">
-                        Explore all features for 45 days with no payment
-                        required
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex">
-                    <div className="flex flex-col items-center mr-4">
-                      <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-primary-600 dark:bg-primary-400"></div>
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 dark:text-white">
-                        Seamless M-Pesa Payment
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300 mt-1">
-                        After 45 days, we'll send an M-Pesa prompt to continue
-                        your subscription
-                      </p>
-                      <div className="flex items-center mt-3 bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                        <Smartphone className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2" />
-                        <span className="text-sm text-gray-600 dark:text-gray-300">
-                          +254 XXX XXX XXX
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Terms Agreement */}
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div
-                  className="flex items-start cursor-pointer"
-                  onClick={() => setAcceptedTerms(!acceptedTerms)}
-                >
-                  <div
-                    className={`flex items-center justify-center w-6 h-6 rounded border mr-3 mt-0.5 transition-colors
-                    ${acceptedTerms
-                        ? "bg-primary-600 border-primary-600"
-                        : "border-gray-300 dark:border-gray-600 hover:border-primary-600"
-                      }`}
-                  >
-                    {acceptedTerms && <Check className="w-4 h-4 text-white" />}
-                  </div>
-                  <div>
-                    <p className="text-gray-900 dark:text-white">
-                      I agree to the NyumbaSmart{" "}
-                      <span className="text-primary-600">Terms of Service</span>{" "}
-                      and{" "}
-                      <span className="text-primary-600">Privacy Policy</span>
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      Your subscription will automatically renew after the trial
-                      period unless canceled
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="sticky bottom-0 bg-white dark:bg-gray-900 p-6 border-t border-gray-200 dark:border-gray-800">
-              {showPayment ? (
-                <button
-                  onClick={handleMpesaPayment}
-                  className="w-full py-3 mt-2 rounded-md text-white font-bold bg-green-600 hover:bg-green-700"
-                >
-                  Pay via M-Pesa
-                </button>
-              ) : (
-                <button
-                  disabled={!acceptedTerms}
-                  onClick={startTrial}
-                  className={`w-full py-3 mt-2 rounded-md text-white font-bold ${acceptedTerms
-                      ? "bg-primary-600 hover:bg-primary-700"
-                      : "bg-gray-400 cursor-not-allowed"
-                    }`}
-                >
-                  Start Free Trial
-                </button>
-              )}
-
-              {/* <button
-                onClick={startTrial}
-                disabled={!acceptedTerms}
-                className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center
-                  ${acceptedTerms
-                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700'
-                    : 'bg-gray-200 dark:bg-gray-800 text-gray-500 cursor-not-allowed'}`}
-              >
-                Start My 45-Day Free Trial
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </button> */}
-              <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-3">
-                No payment required • Cancel anytime
-              </p>
-            </div>
-          </div>
-        </div>
+        <TrialModal
+          selectedTier={selectedTier}
+          showPayment={showPayment}
+          acceptedTerms={acceptedTerms}
+          setAcceptedTerms={setAcceptedTerms}
+          setSelectedTier={setSelectedTier}
+          startTrial={startTrial}
+          handleMpesaPayment={handleMpesaPayment}
+        />
       )}
+
+   {/* Payment Modals */}
+      {showInitiate && (
+        <InitiatePaymentModal
+          phoneNumber="+254712345678"
+          onClose={() => setShowInitiate(false)}
+          onConfirm={confirmPayment}
+          loading={loading}
+        />
+      )}
+      {showConfirm && <ConfirmPaymentModal />}
+      {paymentResult && (
+        <PaymentResultModal
+          success={paymentResult.success}
+          message={paymentResult.message}
+          onClose={() => setPaymentResult(null)}
+        />
+      )}
+
+
     </div>
   );
 };

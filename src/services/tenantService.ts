@@ -5,13 +5,43 @@ import { getAuthHeaders } from "./authService.js";
 
 const API_URL = "http://localhost:5000/api";
 
+interface CreateTenantPayload {
+  name: string;
+  email: string;
+  phone: string;
+  property_id: string;
+  room_id: string;
+}
+
+interface CreateTenantResponse {
+  success: boolean;
+  data?: {
+    id: string;
+    name: string;
+    email: string;
+    leaseId: string;
+  };
+  message?: string;
+}
+
 // ✅ Create a new tenant
-export const createTenant = async (tenantData:any) => {
-  const response = await axios.post(`${API_URL}/users/create-new-tenant`, tenantData, {
-   headers: getAuthHeaders(),
-   withCredentials: true,
-  });
-  return response.data;
+export const createTenant = async (
+  tenantData: CreateTenantPayload
+): Promise<CreateTenantResponse> => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/users/create-new-tenant`,
+      tenantData,
+      {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("❌ Error creating tenant:", error);
+    throw error;
+  }
 };
 
 // ✅ Fetch properties for the current landlord
@@ -19,7 +49,6 @@ export const fetchLandlordProperties = async () => {
   const response = await axios.get(`${API_URL}/properties/`, {
     headers: getAuthHeaders(),
   });
-  console.log("Landlord properties fetched:", response.data);
   return response.data.data;
 };
 
@@ -34,7 +63,7 @@ export const fetchVacantRooms = async (propertyId: string) => {
   return response.data.data;
 };
 
-// Fetch property ID by name
+// Optional: Fetch property ID by name
 export const fetchPropertyIdByName = async (propertyName: string) => {
   const response = await axios.get(
     `${API_URL}/properties/id-by-name/${encodeURIComponent(propertyName)}`,
@@ -42,6 +71,5 @@ export const fetchPropertyIdByName = async (propertyName: string) => {
       headers: getAuthHeaders(),
     }
   );
-  return response.data.data; // property ID
+  return response.data.data;
 };
-

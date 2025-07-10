@@ -195,12 +195,16 @@ const handleRoleSelection = (newRole: UserRole) => {
     }
 
     // Validate phone
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required"
-    } else if (!/^\+?[0-9]{10,15}$/.test(formData.phone.replace(/\s/g, ""))) {
-      newErrors.phone = "Phone number is invalid"
-    }
+    // Validate phone
+const rawPhone = formData.phone.replace(/\s+/g, "").trim()
 
+if (!rawPhone) {
+  newErrors.phone = "Phone number is required"
+} else if (
+  !/^(\+?254|0)(7|1)\d{8}$/.test(rawPhone)
+) {
+  newErrors.phone = "Phone must start with 07, 01, or 254 and be 10–12 digits"
+}
     // Validate city
     if (!formData.city.trim()) {
       newErrors.city = "City is required"

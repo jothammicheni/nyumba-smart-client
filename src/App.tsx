@@ -49,7 +49,25 @@ import AdminDashboard from "./features/admin/pages/DashboardPage.js"
 import Subscriptions from "./features/landlord/pages/Subscriptions.js"
 import AdvertiseRooms from "./features/landlord/pages/AdvertiseRooms.js"
 import MaintainanceRequestsPage from "./features/landlord/pages/MaintainanceRequestsPage.js"
+import { AgentDashboardLayout } from "./features/agent/components/AgentDashboardLayout.js"
+import { AgentSettings } from "./features/agent/pages/Settings.js"
+import ReferralsPage from "./features/agent/pages/Referrals.js"
+import EarningsPage from "./features/agent/pages/Earnings.js"
 import PaymentsAndRevenue from "./features/landlord/pages/PaymentsAndRevenue.js"
+import Terms from "./pages/FooterPages/Terms.js"
+import Cookies from "./pages/FooterPages/Cookies.js"
+import RentCollection from "./pages/FooterPages/RentCollection.js"
+import AgentRefferals from "./pages/FooterPages/AgentRefferals.js"
+import MaintananceTracking from "./pages/FooterPages/MaintananceTracking.js"
+import Privacy from "./pages/FooterPages/Privacy.js"
+import PropertyManagement from "./pages/FooterPages/PropertyManagement.js"
+import UserPortals from "./pages/FooterPages/UserPortals.js"
+import Register from "./pages/AuthPages/Register.js"
+import Settings from "./features/landlord/pages/Settings.js"
+import SEO from "./components/SEO.js"
+import PropertyDetailsPage from "./pages/propertylistingComponets/PropertyDetailsPage.js"
+import BookingsAndAppointments from "./features/landlord/pages/BookingsAndAppointments.js"
+// import ProviderAssignmentPage from "./features/service-provider/pages/ProviderAssignmentPage.js"
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) => {
@@ -84,8 +102,11 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode;
 }
 
 function App() {
+
+
   return (
     <Router>
+     <SEO /> {/* Add SEO component here */}
       <AuthProvider>
         <ThemeProvider defaultTheme="light">
           <Routes>
@@ -93,14 +114,25 @@ function App() {
             <Route element={<Layout includeNavbar={true} includeFooter={true} />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
+                <Route path="/properties" element={<PropertiesPage/>} />
+               <Route path="/properties/:id" element={<PropertyDetailsPage />} />
               <Route path="/contact" element={<ContactPage />} />
-              <Route path="/properties" element={<PropertiesPage />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/cookies" element={<Cookies />} />
+              <Route path="/services/rent-collection" element={<RentCollection/>} />
+              <Route path="/services/agent-refferals" element={<AgentRefferals/>} />
+              <Route path="/services/maintanance" element={<MaintananceTracking/>} />
+              <Route path="/privacy" element={<Privacy/>} />
+              <Route path="/services/property-management" element={<PropertyManagement/>} />
+              <Route path="/services/user-portals" element={<UserPortals/>} />
+
+
             </Route>
 
             {/* Auth Routes with Footer only */}
             <Route element={<Layout includeNavbar={false} includeFooter={true} />}>
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/register" element={<Register/>} />
             </Route>
 
             {/* Tenant Dashboard with Nested Routes */}
@@ -126,29 +158,34 @@ function App() {
                 <ProtectedRoute allowedRoles={["landlord"]}>
                   <LandlordDashboardLayout />
                 </ProtectedRoute>
-              }
-            >
+              }>
               <Route index element={<LandlordDashboard />} />
               <Route path="properties" element={<LandlordPropertiesPage />} />
               <Route path="properties/:id" element={<PropertyDetailPage />} />
               <Route path="tenants" element={<TenantsPage />} />
               <Route path="payments" element={<PaymentsPage />} />
               <Route path="maintenance" element={<MaintainanceRequestsPage landlordId={""} />} />
-              <Route path="subscriptions" element={<Subscriptions/>} />
-             <Route path="advertiseproperty" element={<AdvertiseRooms/>} />
+              <Route path="subscriptions" element={<Subscriptions />} />
+              <Route path="advertiseproperty" element={<AdvertiseRooms />} />
               <Route path="payments-revenue" element={<PaymentsAndRevenue/>} />
-              <Route path="settings" element={<SettingsPage />} />
+              <Route path="settings" element={<Settings/>} />
+              <Route path="bookings" element={<BookingsAndAppointments/>} />
+
             </Route>
 
             {/* Agent Dashboard */}
             <Route
-              path="/agent/dashboard"
+              path="/agent/dashboard/*"
               element={
                 <ProtectedRoute allowedRoles={["agent"]}>
-                  <AgentDashboard />
+                  <AgentDashboardLayout />
                 </ProtectedRoute>
-              }
-            />
+              }>
+              <Route index element={<AgentDashboard />} />
+              <Route path="settings" element={<AgentSettings />} />
+              <Route path="referrals" element={<ReferralsPage />} />
+              <Route path="earnings" element={<EarningsPage />} />
+            </Route>
 
             {/* Service Provider Dashboard */}
             <Route
@@ -157,11 +194,20 @@ function App() {
                 <ProtectedRoute allowedRoles={["service-provider"]}>
                   <ServicetDashboardLayout />
                 </ProtectedRoute>
-              }
-            >
-              <Route index element={<ProviderDashboard />}/>
-              <Route path="tasks" element={<TasksPage/>}/>
-              <Route path="settings" element={<ProviderSettings/>}/>
+              }>
+              <Route index element={<ProviderDashboard />} />
+              <Route path="tasks" element={<TasksPage />} />
+              <Route path="settings" element={<ProviderSettings />} />
+              {/* <Route
+                path="assign-provider"
+                element={
+                  <ProviderAssignmentPage
+                    maintenanceRequest={{ id: "1", description: "Fix plumbing issue" }} // Example data
+                    onAssign={(providerId) => console.log(`Assigned to provider ${providerId}`)}
+                    onCancel={() => console.log("Assignment canceled")}
+                  />
+                }
+              /> */}
             </Route>
 
             {/* Admin Dashboard */}

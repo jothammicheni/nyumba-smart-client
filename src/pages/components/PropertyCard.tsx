@@ -1,6 +1,7 @@
 "use client"
 
-import type React from "react"
+import React from "react"
+import { useNavigate } from "react-router-dom"
 import { MapPin, Bed, Bath, Square, Star, Heart, Eye } from "lucide-react"
 import type { Property } from "../types/property"
 
@@ -8,7 +9,7 @@ interface PropertyCardProps {
   property: Property
   isFavorite: boolean
   onToggleFavorite: (id: string) => void
-  onViewDetails: (property: Property) => void
+  onViewDetails?: (property: Property) => void  // optional prop
   formatCurrency: (amount: number) => string
 }
 
@@ -19,6 +20,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   onViewDetails,
   formatCurrency,
 }) => {
+  const navigate = useNavigate()
+
   const getImageUrl = (property: Property) => {
     if (property.images && property.images.length > 0) {
       return property.images[0]
@@ -33,6 +36,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   const getLocation = (property: Property) => {
     return property.property?.specific_location || property.property?.city || "Location not specified"
   }
+
+  // Navigation handler
+const handleViewDetails = (property: Property) => {
+  navigate(`/properties/${property._id}`)
+}
 
   return (
     <div className="group bg-[#FBFBFB] dark:bg-gray-900/50 rounded-xl shadow-xl overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -71,7 +79,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <button
             onClick={(e) => {
               e.stopPropagation()
-              onViewDetails(property)
+              handleViewDetails(property)
             }}
             className="p-2 rounded-full bg-white/30 backdrop-blur-sm text-gray-900 hover:bg-white/50 hover:text-primary-500 transition-colors"
             aria-label="View details"
@@ -120,7 +128,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         </div>
 
         <button
-          onClick={() => onViewDetails(property)}
+          onClick={() => handleViewDetails(property)}
           className="mt-6 w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-300"
         >
           View Details

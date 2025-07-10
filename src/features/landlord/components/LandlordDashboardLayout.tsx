@@ -103,7 +103,12 @@ export default function LandlordDashboardLayout() {
               >
                 <CreditCard className="w-5 h-5 mr-3" /> Subscriptions
               </Link>
-
+<Link
+                to="bookings"
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
+              >
+                <CreditCard className="w-5 h-5 mr-3" />Bookings And visits
+              </Link>
               <Link
                 to="settings"
                 onClick={handleNavClick}
@@ -177,7 +182,12 @@ export default function LandlordDashboardLayout() {
               >
                 <CreditCard className="w-5 h-5 mr-3" /> Subscriptions
               </Link>
-
+ <Link
+                to="bookings"
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/landlord/payments")}`}
+              >
+                <CreditCard className="w-5 h-5 mr-3" />Bookings And visits
+              </Link>
 
 
               <Link

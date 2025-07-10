@@ -1,5 +1,6 @@
 import type React from "react"
 import { Target, Eye, Heart, Users, CheckCircle, Lightbulb } from "lucide-react"
+import AboutPageSEO from "../SEO/AboutPageSEO.js"
 
 const AboutPage: React.FC = () => {
   const values = [
@@ -32,6 +33,7 @@ const AboutPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+      <AboutPageSEO/>
       {/* Hero Section */}
       <div className="relative pt-20 pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-[#FBFBFB]/10 shadow-xl dark:bg-gray-950/70"></div>
