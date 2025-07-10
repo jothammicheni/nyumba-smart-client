@@ -10,7 +10,8 @@ import RentPaymentModal from "../components/TenantModals/RentPaymentModal.js"
 import ConfirmPaymentModal from "../components/TenantModals/ConfirmPaymentModal.js"
 import axios from "axios"
 import { getAuthHeaders } from "../../../services/authService.js"
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 interface Tenant {
   _id: string
   user_id: string
@@ -86,9 +87,9 @@ const TenantsPage: React.FC = () => {
   }
 
 const handleConfirmPayment = async () => {
-  if (!confirmData) return
-  const { tenant, amount, method, mpesaCode } = confirmData
- console.log("Confirming payment for tenant:", tenant.user._id, "Amount:", amount, "Method:", method, "Mpesa Code:", mpesaCode)
+  if (!confirmData) return;
+  const { tenant, amount, method, mpesaCode } = confirmData;
+  console.log("Confirming payment for tenant:", tenant.user._id, "Amount:", amount, "Method:", method, "Mpesa Code:", mpesaCode);
   try {
     const res = await axios.post(
       "http://localhost:5000/api/payment/update",
@@ -103,20 +104,25 @@ const handleConfirmPayment = async () => {
       {
         headers: getAuthHeaders(),
       }
-    )
+    );
 
-    console.log(res)
+    console.log(res);
 
-    // Success
-    setIsConfirmOpen(false)
-    setConfirmData(null)
-    setPaymentTenant(null)
-    await fetchTenants()
+    // Show success toast
+    toast.success("Payment confirmed successfully!");
+
+    // Reset state and refresh data
+    setIsConfirmOpen(false);
+    setConfirmData(null);
+    setPaymentTenant(null);
+    await fetchTenants();
   } catch (err: any) {
-    console.error("Payment failed:", err.response?.data || err.message)
-    alert("Payment failed: " + (err.response?.data?.error || err.message))
+    console.error("Payment failed:", err.response?.data || err.message);
+
+    // Show error toast
+    toast.error("Payment failed: " + (err.response?.data?.error || err.message));
   }
-}
+};
 
 
   return (
@@ -237,6 +243,7 @@ const handleConfirmPayment = async () => {
 <AddTenantModal
   isOpen={isAddModalOpen}
   onClose={() => setIsAddModalOpen(false)}
+  onSuccess={() => {}}
 />      <TenantActionsModal open={isActionsModalOpen} onClose={() => setIsActionsModalOpen(false)} tenant={selectedTenant} />
       <RentPaymentModal open={isRentPaymentOpen} onClose={() => setIsRentPaymentOpen(false)} tenant={paymentTenant} onSubmit={handleRentPaymentSubmit} />
       <ConfirmPaymentModal open={isConfirmOpen} onClose={() => setIsConfirmOpen(false)} confirmData={confirmData} onConfirm={handleConfirmPayment} />
