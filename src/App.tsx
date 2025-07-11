@@ -15,7 +15,7 @@ import NotFound from "./pages/NotFound.js"
 
 // Auth Pages
 import LoginPage from "./features/auth/pages/LoginPage.js"
-import RegisterPage from "./features/auth/pages/RegisterPage.js"
+// import RegisterPage from "./features/auth/pages/RegisterPage.js"
 
 // Tenant Dashboard and Nested Pages
 import TenantDashboardLayout from "./features/tenant/components/TenantDashboardLayout.js"
@@ -33,7 +33,6 @@ import LandlordPropertiesPage from "./features/landlord/pages/PropertiesPage.js"
 import PropertyDetailPage from "./features/landlord/pages/PropertyDetailPage.js"
 import TenantsPage from "./features/landlord/pages/TenantsPage.js"
 import PaymentsPage from "./features/landlord/pages/PropertiesPage.js"
-import SettingsPage from "./features/landlord/pages/PropertiesPage.js"
 
 // Agent Dashboard
 import AgentDashboard from "./features/agent/pages/DashboardPage.js"
@@ -53,7 +52,21 @@ import { AgentDashboardLayout } from "./features/agent/components/AgentDashboard
 import { AgentSettings } from "./features/agent/pages/Settings.js"
 import ReferralsPage from "./features/agent/pages/Referrals.js"
 import EarningsPage from "./features/agent/pages/Earnings.js"
-import ProviderAssignmentPage from "./features/service-provider/pages/ProviderAssignmentPage.js"
+import PaymentsAndRevenue from "./features/landlord/pages/PaymentsAndRevenue.js"
+import Terms from "./pages/FooterPages/Terms.js"
+import Cookies from "./pages/FooterPages/Cookies.js"
+import RentCollection from "./pages/FooterPages/RentCollection.js"
+import AgentRefferals from "./pages/FooterPages/AgentReferrals.js"
+import MaintananceTracking from "./pages/FooterPages/MaitenanceTracking.js"
+import Privacy from "./pages/FooterPages/Privacy.js"
+import PropertyManagement from "./pages/FooterPages/PropertyManagement.js"
+import UserPortals from "./pages/FooterPages/UserPortals.js"
+import Register from "./pages/Register.js"
+import Settings from "./features/landlord/pages/Settings.js"
+import PropertyDetailsPage from "./pages/propertylistingComponets/PropertyDetailsPage.js"
+import BookingsAndAppointments from "./features/landlord/pages/BookingAndAppointmentsPage.js"
+import SEO from "./components/SEO.js"
+// import ProviderAssignmentPage from "./features/service-provider/pages/ProviderAssignmentPage.js"
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) => {
@@ -88,23 +101,37 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode;
 }
 
 function App() {
+
+
   return (
     <Router>
+     <SEO />
       <AuthProvider>
-        <ThemeProvider defaultTheme="light">
+        <ThemeProvider>
           <Routes>
             {/* Public Routes with Navbar and Footer */}
             <Route element={<Layout includeNavbar={true} includeFooter={true} />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
+                <Route path="/properties" element={<PropertiesPage/>} />
+               <Route path="/properties/:id" element={<PropertyDetailsPage />} />
               <Route path="/contact" element={<ContactPage />} />
-              <Route path="/properties" element={<PropertiesPage />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/cookies" element={<Cookies />} />
+              <Route path="/services/rent-collection" element={<RentCollection/>} />
+              <Route path="/services/agent-refferals" element={<AgentRefferals/>} />
+              <Route path="/services/maintanance" element={<MaintananceTracking/>} />
+              <Route path="/privacy" element={<Privacy/>} />
+              <Route path="/services/property-management" element={<PropertyManagement/>} />
+              <Route path="/services/user-portals" element={<UserPortals/>} />
+
+
             </Route>
 
             {/* Auth Routes with Footer only */}
             <Route element={<Layout includeNavbar={false} includeFooter={true} />}>
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/register" element={<Register/>} />
             </Route>
 
             {/* Tenant Dashboard with Nested Routes */}
@@ -139,7 +166,10 @@ function App() {
               <Route path="maintenance" element={<MaintainanceRequestsPage landlordId={""} />} />
               <Route path="subscriptions" element={<Subscriptions />} />
               <Route path="advertiseproperty" element={<AdvertiseRooms />} />
-              <Route path="settings" element={<SettingsPage />} />
+              <Route path="payments-revenue" element={<PaymentsAndRevenue/>} />
+              <Route path="settings" element={<Settings/>} />
+              <Route path="bookings" element={<BookingsAndAppointments/>} />
+
             </Route>
 
             {/* Agent Dashboard */}
@@ -167,10 +197,16 @@ function App() {
               <Route index element={<ProviderDashboard />} />
               <Route path="tasks" element={<TasksPage />} />
               <Route path="settings" element={<ProviderSettings />} />
-              <Route
+              {/* <Route
                 path="assign-provider"
-                element={<ProviderAssignmentPage /> }
-              />
+                element={
+                  <ProviderAssignmentPage
+                    maintenanceRequest={{ id: "1", description: "Fix plumbing issue" }} // Example data
+                    onAssign={(providerId) => console.log(`Assigned to provider ${providerId}`)}
+                    onCancel={() => console.log("Assignment canceled")}
+                  />
+                }
+              /> */}
             </Route>
 
             {/* Admin Dashboard */}
