@@ -1,6 +1,6 @@
 import React from 'react'
 
-const RentCollection = () => {
+const MaintananceTracking = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const RentCollection = () => {
   )
 }
 
-export default RentCollection
+export default MaintananceTracking

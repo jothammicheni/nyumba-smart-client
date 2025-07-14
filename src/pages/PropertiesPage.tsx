@@ -8,6 +8,7 @@ import Pagination from "./components/Pagination.js"
 import PropertyModal from "./components/PropertyModal.js"
 import type { Property, Filters } from "../types/properties.js"
 import { trackImpression, trackClick } from "../services/listingService.js"; // Adjust the import path as necessary
+import PropertyListingSEO from "../SEO/PropertyListingSEO.js"
 
 const PropertiesPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -146,6 +147,7 @@ const PropertiesPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950/60 pt-20 pb-12">
+                <PropertyListingSEO/>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-16">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
@@ -159,6 +161,7 @@ const PropertiesPage = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950/60 pt-20 pb-12">
+        <PropertyListingSEO/>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-16">
             <Home className="mx-auto h-16 w-16 text-gray-400" />
@@ -178,6 +181,7 @@ const PropertiesPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950/60 pt-20 pb-12">
+      <PropertyListingSEO/>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-12">
@@ -247,12 +251,12 @@ const PropertiesPage = () => {
       </div>
 
       {/* Property Details Modal */}
-      <PropertyModal
+      {/* <PropertyModal
         isOpen={isModalOpen}
         property={selectedProperty}
         onClose={closeModal}
         formatCurrency={formatCurrency}
-      />
+      /> */}
     </div>
   )
 }

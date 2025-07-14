@@ -50,10 +50,69 @@ export const listingService = {
     }
   },
 
+async sendInquiryMessage(data: {
+  name: string
+  email: string
+  phone: string
+  inquiryMessage: string
+  property_id: string
+  PropertyName: string
+  landlord_id: string
+}) {
+  try {
+    const response = await axios.post(
+      `http://localhost:5000/api/inquiry/sendinquiry`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    return response.data
+  } catch (error: any) {
+    console.error("Failed to send inquiry:", error.response?.data || error.message)
+    throw new Error(error.response?.data?.error || "Failed to send inquiry")
+  }
+}
+,
+// ✅ Fetch all inquiries
+async getAllBookings() {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/inquiry/getAll`, {
+      headers: getAuthHeaders(),
+    })
+    return response.data.inquiries
+  } catch (error: any) {
+    console.error("Failed to fetch inquiries:", error)
+    throw new Error(error.response?.data?.error || "Failed to fetch inquiries")
+  }
+},
+
+// 🔧 Mock method for now – replace when visits are available
+async getAllVisits() {
+  try {
+    // Replace this with real endpoint when ready
+    return [
+      {
+        _id: "visit-001",
+        visitorName: "John Doe",
+        visitDate: new Date().toISOString(),
+        propertyName: "Green Villa",
+        contact: "0722000111",
+        type: "visit",
+      },
+    ]
+  } catch (error) {
+    console.error("Failed to fetch visits:", error)
+    return []
+  }
+},
+
   async getListingById(id: string) {
     try {
-      const response = await axios.get(`${API_BASE_URL}/listings/${id}`)
-      return response.data
+      const response = await axios.get(`${API_BASE_URL}/api/listings/${id}`)
+      return response.data.listing
     } catch (error: any) {
       throw new Error(error.response?.data?.error || "Failed to fetch listing")
     }

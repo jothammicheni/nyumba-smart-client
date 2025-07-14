@@ -1,7 +1,11 @@
 import React from 'react'
 
-export default function UserPortals() {
+const UserPortals = () => {
   return (
-    <div>UserPortals</div>
+    <div>
+      
+    </div>
   )
 }
+
+export default UserPortals

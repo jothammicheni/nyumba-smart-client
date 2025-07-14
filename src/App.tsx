@@ -15,7 +15,6 @@ import NotFound from "./pages/NotFound.js"
 
 // Auth Pages
 import LoginPage from "./features/auth/pages/LoginPage.js"
-// import RegisterPage from "./features/auth/pages/RegisterPage.js"
 
 // Tenant Dashboard and Nested Pages
 import TenantDashboardLayout from "./features/tenant/components/TenantDashboardLayout.js"
@@ -33,6 +32,7 @@ import LandlordPropertiesPage from "./features/landlord/pages/PropertiesPage.js"
 import PropertyDetailPage from "./features/landlord/pages/PropertyDetailPage.js"
 import TenantsPage from "./features/landlord/pages/TenantsPage.js"
 import PaymentsPage from "./features/landlord/pages/PropertiesPage.js"
+// import SettingsPage from "./features/landlord/pages/PropertiesPage.js"
 
 // Agent Dashboard
 import AgentDashboard from "./features/agent/pages/DashboardPage.js"
@@ -53,19 +53,19 @@ import { AgentSettings } from "./features/agent/pages/Settings.js"
 import ReferralsPage from "./features/agent/pages/Referrals.js"
 import EarningsPage from "./features/agent/pages/Earnings.js"
 import PaymentsAndRevenue from "./features/landlord/pages/PaymentsAndRevenue.js"
-import Terms from "./pages/FooterPages/Terms.js"
+import { Terms } from "./pages/FooterPages/Terms.js"
 import Cookies from "./pages/FooterPages/Cookies.js"
 import RentCollection from "./pages/FooterPages/RentCollection.js"
-import AgentRefferals from "./pages/FooterPages/AgentReferrals.js"
-import MaintananceTracking from "./pages/FooterPages/MaitenanceTracking.js"
+import AgentRefferals from "./pages/FooterPages/AgentRefferals.js"
+import MaintananceTracking from "./pages/FooterPages/MaintananceTracking.js"
 import Privacy from "./pages/FooterPages/Privacy.js"
 import PropertyManagement from "./pages/FooterPages/PropertyManagement.js"
 import UserPortals from "./pages/FooterPages/UserPortals.js"
-import Register from "./pages/Register.js"
+import Register from "./pages/AuthPages/Register.js"
 import Settings from "./features/landlord/pages/Settings.js"
-import PropertyDetailsPage from "./pages/propertylistingComponets/PropertyDetailsPage.js"
-import BookingsAndAppointments from "./features/landlord/pages/BookingAndAppointmentsPage.js"
 import SEO from "./components/SEO.js"
+import PropertyDetailsPage from "./pages/propertylistingComponets/PropertyDetailsPage.js"
+import BookingsAndAppointments from "./features/landlord/pages/BookingsAndAppointments.js"
 // import ProviderAssignmentPage from "./features/service-provider/pages/ProviderAssignmentPage.js"
 
 // Protected Route Component
@@ -105,9 +105,9 @@ function App() {
 
   return (
     <Router>
-     <SEO />
+     <SEO /> {/* Add SEO component here */}
       <AuthProvider>
-        <ThemeProvider>
+        <ThemeProvider defaultTheme="light">
           <Routes>
             {/* Public Routes with Navbar and Footer */}
             <Route element={<Layout includeNavbar={true} includeFooter={true} />}>

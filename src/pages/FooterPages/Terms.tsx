@@ -1,7 +1,7 @@
 import React from 'react';
 import TermsSEO from '../../SEO/TermsSEO.js';
 
-const Terms = () => {
+export const Terms = () => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 p-6 sm:p-10">
       <TermsSEO/>
@@ -93,4 +93,3 @@ const Terms = () => {
   );
 };
 
-export default Terms;

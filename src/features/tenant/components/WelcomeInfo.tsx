@@ -42,7 +42,9 @@ const initiatePayment = async () => {
   try {
     // Initiate the payment
     const response = await axios.post(
-      "https://nyumba-smart-server.onrender.com/api/payment/pay",
+      // "https://nyumba-smart-server.onrender.com/api/payment/pay",
+            "http://localhost:5000/api/payment/pay",
+
       {
         sender_id: tenantInfo._id, // Use tenant's ID
         phone,

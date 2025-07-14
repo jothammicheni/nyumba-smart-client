@@ -145,7 +145,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link
-                  to="/services/tenant-portal"
+                  to="/services/user-portals"
                   className="group text-gray-300 hover:text-white transition-all duration-300 flex items-center">
                   <span className="w-0 group-hover:w-3 h-0.5 bg-primary-500 rounded-full transition-all duration-300 mr-0 group-hover:mr-3"></span>
                   Tenant Portal

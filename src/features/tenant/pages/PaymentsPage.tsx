@@ -1,140 +1,171 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from "axios"
-import { AlertTriangle, CheckCircle } from "lucide-react"
-import React, { useEffect, useState } from "react"
-import { getAuthHeaders } from "../../../services/authService.js"
-import { Loader } from "../../../components/Loader.js"
+"use client";
 
-interface Payment {
-  id: number
-  date: string
-  amount: string
-  status: "Paid" | "Pending"
+import axios from "axios";
+import { AlertTriangle, CheckCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { getAuthHeaders } from "../../../services/authService.js";
+import ReceiptModal from "../components/ReceiptModal.js";
+
+interface PaymentRecord {
+  _id: string;
+  status: "pending" | "success" | "failed" | "refunded";
+  mpesa_code?: string;
+  payerPhone?: string;
+  paidAmount?: number;
+  timestamp: string;
+  amount: number;
+}
+
+interface TenantInfo {
+  balance: number;
+  tenantName: string;
+  propertyName: string;
+  roomNumber: string;
 }
 
 const TenantPaymentsPage: React.FC = () => {
-  const [tenantInfo, setTenantInfo] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  const payments: Payment[] = [
-    { id: 1, date: "2024-07-01", amount: "KSh 35,000", status: "Paid" },
-    { id: 2, date: "2024-08-01", amount: "KSh 35,000", status: "Pending" },
-    { id: 3, date: "2024-08-01", amount: "KSh 95,000", status: "Paid" },
-  ]
-
-  const handleViewReceipt = (id: number) => {
-    alert(`Viewing receipt for payment ID: ${id}`)
-  }
-
-  const handleMakePayment = (id: number) => {
-    alert(`Redirecting to payment portal for payment ID: ${id}`)
-  }
+  const [tenantInfo, setTenantInfo] = useState<TenantInfo | null>(null);
+  const [payments, setPayments] = useState<PaymentRecord[]>([]);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchTenantInfo = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "https://nyumba-smart-server.onrender.com/api/tenants/info",
-          { headers: getAuthHeaders() }
-        )
-        setTenantInfo(response.data)
-      } catch (error) {
-        console.error("Error fetching tenant info:", error)
+        const [tenantRes, paymentsRes] = await Promise.all([
+          axios.get("https://nyumba-smart-server.onrender.com/api/tenants/info", {
+            headers: getAuthHeaders(),
+          }),
+          axios.get("http://localhost:5000/api/payment/history", {
+            headers: getAuthHeaders(),
+          }),
+        ]);
+        setTenantInfo(tenantRes.data);
+        setPayments(paymentsRes.data.data);
+      } catch (err: any) {
+        console.error(err);
+        setError("Failed to load your payment information.");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchTenantInfo()
-  }, [])
+    fetchData();
+  }, []);
 
-  if (loading) return <div><Loader /></div>
-
-  if (!tenantInfo)
-    return (
-      <div className="text-center p-4 text-gray-500">
-        No tenant information available.
-      </div>
-    )
+  if (loading) return <div className="text-center p-4">Loading...</div>;
+  if (error) return <div className="text-center p-4 text-red-600">{error}</div>;
+  if (!tenantInfo) return <div className="text-center p-4">No tenant info found.</div>;
 
   return (
-    <div className="p-6 space-y-6 bg-white dark:bg-gray-900 rounded-lg shadow">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">My Payments</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Track your payment status and balance</p>
-        </div>
+    <div className="p-4 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6 text-primary text-center sm:text-left">
+        My Payments
+      </h1>
 
-        <div className="flex items-center gap-4 bg-gray-50 dark:bg-gray-950/40 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3">
-          <div className="flex-shrink-0">
-            {tenantInfo.balance > 0 ? (
-              <AlertTriangle className="h-6 w-6 text-red-500" />
-            ) : (
-              <CheckCircle className="h-6 w-6 text-green-500" />
-            )}
-          </div>
+      <div className="flex items-center justify-between mb-6 flex-col sm:flex-row gap-4">
+        <div className="flex items-center gap-3">
+          {tenantInfo.balance > 0 ? (
+            <AlertTriangle className="h-8 w-8 text-red-600" />
+          ) : (
+            <CheckCircle className="h-8 w-8 text-green-600" />
+          )}
           <div>
-            <p className="text-sm text-gray-600 dark:text-gray-300">Current Balance</p>
-            <p className={`text-lg font-semibold ${tenantInfo.balance > 0 ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}`}>
-              KSh {tenantInfo.balance}
-            </p>
+            <dt className="text-sm text-gray-500">Current Balance</dt>
+            <dd
+              className={`text-xl font-semibold ${
+                tenantInfo.balance > 0 ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              Ksh {tenantInfo.balance}
+            </dd>
           </div>
         </div>
 
         {tenantInfo.balance > 0 && (
-          <button className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-            Pay Rent via M-Pesa
+          <button className="px-6 py-2 rounded-md bg-green-600 text-white text-lg font-medium hover:bg-green-700 transition w-full sm:w-auto">
+            Lipa Rent na M-Pesa
           </button>
         )}
       </div>
 
-      {/* Payments List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {payments.map((payment) => (
-          <div
-            key={payment.id}
-            className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm rounded-xl p-5 space-y-3"
-          >
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Date</p>
-              <p className="font-medium text-gray-800 dark:text-white">{payment.date}</p>
-            </div>
+      {payments.length === 0 ? (
+        <p className="text-center text-gray-500">No payment history available.</p>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {payments.map((payment) => {
+            const paymentDate = new Date(payment.timestamp).toLocaleDateString();
+            const paymentAmount =
+              payment.paidAmount !== undefined
+                ? `Ksh ${payment.paidAmount.toLocaleString()}`
+                : `Ksh ${payment.amount.toLocaleString()}`;
 
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Amount</p>
-              <p className="font-semibold text-lg text-gray-900 dark:text-white">{payment.amount}</p>
-            </div>
+            const statusClass =
+              payment.status === "success"
+                ? "text-green-600"
+                : payment.status === "pending"
+                ? "text-yellow-600"
+                : "text-red-600";
 
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
-              <p className={`font-medium ${payment.status === "Paid" ? "text-green-600" : "text-yellow-600"}`}>
-                {payment.status}
-              </p>
-            </div>
+            const displayStatus =
+              payment.status === "success"
+                ? "Paid"
+                : payment.status === "pending"
+                ? "Pending"
+                : "Failed";
 
-            <div>
-              {payment.status === "Paid" ? (
-                <button
-                  onClick={() => handleViewReceipt(payment.id)}
-                  className="text-sm text-primary-600 hover:underline"
-                >
-                  View Receipt
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleMakePayment(payment.id)}
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  Pay Now
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+            return (
+              <div
+                key={payment._id}
+                className="bg-white p-4 rounded-lg shadow-md flex flex-col justify-between"
+              >
+                <div>
+                  <p className="text-sm text-gray-500">Date</p>
+                  <p className="font-semibold mb-2 truncate">{paymentDate}</p>
+
+                  <p className="text-sm text-gray-500">Amount</p>
+                  <p className={`font-bold text-lg ${statusClass} truncate`}>
+                    {paymentAmount}
+                  </p>
+
+                  <p className="text-sm text-gray-500 mt-3">Status</p>
+                  <p className={`font-semibold ${statusClass} mb-3`}>{displayStatus}</p>
+                </div>
+
+                <div>
+                  {payment.status === "success" ? (
+                    <button
+                      onClick={() => setSelectedPayment(payment)}
+                      className="text-sm text-primary-600 hover:underline w-full text-center py-2 border border-primary-600 rounded-md"
+                    >
+                      View Receipt
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => alert("Redirecting to M-Pesa…")}
+                      className="text-sm text-blue-600 hover:underline w-full text-center py-2 border border-blue-600 rounded-md"
+                    >
+                      Pay Now
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {selectedPayment && tenantInfo && (
+        <ReceiptModal
+          payment={selectedPayment}
+          tenantInfo={tenantInfo}
+          onClose={() => setSelectedPayment(null)}
+        />
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default TenantPaymentsPage
+export default TenantPaymentsPage;

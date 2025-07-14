@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Mail, Phone, MapPin, Send, Clock } from "lucide-react"
+import ContactPageSEO from "../SEO/ContactPageSEO .js"
 
 const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -47,6 +48,7 @@ const ContactPage: React.FC = () => {
 
   return (
     <div className="pt-16 pb-12 bg-gradient-to-br from-gray-950 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+      <ContactPageSEO/>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">Contact Us</h1>
