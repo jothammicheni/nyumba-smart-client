@@ -13,7 +13,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "../../../components/ui/dialog.js"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select.js"
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select.js"
 import { Wrench, Calendar, MapPin, User, AlertCircle, ChevronRight } from "lucide-react"
 import { fetchLandlordMaintenanceRequests } from "../../../services/maintananceService.js"
 import ServiceProviderAssignment from "../../../components/service/ServiceProviderAssignment.js"
@@ -44,8 +44,11 @@ interface MaintenanceRequest {
   serviceType?: "plumbing" | "electrical" | "cleaning" | "security" | "wifi" | "other"
   assignedTo?: {
     _id: string
-    name: string
     services: string[]
+    userId: {
+      _id: string;
+      name: string;
+    };
   }
   notes: string
   createdAt: string
@@ -293,14 +296,15 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                               <div className="p-1.5 sm:p-2 rounded-full bg-primary-600/30 dark:bg-primary-600/30 flex-shrink-0">
                                 <User className="h-3 w-3 sm:h-4 sm:w-4 text-primary-600 dark:text-primary-600" />
                               </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="text-xs sm:text-sm text-gray-500">Assigned to</p>
-                                <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
-                                  {request.assignedTo.name}
+                              <div className="min-w-0 flex-1 space-y-1">
+                                <p className="text-xs sm:text-sm text-gray-500">Assigned to: </p>
+                                <p className="font-medium text-gray-700 text-xs truncate">
+                                  {request.assignedTo.userId?.name || "Not Specified"}
                                 </p>
-                                <p className="text-xs text-gray-500 mt-1 truncate">
-                                  Services: {request.assignedTo.services.join(", ") || "Not specified"}
-                                </p>
+                                {/* <p className="text-xs sm:text-sm text-gray-500">Services: </p>
+                                <p className="text-xs text-gray-600 mt-1 truncate">
+                                  {request.assignedTo.services.join(", ") || "Not specified"}
+                                </p> */}
                               </div>
                             </div>
                           )}
@@ -344,30 +348,19 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                       )}
 
                       {request.status === "assigned" && (
-                        <Select onValueChange={(value: string) => handleUpdateRequestState(request._id, value)}>
-                          <SelectTrigger className="w-full h-9 sm:h-10 text-sm">
-                            <SelectValue placeholder="Update status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="in_progress" className="text-gray-900 bg-green-600 mb-3">
-                              <div className="flex items-center gap-2">
-                                <span className="h-2 w-2 rounded-full bg-indigo-500"></span>
-                                Start Work
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="cancelled" className="text-gray-200 bg-red-600 mb-3">
-                              <div className="flex items-center gap-2">
-                                <span className="h-2 w-2 rounded-full bg-gray-500"></span>
-                                Cancel Request
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleUpdateRequestState(request._id, 'cancelled')}
+                          className="w-full h-9 sm:h-10 text-sm bg-red-600 hover:bg-red-700">
+                          Cancel Request
+                        </Button>
                       )}
 
                       <Button
                         variant="outline"
                         size="sm"
+                        disabled
                         className="w-full h-9 sm:h-10 text-sm"
                         onClick={() => {
                           window.location.href = `/properties/requests/${request._id}`

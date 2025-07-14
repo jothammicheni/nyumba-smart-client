@@ -56,8 +56,11 @@ interface MaintenanceRequest {
   serviceType?: "plumbing" | "electrical" | "cleaning" | "security" | "wifi" | "other"
   assignedTo?: {
     _id: string
-    name: string
     services: string[]
+    userId: {
+      _id: string;
+      name: string;
+    };
   }
   notes: string
   createdAt: string
