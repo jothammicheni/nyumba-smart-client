@@ -1,0 +1,7 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+// components/InitiatePaymentModal.tsx
+import { Loader2, Smartphone } from "lucide-react";
+const InitiatePaymentModal = ({ phoneNumber, onClose, onConfirm, loading = false, }) => {
+    return (_jsx("div", { className: "fixed inset-0 z-50 bg-black/50 flex items-center justify-center", children: _jsxs("div", { className: "bg-white dark:bg-gray-900 rounded-lg p-6 shadow-xl max-w-md w-full", children: [_jsx("h2", { className: "text-xl font-bold text-gray-900 dark:text-white mb-4", children: "Confirm Payment" }), _jsx("p", { className: "text-gray-600 dark:text-gray-300 mb-4", children: "An M-Pesa prompt will be sent to:" }), _jsxs("div", { className: "flex items-center bg-gray-100 dark:bg-gray-800 p-3 rounded-md mb-6", children: [_jsx(Smartphone, { className: "text-primary-600 w-5 h-5 mr-2" }), _jsx("span", { className: "text-gray-800 dark:text-white", children: phoneNumber })] }), _jsxs("div", { className: "flex justify-end space-x-3", children: [_jsx("button", { onClick: onClose, disabled: loading, className: "px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white rounded hover:bg-gray-300", children: "Cancel" }), _jsxs("button", { onClick: onConfirm, disabled: loading, className: "px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 flex items-center", children: [loading && _jsx(Loader2, { className: "animate-spin w-4 h-4 mr-2" }), "Confirm & Pay"] })] })] }) }));
+};
+export default InitiatePaymentModal;

@@ -19,7 +19,7 @@ const UpcomingPayments = () => {
 
   return (
     <>
-      <div className="bg-white dark:bg-transparent shadow-lg rounded-lg">
+      <div className="bg-white dark:bg-gray-950/50 shadow-md rounded-lg">
         <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-primary-600/20 rounded">
           <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Upcoming Payments</h3>
         </div>
