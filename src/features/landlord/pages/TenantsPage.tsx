@@ -10,16 +10,35 @@ import RentPaymentModal from "../components/TenantModals/RentPaymentModal.js"
 import ConfirmPaymentModal from "../components/TenantModals/ConfirmPaymentModal.js"
 import axios from "axios"
 import { getAuthHeaders } from "../../../services/authService.js"
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 interface Tenant {
   _id: string
   user_id: string
   room_id: string
-  user: { _id: string; name: string; email: string; phone?: string }
-  room: { _id: string; room_number: string; property_id: string }
-  lease?: { balance: number; leaseStart?: string; leaseEnd?: string; dueDate?: number } | null
-  payment?: { status: string; amount: number; timestamp: string } | null
+  user: { 
+    _id: string 
+    name: string 
+    email: string 
+    phone?: string 
+  }
+  room: { 
+    _id: string 
+    room_number: string 
+    property_id: string 
+  }
+  lease?: { 
+    balance: number 
+    leaseStart?: string 
+    leaseEnd?: string 
+    dueDate?: number 
+  } | null
+  payment?: { 
+    status: string 
+    amount: number 
+    timestamp: string 
+  } | null
   lease_status: string
   join_date: string
 }
@@ -32,10 +51,8 @@ const TenantsPage: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null)
   const [isActionsModalOpen, setIsActionsModalOpen] = useState(false)
-
   const [isRentPaymentOpen, setIsRentPaymentOpen] = useState(false)
   const [paymentTenant, setPaymentTenant] = useState<Tenant | null>(null)
-
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [confirmData, setConfirmData] = useState<{
     tenant: Tenant
@@ -49,9 +66,11 @@ const TenantsPage: React.FC = () => {
     setError("")
     try {
       const response = await getTenants()
-      setTenants(response.data)
+      setTenants(response.data || [])
     } catch (err: any) {
-      setError(err.response?.data?.error || "Failed to fetch tenants")
+      const errorMsg = err.response?.data?.error || "Failed to fetch tenants"
+      setError(errorMsg)
+      toast.error(errorMsg)
     } finally {
       setLoading(false)
     }
@@ -61,20 +80,40 @@ const TenantsPage: React.FC = () => {
     fetchTenants()
   }, [])
 
-  const filteredTenants = tenants.filter(
-    (tenant) =>
-      tenant.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tenant.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tenant.room.room_number.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredTenants = tenants.filter((tenant) => {
+    if (!tenant?.user || !tenant?.room) return false
+    
+    const searchLower = searchTerm.toLowerCase()
+    const nameMatch = tenant.user.name?.toLowerCase().includes(searchLower) ?? false
+    const emailMatch = tenant.user.email?.toLowerCase().includes(searchLower) ?? false
+    const roomMatch = tenant.room.room_number?.toLowerCase().includes(searchLower) ?? false
+    
+    return nameMatch || emailMatch || roomMatch
+  })
 
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A"
+    try {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      })
+    } catch {
+      return "Invalid date"
+    }
+  }
 
-  const formatCurrency = (amount: number) =>
-    amount.toLocaleString("en-US", { style: "currency", currency: "USD" })
+  const formatCurrency = (amount?: number) => {
+    if (amount === undefined || amount === null) return "$0.00"
+    return amount.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD"
+    })
+  }
 
   const openRentPayment = (tenant: Tenant) => {
+    if (!tenant) return
     setPaymentTenant(tenant)
     setIsRentPaymentOpen(true)
   }
@@ -82,48 +121,47 @@ const TenantsPage: React.FC = () => {
   const handleRentPaymentSubmit = (amount: number, method: string, mpesaCode?: string) => {
     if (!paymentTenant) return
     setIsRentPaymentOpen(false)
-    setConfirmData({ tenant: paymentTenant, amount, method, mpesaCode })
+    setConfirmData({ 
+      tenant: paymentTenant, 
+      amount, 
+      method, 
+      mpesaCode 
+    })
     setIsConfirmOpen(true)
   }
 
-const handleConfirmPayment = async () => {
-  if (!confirmData) return;
-  const { tenant, amount, method, mpesaCode } = confirmData;
-  console.log("Confirming payment for tenant:", tenant.user._id, "Amount:", amount, "Method:", method, "Mpesa Code:", mpesaCode);
-  try {
-    const res = await axios.post(
-      "http://localhost:5000/api/payment/update",
-      {
-        tenantId: tenant.user._id,
-        roomId: tenant.room._id,
-        propertyId: tenant.room.property_id,
-        amount,
-        method,
-        mpesa_code: mpesaCode,
-      },
-      {
-        headers: getAuthHeaders(),
-      }
-    );
+  const handleConfirmPayment = async () => {
+    if (!confirmData?.tenant) {
+      toast.error("Invalid payment data")
+      return
+    }
+    
+    const { tenant, amount, method, mpesaCode } = confirmData
+    
+    try {
+      await axios.post(
+        "http://localhost:5000/api/payment/update",
+        {
+          tenantId: tenant.user._id,
+          roomId: tenant.room._id,
+          propertyId: tenant.room.property_id,
+          amount,
+          method,
+          mpesa_code: mpesaCode,
+        },
+        { headers: getAuthHeaders() }
+      )
 
-    console.log(res);
-
-    // Show success toast
-    toast.success("Payment confirmed successfully!");
-
-    // Reset state and refresh data
-    setIsConfirmOpen(false);
-    setConfirmData(null);
-    setPaymentTenant(null);
-    await fetchTenants();
-  } catch (err: any) {
-    console.error("Payment failed:", err.response?.data || err.message);
-
-    // Show error toast
-    toast.error("Payment failed: " + (err.response?.data?.error || err.message));
+      toast.success("Payment confirmed successfully!")
+      setIsConfirmOpen(false)
+      setConfirmData(null)
+      setPaymentTenant(null)
+      await fetchTenants()
+    } catch (err: any) {
+      console.error("Payment failed:", err)
+      toast.error("Payment failed: " + (err.response?.data?.error || err.message))
+    }
   }
-};
-
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
@@ -156,7 +194,11 @@ const handleConfirmPayment = async () => {
         </button>
       </div>
 
-      {error && <div className="p-4 bg-red-100 text-red-700 rounded mb-4">{error}</div>}
+      {error && (
+        <div className="p-4 bg-red-100 text-red-700 rounded mb-4">
+          {error}
+        </div>
+      )}
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
         {loading ? (
@@ -166,7 +208,9 @@ const handleConfirmPayment = async () => {
         ) : filteredTenants.length === 0 ? (
           <div className="p-6 text-center">
             <Users className="h-12 w-12 mx-auto text-gray-400" />
-            <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">No tenants found</h3>
+            <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
+              No tenants found
+            </h3>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               {searchTerm ? "Try adjusting your search terms" : "You don't have any tenants yet"}
             </p>
@@ -186,7 +230,11 @@ const handleConfirmPayment = async () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredTenants.map((tenant) => {
+                  if (!tenant?.user || !tenant?.room) return null
+                  
                   const isPaid = tenant.lease?.balance === 0
+                  const balance = tenant.lease?.balance ?? 0
+                  
                   return (
                     <tr key={tenant._id}>
                       <td className="px-4 py-3">
@@ -195,18 +243,30 @@ const handleConfirmPayment = async () => {
                             <User className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                           </div>
                           <div>
-                            <div className="text-sm font-medium">{tenant.user.name}</div>
-                            <div className="text-xs text-gray-500">{tenant.user.email}</div>
-                            {tenant.user.phone && <div className="text-xs text-gray-500">{tenant.user.phone}</div>}
+                            <div className="text-sm font-medium">
+                              {tenant.user.name || "N/A"}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {tenant.user.email || "N/A"}
+                            </div>
+                            {tenant.user.phone && (
+                              <div className="text-xs text-gray-500">
+                                {tenant.user.phone}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm">
                         {isPaid ? (
-                          <span className="text-green-700 bg-green-100 px-2 py-1 rounded text-xs font-semibold">Paid</span>
+                          <span className="text-green-700 bg-green-100 px-2 py-1 rounded text-xs font-semibold">
+                            Paid
+                          </span>
                         ) : (
                           <>
-                            <span className="text-red-700 bg-red-100 px-2 py-1 rounded text-xs font-semibold">Pending</span>
+                            <span className="text-red-700 bg-red-100 px-2 py-1 rounded text-xs font-semibold">
+                              Pending
+                            </span>
                             <button
                               className="ml-3 text-primary-600 underline text-xs hover:text-primary-700"
                               onClick={() => openRentPayment(tenant)}
@@ -216,9 +276,15 @@ const handleConfirmPayment = async () => {
                           </>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-sm">{formatCurrency(tenant.lease?.balance || 0)}</td>
-                      <td className="px-4 py-3 text-sm">{tenant.lease_status}</td>
-                      <td className="px-4 py-3 text-sm">{formatDate(tenant.join_date)}</td>
+                      <td className="px-4 py-3 text-sm">
+                        {formatCurrency(balance)}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {tenant.lease_status || "N/A"}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {formatDate(tenant.join_date)}
+                      </td>
                       <td className="px-4 py-3 text-sm">
                         <button
                           onClick={() => {
@@ -240,13 +306,51 @@ const handleConfirmPayment = async () => {
       </div>
 
       {/* Modals */}
-<AddTenantModal
-  isOpen={isAddModalOpen}
-  onClose={() => setIsAddModalOpen(false)}
-  onSuccess={() => {}}
-/>      <TenantActionsModal open={isActionsModalOpen} onClose={() => setIsActionsModalOpen(false)} tenant={selectedTenant} />
-      <RentPaymentModal open={isRentPaymentOpen} onClose={() => setIsRentPaymentOpen(false)} tenant={paymentTenant} onSubmit={handleRentPaymentSubmit} />
-      <ConfirmPaymentModal open={isConfirmOpen} onClose={() => setIsConfirmOpen(false)} confirmData={confirmData} onConfirm={handleConfirmPayment} />
+      <AddTenantModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={fetchTenants}
+      />
+
+      {selectedTenant && (
+        <TenantActionsModal
+          isOpen={isActionsModalOpen}
+          onClose={() => setIsActionsModalOpen(false)}
+          tenant={selectedTenant}
+          onEdit={() => {
+            // Implement edit functionality
+            setIsActionsModalOpen(false)
+            toast.info("Edit functionality coming soon")
+          }}
+          onDelete={async () => {
+            // Implement delete functionality
+            setIsActionsModalOpen(false)
+            toast.info("Delete functionality coming soon")
+          }}
+          onMarkPaid={() => {
+            setIsActionsModalOpen(false)
+            openRentPayment(selectedTenant)
+          }}
+        />
+      )}
+
+      {paymentTenant && (
+        <RentPaymentModal
+          open={isRentPaymentOpen}
+          onClose={() => setIsRentPaymentOpen(false)}
+          tenant={paymentTenant}
+          onSubmit={handleRentPaymentSubmit}
+        />
+      )}
+
+      {confirmData && (
+        <ConfirmPaymentModal 
+          open={isConfirmOpen}
+          onClose={() => setIsConfirmOpen(false)}
+          confirmData={confirmData}
+          onConfirm={handleConfirmPayment}
+        />
+      )}
     </div>
   )
 }

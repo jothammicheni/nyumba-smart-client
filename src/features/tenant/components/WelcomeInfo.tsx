@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { getAuthHeaders } from "../../../services/authService.js";
+import { Loader } from "../../../components/Loader.js";
 
 function WelcomeInfo() {
   const [tenantInfo, setTenantInfo] = useState<any>(null);
@@ -27,41 +28,6 @@ function WelcomeInfo() {
 
     fetchTenantInfo();
   }, []);
-
-  // const initiatePayment = async () => {
-  //   if (!phone) {
-  //     setMessage({ type: "error", text: "Please enter your phone number" });
-  //     return;
-  //   }
-
-  //   setPaying(true);
-  //   setMessage(null);
-
-  //   try {
-  //     const response = await axios.post(
-  //       "https://nyumba-smart-server.onrender.com/api/payment/pay",
-  //       {
-  //         sender_id: tenantInfo._id,
-  //         phone,
-  //         amount: tenantInfo.amountDue || 100, // fallback if no due amount
-  //       },
-  //       {
-  //         headers: getAuthHeaders(),
-  //       }
-  //     );
-  //     console.log(response)
-  //     setMessage({ type: "success", text: "STK push sent. Check your phone to complete payment." });
-  //     setShowModal(false);
-  //     setPhone("");
-  //   } catch (error: any) {
-  //     setMessage({
-  //       type: "error",
-  //       text: error.response?.data?.error || "Payment initiation failed.",
-  //     });
-  //   } finally {
-  //     setPaying(false);
-  //   }
-  // };
 
 const initiatePayment = async () => {
   // Check if the phone number is provided
@@ -166,29 +132,26 @@ const initiatePayment = async () => {
 };
 
 
-
-
-  if (loading) return <div className="text-center p-4">Loading...</div>;
+  if (loading) return <Loader />
   if (!tenantInfo) return <div className="text-center p-4">No tenant information available.</div>;
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow">
+    <div className="bg-white dark:bg-gray-950/50 shadow">
       <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
         <div className="py-6 md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
-              Hi, {tenantInfo.tenantName}
+              Welcome, {tenantInfo.tenantName}
             </h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {tenantInfo.propertyName} - {tenantInfo.roomNumber}
+            <p className="mt-1 text-base text-gray-500 dark:text-gray-400">
+            <span className="italic text-sm text-gray-600">Apartment: </span> {tenantInfo.propertyName} - <span className="italic text-sm text-gray-600">Room: </span> {tenantInfo.roomNumber}
             </p>
           </div>
           <div className="mt-4 flex md:mt-0 md:ml-4">
             <button
               type="button"
               onClick={() => setShowModal(true)}
-              className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-            >
+              className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
               Pay Rent
             </button>
           </div>

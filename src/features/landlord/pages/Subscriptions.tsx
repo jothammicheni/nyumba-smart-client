@@ -8,11 +8,7 @@ import {
   Gem,
   Crown,
   BadgeCheck,
-  X,
-  Check,
   Clock,
-  Smartphone,
-  ArrowRight,
 } from "lucide-react";
 import {
   createSubscription,

@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import type React from "react"
 import { useState, useEffect } from "react"
 import { Eye, EyeOff, CheckCircle, XCircle, Loader2 } from "lucide-react"
-import { useTheme } from "../../../components/ThemeProvider"
-import { useAuth } from "../../../context/AuthContext"
+import { useTheme } from "../../../components/ThemeProvider.js"
+import { useAuth } from "../../../context/AuthContext.js"
 import { useNavigate } from "react-router-dom"
 
 type UserRole = "landlord" | "tenant" | "agent" | "service-provider"

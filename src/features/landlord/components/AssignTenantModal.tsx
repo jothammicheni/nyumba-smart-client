@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import type React from "react"
 import { useState, useEffect } from "react"
 import { X, Search } from "lucide-react"
-import { getAvailableTenants } from "../../../services/propertyService"
+import { getAvailableTenants } from "../../../services/propertyService.js"
 
 interface User {
   _id: string
@@ -19,7 +20,7 @@ interface AssignTenantModalProps {
   roomId: string
 }
 
-const AssignTenantModal: React.FC<AssignTenantModalProps> = ({ isOpen, onClose, onSubmit, roomId }) => {
+const AssignTenantModal: React.FC<AssignTenantModalProps> = ({ isOpen, onClose, onSubmit }) => {
   const [availableTenants, setAvailableTenants] = useState<User[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")

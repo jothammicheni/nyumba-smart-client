@@ -18,52 +18,52 @@ const announcements = [
 ]
 
 const Announcements = () => {
- const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     })
   }
-    
+
   return (
-  <>
-    <div className="mt-8">
-                <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
-                  <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Announcements</h3>
-                  </div>
-                  <div className="px-4 py-5 sm:p-6">
-                    <div className="flow-root">
-                      <ul className="-my-5 divide-y divide-gray-200 dark:divide-gray-700">
-                        {announcements.map((announcement) => (
-                          <li key={announcement.id} className="py-4">
-                            <div className="flex items-start space-x-4">
-                              <div className="flex-shrink-0 pt-1">
-                                <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-                                  <Bell className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                                </div>
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex justify-between">
-                                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                    {announcement.title}
-                                  </p>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {formatDate(announcement.date)}
-                                  </p>
-                                </div>
-                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{announcement.message}</p>
-                              </div>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
+    <>
+      <div className="mt-8">
+        <div className="bg-white dark:bg-gray-950/50 shadow rounded-lg">
+          <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-primary-600/20">
+            <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Announcements</h3>
+          </div>
+          <div className="px-4 py-5 sm:p-6">
+            <div className="flow-root">
+              <ul className="-my-5 divide-y divide-gray-200 dark:divide-primary-600/10">
+                {announcements.map((announcement) => (
+                  <li key={announcement.id} className="py-4">
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 pt-1">
+                        <div className="w-12 h-12 bg-primary-600/30 dark:bg-primary-600/30 rounded-full flex items-center justify-center mr-4">
+                          <Bell className="w-6 h-6 text-primary-600 dark:text-primary-600" />
+                        </div>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex justify-between">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {announcement.title}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {formatDate(announcement.date)}
+                          </p>
+                        </div>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{announcement.message}</p>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-  </>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 

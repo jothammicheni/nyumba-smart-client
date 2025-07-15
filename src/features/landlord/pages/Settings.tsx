@@ -126,6 +126,7 @@ const Settings: React.FC = () => {
     setPaymentPhoneError("")
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const togglePasswordVisibility = (field: "old" | "new" | "confirm") => {
     setShowPasswords((prev) => ({
       ...prev,

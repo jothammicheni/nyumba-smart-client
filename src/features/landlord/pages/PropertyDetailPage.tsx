@@ -23,6 +23,7 @@ import {
 import AddRoomModal from "../components/AddRoomModal.js";
 import AssignTenantModal from "../components/AssignTenantModal.js";
 import AdvertisePropertyModal from "../components/AdvertisePropertyModal.js";
+import { Loader } from "../../../components/Loader.js";
 
 interface Room {
   _id: string;
@@ -136,13 +137,7 @@ const PropertyDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
+  if (loading) return <div><Loader/></div>
 
   if (error) {
     return (

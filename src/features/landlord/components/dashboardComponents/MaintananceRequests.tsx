@@ -41,8 +41,8 @@ const MaintenanceRequests: React.FC = () => {
   }, []);
   return (
     <>
-      <div className="bg-white/30 dark:bg-transparent shadow rounded-lg">
-        <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-950/50 shadow rounded-lg">
+        <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-primary-600/20">
           <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
             Maintenance Requests
           </h3>
@@ -97,7 +97,7 @@ const MaintenanceRequests: React.FC = () => {
           <div className="mt-6">
             <a
               href="/landlord/dashboard/maintenance"
-              className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+              className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-700 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-900">
               View all
             </a>
           </div>

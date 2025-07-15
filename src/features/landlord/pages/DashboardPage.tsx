@@ -4,7 +4,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import {  Plus} from "lucide-react"
+import { Plus } from "lucide-react"
 
 import PropertyOverview from "../components/dashboardComponents/PropertyOverview.js"
 import FinancialOverview from "../components/dashboardComponents/FinancialOverview.js"
@@ -15,7 +15,7 @@ import MaintenanceRequests from "../components/dashboardComponents/MaintananceRe
 const LandlordDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-     
+
       {/* Main content */}
       <div className=" flex flex-col flex-1">
         {/* Main content area */}
@@ -50,24 +50,15 @@ const LandlordDashboard: React.FC = () => {
           <div className="mt-8">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               {/* Stats cards */}
-              <PropertyOverview/>
+              <PropertyOverview />
 
               {/* Financial stats */}
-            <FinancialOverview/>
-     
-              {/* Recent Activity and Upcoming Payments */}
-              <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
-                {/* Recent Activity */}
-                <RecentActivity/>
+              <FinancialOverview />
 
-                {/* Upcoming Payments */}
-               <UpcomingPayments/> 
-              </div>
-
-               <div className="mt-8">
+              <div className="mt-8">
                 {/* mantanance claims */}
-               <MaintenanceRequests/>
-               </div>
+                <MaintenanceRequests />
+              </div>
 
             </div>
           </div>

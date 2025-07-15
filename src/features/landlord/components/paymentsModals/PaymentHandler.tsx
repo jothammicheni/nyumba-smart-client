@@ -1,7 +1,7 @@
 import { useState } from "react"
 import InitiatePaymentModal from "./InitiatePaymentModal.js"
 import ConfirmPaymentModal from "./ConfirmPaymentModal.js"
-import PaymentResultModal from "./PaymentResultModal.js"
+import PaymentResultModal from "./PaymentRequestModal.js"
 
 const PaymentHandler = () => {
   const [showInitiate, setShowInitiate] = useState(false)
@@ -28,7 +28,7 @@ const PaymentHandler = () => {
         success,
         message: success ? "Your subscription has been activated." : "Payment failed. Try again later.",
       })
-    } catch (err) {
+    } catch {
       setPaymentResult({ success: false, message: "Something went wrong." })
     } finally {
       setShowConfirm(false)

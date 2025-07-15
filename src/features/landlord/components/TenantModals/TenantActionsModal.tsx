@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// components/TenantActionsModal.tsx
 import React, { Fragment } from "react"
 import { Dialog, Transition } from "@headlessui/react"
 import { Pencil, Trash, CheckCircle } from "lucide-react"

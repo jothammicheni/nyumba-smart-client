@@ -22,6 +22,7 @@ import ListingStatsModal from "../components/ListingStatsModal.js"
 import ImageManagementModal from "../components/ImageManagementModal.js"
 import { getAuthHeaders } from "../../../services/authService.js"
 import axios from "axios"
+import { Loader } from "../../../components/Loader.js"
 
 const AdvertiseRooms = () => {
   const [listings, setListings] = useState<Property[]>([])
@@ -145,18 +146,7 @@ const AdvertiseRooms = () => {
     })
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950/60 pt-20 pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center py-16">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading your listings...</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  if (loading) return <div><Loader/></div>
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950/60 pt-20 pb-12">

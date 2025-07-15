@@ -1,5 +1,5 @@
 import React from 'react';
-import CookiesSEO from '../../SEO/CookiesSEO.js';
+import CookiesSEO from '../../SEO/CookiesPageSEO.js'; // Adjust the import path as necessary
 
 const Cookies = () => {
   return (

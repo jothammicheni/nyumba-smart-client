@@ -22,12 +22,11 @@ const FinancialOverview = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchStats = async () => {      try {
-
+    const fetchStats = async () => {
+      try {
         const response = await axios.get("http://localhost:5000/api/landlord/financeStats", {
-          headers:getAuthHeaders(),
+          headers: getAuthHeaders(),
         })
-
         setFinancialStats(response.data.financialStats)
         setPropertyStats(response.data.propertyStats)
       } catch (error) {
@@ -36,7 +35,6 @@ const FinancialOverview = () => {
         setLoading(false)
       }
     }
-
     fetchStats()
   }, [])
 
@@ -50,34 +48,34 @@ const FinancialOverview = () => {
 
   return (
     <>
-      <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white mt-8 mb-4">
+      <h3 className="text-base sm:text-lg leading-6 font-medium text-gray-900 dark:text-white mt-4 sm:mt-6 md:mt-8 mb-2 sm:mb-3 md:mb-4">
         Financial Overview
       </h3>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 xs:grid-cols-2 sm:gap-4 md:gap-5 lg:grid-cols-4">
         {/* Total Revenue */}
         <StatCard
-          icon={<DollarSign className="h-6 w-6 text-gray-400" />}
+          icon={<DollarSign className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />}
           title="Total Expected Rent"
           value={formatCurrency(financialStats.totalRevenue)}
         />
 
         {/* Paid Rent */}
         <StatCard
-          icon={<CreditCard className="h-6 w-6 text-gray-400" />}
+          icon={<CreditCard className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-600" />}
           title="Paid Rent"
           value={formatCurrency(financialStats.paidRent)}
         />
 
         {/* Pending Rent */}
         <StatCard
-          icon={<AlertTriangle className="h-6 w-6 text-red-400" />}
+          icon={<AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-red-500" />}
           title="Pending Rent"
           value={formatCurrency(financialStats.pendingRent)}
         />
 
         {/* Occupancy Rate */}
         <StatCard
-          icon={<Percent className="h-6 w-6 text-gray-400" />}
+          icon={<Percent className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-purple-500" />}
           title="Occupancy Rate"
           value={loading ? "..." : `${propertyStats.occupancyRate}%`}
         />
@@ -95,17 +93,17 @@ const StatCard = ({
   title: string
   value: string | number
 }) => (
-  <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-    <div className="p-5">
+  <div className="bg-white dark:bg-gray-950/50 overflow-hidden shadow-md rounded-lg hover:shadow-lg transition-shadow duration-200">
+    <div className="p-3 sm:p-4 md:p-5">
       <div className="flex items-center">
         <div className="flex-shrink-0">{icon}</div>
-        <div className="ml-5 w-0 flex-1">
+        <div className="ml-3 sm:ml-4 md:ml-5 w-0 flex-1 min-w-0">
           <dl>
-            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+            <dt className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
               {title}
             </dt>
             <dd>
-              <div className="text-lg font-medium text-gray-900 dark:text-white">
+              <div className="text-base sm:text-lg font-medium text-gray-900 dark:text-white truncate">
                 {value}
               </div>
             </dd>

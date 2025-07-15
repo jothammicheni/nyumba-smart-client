@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import React, { useEffect, useState } from "react"
@@ -38,6 +39,7 @@ const PropertyDetailsPage = () => {
     if (id) fetchListing()
   }, [id])
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleClick = async (action: string) => {
     if (property?._id) {
       await trackClick(property._id)

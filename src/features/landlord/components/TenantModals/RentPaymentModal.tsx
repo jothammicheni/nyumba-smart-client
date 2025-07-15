@@ -1,12 +1,27 @@
 import React, { useState, useEffect } from "react"
 
+// interface Tenant {
+//   _id: string
+//   room_id: string
+//   property_id: string
+//   user: { name: string }
+//   lease?: { balance: number } | null
+// }
 interface Tenant {
   _id: string
-  room_id: string
-  property_id: string
-  user: { name: string }
-  lease?: { balance: number } | null
+  room: {
+    _id: string
+    room_number: string
+    property_id: string
+  }
+  user: {
+    name: string
+  }
+  lease?: {
+    balance: number
+  } | null
 }
+
 
 interface Props {
   open: boolean

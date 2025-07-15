@@ -7,14 +7,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select.js'
 import { Badge } from '../ui/badge.js'
 import { Input } from '../ui/input.js'
-import { Star, MapPin, Phone, Mail, CheckCircle } from 'lucide-react'
+import { Star, MapPin, Phone, Mail, CheckCircle, XCircle } from 'lucide-react'
 import axios from 'axios'
 import { getAuthHeaders } from '../../services/authService.js'
+import { Toaster, toast } from 'sonner'
+import React from 'react'
 
 interface ServiceProvider {
   _id: string
   userId: string | null
-  user?: { 
+  user?: {
     _id: string
     name: string
     email: string
@@ -40,12 +42,13 @@ interface MaintenanceRequest {
     email: string
     phone: string
   }
+  property: {
+    _id: string
+    name: string
+    address?: string
+  }
   room: {
-    property_id: {
-      _id: string
-      name: string
-      address?: string
-    }
+    _id: string
   }
   description: string
   status: "pending" | "assigned" | "in_progress" | "completed" | "cancelled"
@@ -53,8 +56,11 @@ interface MaintenanceRequest {
   serviceType?: "plumbing" | "electrical" | "cleaning" | "security" | "wifi" | "other"
   assignedTo?: {
     _id: string
-    name: string
     services: string[]
+    userId: {
+      _id: string;
+      name: string;
+    };
   }
   notes: string
   createdAt: string
@@ -118,41 +124,38 @@ export default function ServiceProviderAssignment({ maintenanceRequest, onAssign
   const searchProviders = useCallback(async () => {
     setLoading(true)
     try {
-      const queryParams = new URLSearchParams()
-      if (searchFilters.city) queryParams.append('city', searchFilters.city)
-      if (searchFilters.serviceType) queryParams.append('serviceType', searchFilters.serviceType)
-      queryParams.append('isActive', 'true')
+      const queryParams = new URLSearchParams({
+        // isActive: 'true',
+        ...(searchFilters.city && { city: searchFilters.city }),
+        ...(searchFilters.serviceType && { serviceType: searchFilters.serviceType }),
+      })
 
-      const response = await axios.get('http://localhost:5000/api/provider-service/search',
+      const response = await axios.get(`http://localhost:5000/api/provider-service/search${queryParams.toString()}`,
         { headers: getAuthHeaders() }
       )
       if (response.data.success && Array.isArray(response.data.providers)) {
-        setProviders(response.data.providers)
+        setProviders(response.data.providers.filter((provider: ServiceProvider) =>
+          provider.isActive && provider.services.includes(serviceType)
+        ))
       } else {
-        console.error('Search failed:', response.data.error || 'Unexpected response format')
+        toast.error(response.data.error || 'Failed to fetch service providers')
       }
-
     } catch (error) {
       console.error('Failed to search providers:', error)
     } finally {
       setLoading(false)
     }
-  }, [searchFilters])
+  }, [searchFilters, serviceType])
 
   useEffect(() => {
     searchProviders()
   }, [searchFilters, searchProviders])
 
-  // const handleAssign = () => {
-  //   if (selectedProvider && serviceType) {
-  //     onAssign(maintenanceRequest._id, selectedProvider._id, serviceType)
-  //   }
-  // }
   const handleAssign = async () => {
     if (!selectedProvider || !serviceType) {
+      toast.error('Please select a provider and service type')
       return
     }
-
     setLoading(true)
     try {
       onAssign(selectedProvider._id, serviceType, notes)
@@ -164,10 +167,10 @@ export default function ServiceProviderAssignment({ maintenanceRequest, onAssign
   }
 
   return (
-    <div className='h-[85vh] flex flex-col space-y-4 overflow-y-auto'>
-      {/* Request Details */}
+    <div className='h-[85vh] flex flex-col space-y-4'>
+      <Toaster position='top-right' richColors />
       <div className='flex-shrink-0'>
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+        <div className='grid grid-cols-1 lg:grid-cols-1 gap-4'>
           <Card className='h-fit'>
             <CardHeader className='pb-3'>
               <CardTitle className='text-lg'>Request Details</CardTitle>
@@ -179,7 +182,7 @@ export default function ServiceProviderAssignment({ maintenanceRequest, onAssign
               </div>
               <div className='flex items-center justify-between'>
                 <strong className='text-muted-foreground'>Property:</strong>
-                <span className='font-medium truncate ml-2'>{maintenanceRequest.room.property_id.name}</span>
+                {/* <span className='font-medium truncate ml-2'>{maintenanceRequest.property.name}</span> */}
               </div>
               <div className='space-y-1'>
                 <strong className='text-muted-foreground'>Issue:</strong>
@@ -257,7 +260,7 @@ export default function ServiceProviderAssignment({ maintenanceRequest, onAssign
       </div>
 
       {/* main content */}
-      <div className='flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-0'>
+      <div className='flex-1 grid grid-cols-1 lg:grid-cols-1 gap-4 min-h-0'>
         {/* Service Providers List */}
         <div className='lg:col-span-2'>
           <Card className='h-full flex flex-col'>
@@ -367,7 +370,7 @@ export default function ServiceProviderAssignment({ maintenanceRequest, onAssign
                   <h4 className='font-medium text-sm mb-2'>Selected Provider</h4>
                   <div className='space-y-1 text-xs'>
                     <div className='flex items-center gap-1'>
-                      <span className='font-medium'>{selectedProvider.user?.name || 'Unknown'}</span>
+                      <span className='font-medium'>{selectedProvider.user?.name}</span>
                       {selectedProvider.user?.isVerified && (
                         <CheckCircle className='h-3 w-3 text-green-500' />
                       )}
@@ -386,30 +389,50 @@ export default function ServiceProviderAssignment({ maintenanceRequest, onAssign
                 </div>
               )}
 
-              {/* Notes */}
-              <div className='flex-1'>
-                <label className='text-sm font-medium text-muted-foreground'>Additional Notes (Optional)</label>
+              {/* Notes Section */}
+              <div className="space-y-2 pt-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Additional Notes <span className="text-gray-400">(Optional)</span>
+                </label>
                 <textarea
-                  className='mt-1 resize-none text-gray-900'
-                  placeholder='Add special instructions...'
+                  className="block w-full rounded-md text-gray-900 border border-gray-300 dark:border-gray-700 dark:bg-slate-100 shadow-sm focus:border-primary-600 focus:ring-primary-600 sm:text-sm p-3 transition"
+                  placeholder="Add special instructions or details here..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={5}
                 />
+                <p className="text-xs text-gray-500">
+                  Any specific requirements or details for the service provider
+                </p>
               </div>
 
               {/* Action Buttons */}
-              <div className='space-y-2'>
-                <Button
-                variant='outline'
+              <div className="mt-6 space-y-3">
+                <button
                   onClick={handleAssign}
                   disabled={!selectedProvider || !serviceType}
-                  className='w-full bg-primary-600'>
-                  Assign Service Provider
-                </Button>
-                <Button variant='outline' onClick={onCancel} className='w-full'>
+                  className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${!selectedProvider || !serviceType
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                    } transition-colors duration-200`}
+                >
+                  {!selectedProvider || !serviceType ? (
+                    'Select provider and service type'
+                  ) : (
+                    <>
+                      <CheckCircle className="h-5 w-5 mr-2" />
+                      Assign Service Provider
+                    </>
+                  )}
+                </button>
+
+                <button
+                  onClick={onCancel}
+                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200"
+                >
+                  <XCircle className="h-5 w-5 mr-2" />
                   Cancel
-                </Button>
+                </button>
               </div>
             </CardContent>
           </Card>

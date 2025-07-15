@@ -1,6 +1,6 @@
 import type React from "react"
 import { useState } from "react"
-import { Home, DollarSign, Settings, Bell, Menu, X, LogOut, UserPlus, Search } from "lucide-react"
+import { Home, DollarSign, Settings, Bell, Menu, X, LogOut, UserPlus } from "lucide-react"
 import { useTheme } from "../../../components/ThemeProvider.js"
 import { useAuth } from "../../../context/AuthContext.js"
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom"
@@ -25,7 +25,7 @@ export const ServicetDashboardLayout: React.FC = () => {
             (path === '' && currentPath === '/agent/dashboard') ||
             (path !== '' && currentPath.startsWith(`/agent/dashboard/${normalizedPath}`))
             ? "bg-primary-600 text-white"
-            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700";
+            : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-primary-600/20";
     }
 
     const handleNavClick = () => {
@@ -33,12 +33,12 @@ export const ServicetDashboardLayout: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
             {/* Mobile sidebar */}
             <div className={`fixed inset-0 z-40 lg:hidden ${sidebarOpen ? "block" : "hidden"}`}>
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)}></div>
-                <div className="fixed inset-y-0 left-0 flex flex-col w-64 max-w-xs bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="fixed inset-y-0 left-0 flex flex-col w-64 max-w-xs bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-primary-600/20">
+                    <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-primary-600/20">
                         <div className="flex items-center">
                             <span className="text-xl font-bold text-primary-600 dark:text-primary-500">NyumbaSmart</span>
                         </div>
@@ -50,7 +50,7 @@ export const ServicetDashboardLayout: React.FC = () => {
                         </button>
                     </div>
                     <div className="flex-1 overflow-y-auto">
-                        <nav className="px-2 py-4 space-y-1">
+                        <nav className="px-2 py-4 space-y-5">
                             <Link
                                 to=""
                                 onClick={handleNavClick}
@@ -79,7 +79,7 @@ export const ServicetDashboardLayout: React.FC = () => {
                             </Link>
                         </nav>
                     </div>
-                    <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="p-4 border-t border-gray-200 dark:border-primary-600/20">
                         <button
                             onClick={handleLogout}
                             className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500">
@@ -92,12 +92,12 @@ export const ServicetDashboardLayout: React.FC = () => {
 
             {/* Desktop sidebar */}
             <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-                <div className="flex flex-col flex-1 min-h-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col flex-1 min-h-0 bg-white dark:bg-gray-950/50 border-r border-gray-200 dark:border-primary-600/20">
+                    <div className="flex items-center h-16 px-4 border-b border-gray-200 dark:border-primary-600/10">
                         <span className="text-xl font-bold text-primary-600 dark:text-primary-500">NyumbaSmart</span>
                     </div>
                     <div className="flex flex-col flex-1 overflow-y-auto">
-                        <nav className="px-2 py-4 space-y-1">
+                        <nav className="px-2 py-4 space-y-5">
                             <Link
                                 to=""
                                 onClick={handleNavClick}
@@ -126,7 +126,7 @@ export const ServicetDashboardLayout: React.FC = () => {
                             </Link>
                         </nav>
                     </div>
-                    <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="p-4 border-t border-gray-200 dark:border-primary-600/10">
                         <button
                             onClick={handleLogout}
                             className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500"
@@ -139,33 +139,20 @@ export const ServicetDashboardLayout: React.FC = () => {
             </div>
 
             {/* Main content */}
-            <div className="flex flex-col flex-1 lg:pl-64 ">
-                {/* Top navigation */}
-                <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white dark:bg-gray-800 shadow">
+            <div className="flex flex-col flex-1 lg:pl-64">
+                <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950">
                     <button
                         type="button"
                         className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 lg:hidden"
                         onClick={() => setSidebarOpen(true)}>
                         <Menu className="h-6 w-6" />
                     </button>
-                    <div className="flex-1 flex justify-between px-4">
+                    <div className="flex-1 flex justify-between px-10 py-10">
                         <div className="flex-1 flex items-center">
                             <div className="max-w-lg w-full lg:max-w-xs relative">
                                 <label htmlFor="search" className="sr-only">
                                     Search
                                 </label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Search className="h-5 w-5 text-gray-400" />
-                                    </div>
-                                    <input
-                                        id="search"
-                                        name="search"
-                                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                                        placeholder="Search..."
-                                        type="search"
-                                    />
-                                </div>
                             </div>
                         </div>
                         <div className="ml-4 flex items-center md:ml-6">
@@ -228,8 +215,8 @@ export const ServicetDashboardLayout: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Main content area */}
-                <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+                {/* Outlet for nested routes */}
+                <main className="flex-1 overflow-y-auto p-6">
                     <Outlet />
                 </main>
             </div>
