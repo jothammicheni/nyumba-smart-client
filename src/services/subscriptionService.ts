@@ -5,7 +5,7 @@ import axios from 'axios';
 import { getAuthHeaders } from './authService.js';
 
 
-const API_URL = 'http://localhost:5000/api/subscriptions';
+const API_URL = 'https://nyumba-smart-server.onrender.com/api/subscriptions';
 
 // ✅ Function to create a subscription
 export const createSubscription = async (subscriptionData: any) => {

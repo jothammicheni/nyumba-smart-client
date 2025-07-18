@@ -24,7 +24,7 @@ const FinancialOverview = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/landlord/financeStats", {
+        const response = await axios.get("https://nyumba-smart-server.onrender.com/api/landlord/financeStats", {
           headers: getAuthHeaders(),
         })
         setFinancialStats(response.data.financialStats)

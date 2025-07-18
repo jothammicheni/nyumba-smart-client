@@ -2,7 +2,7 @@
 import axios from "axios"
 import { getAuthHeaders } from "../../authService.js"
 
-const API_BASE_URL = "http://localhost:5000" // Replace with production URL
+const API_BASE_URL = "https://nyumba-smart-server.onrender.com" // Replace with production URL
 
 interface MpesaResponse {
   MerchantRequestID: string

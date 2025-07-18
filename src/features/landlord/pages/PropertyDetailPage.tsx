@@ -142,7 +142,7 @@ const handleDelete = async () => {
 
   try {
     await axios.delete(
-      `http://localhost:5000/api/properties/${property?._id}`,
+      `https://nyumba-smart-server.onrender.com/api/properties/${property?._id}`,
       {
         headers: getAuthHeaders(),
       }

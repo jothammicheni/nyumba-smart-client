@@ -2,7 +2,7 @@
 import axios from "axios"
 import { getAuthHeaders } from "./authService.js"
 
-const API_BASE_URL = "http://localhost:5000"
+const API_BASE_URL = "https://nyumba-smart-server.onrender.com"
 
 export interface CreateListingData {
   property_id: string
@@ -61,7 +61,7 @@ async sendInquiryMessage(data: {
 }) {
   try {
     const response = await axios.post(
-      `http://localhost:5000/api/inquiry/sendinquiry`,
+      `https://nyumba-smart-server.onrender.com/api/inquiry/sendinquiry`,
       data,
       {
         headers: {

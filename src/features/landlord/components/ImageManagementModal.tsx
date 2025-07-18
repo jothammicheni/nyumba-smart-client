@@ -68,7 +68,7 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
     setError("")
 
     try {
-      const response = await axios.delete(`http://localhost:5000/api/listings/${listing?._id}`, {
+      const response = await axios.delete(`https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`, {
         headers: getAuthHeaders(),
         data: {
           deleteImages: [imageUrl],
@@ -102,7 +102,7 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
         formData.append("images", image)
       })
 
-      const response = await fetch(`http://localhost:5000/api/listings/${listing?._id}`, {
+      const response = await fetch(`https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`, {
         method: "PUT",
         body: formData,
         headers: {
@@ -142,7 +142,7 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
         formData.append("deleteImages", JSON.stringify(imagesToDelete))
       }
 
-      const response = await fetch(`http://localhost:5000/api/listings/${listing?._id}`, {
+      const response = await fetch(`https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`, {
         method: "PUT",
         body: formData,
         headers: {

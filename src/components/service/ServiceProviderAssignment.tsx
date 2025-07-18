@@ -130,7 +130,7 @@ export default function ServiceProviderAssignment({ maintenanceRequest, onAssign
         ...(searchFilters.serviceType && { serviceType: searchFilters.serviceType }),
       })
 
-      const response = await axios.get(`http://localhost:5000/api/provider-service/search${queryParams.toString()}`,
+      const response = await axios.get(`https://nyumba-smart-server.onrender.com/api/provider-service/search${queryParams.toString()}`,
         { headers: getAuthHeaders() }
       )
       if (response.data.success && Array.isArray(response.data.providers)) {
