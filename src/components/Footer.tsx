@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
           <div className="lg:col-span-2">
             <div className="mb-6">
               <h3 className="text-3xl font-bold text-primary-600 mb-4">
-                NyumbaSmart
+                TenaHub
               </h3>
               <p className="text-gray-300 text-base leading-relaxed max-w-md">
                 Transforming property management in Kenya with innovative technology solutions for landlords and tenants.
@@ -202,8 +202,8 @@ const Footer: React.FC = () => {
                     </div>
                     <div className="min-w-0">
                       <h4 className="text-white font-medium mb-1">Email</h4>
-                      <a href="mailto:info@nyumbasmart.com"><p className="text-gray-300 text-sm truncate">info@nyumbasmart.com</p></a>
-                      <a href="mailto:queries@nyumbasmart.com"><p className="text-gray-300 text-sm truncate">queries@nyumbasmart.com</p></a>
+                      <a href="mailto:info@TenaHub.com"><p className="text-gray-300 text-sm truncate">info@TenaHub.com</p></a>
+                      <a href="mailto:queries@TenaHub.com"><p className="text-gray-300 text-sm truncate">queries@TenaHub.com</p></a>
                     </div>
                   </div>
                 </div>
@@ -213,7 +213,7 @@ const Footer: React.FC = () => {
             <div className="flex flex-col items-center justify-center">
               <div className="bg-gradient-to-br from-gray-500/10 to-gray-500/10 p-5 rounded-xl border border-gray-900/20">
                 <h4 className="text-base font-bold text-white mb-3">Ready to Get Started?</h4>
-                <p className="text-gray-300 mb-4 text-sm">Join thousands of property owners using NyumbaSmart</p>
+                <p className="text-gray-300 mb-4 text-sm">Join thousands of property owners using TenaHub</p>
                 <Link
                   to="/register"
                   className="inline-flex pulse-animation items-center px-6 py-2 border border-transparent text-base font-medium rounded-md text-white bg-primary-500 hover:bg-primary-600 md:py-3 md:text-lg md:px-10 transition duration-300">
@@ -227,7 +227,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800/50 mt-8 pt-8">
           <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
             <div className="text-center lg:text-left">
-              <p className="text-base font-light text-gray-400">&copy; {new Date().getFullYear()} NyumbaSmart. All rights reserved.</p>
+              <p className="text-base font-light text-gray-400">&copy; {new Date().getFullYear()} TenaHub. All rights reserved.</p>
             </div>
             <div className="flex items-center space-x-6 text-sm">
               <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors duration-300">

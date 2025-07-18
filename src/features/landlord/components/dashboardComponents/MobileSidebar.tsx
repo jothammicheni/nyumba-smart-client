@@ -27,7 +27,7 @@ const MobileSidebar = () => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)}></div>
         <div className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col z-50">
           <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-            <span className="text-xl font-bold text-primary-600 dark:text-primary-500">NyumbaSmart</span>
+            <span className="text-xl font-bold text-primary-600 dark:text-primary-500">TenaHub</span>
             <button
               onClick={() => setSidebarOpen(false)}
               className="text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"

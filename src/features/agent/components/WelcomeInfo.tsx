@@ -34,11 +34,11 @@ function WelcomeInfo() {
 
     const handleShare = () => {
         const referralLink = `${window.location.origin}/?ref=${agentInfo.agentProfile.referralCode}`;
-        const referralMessage = `Join NyumbaSmart using my referral code! Register here: ${referralLink}`;
+        const referralMessage = `Join TenaHub using my referral code! Register here: ${referralLink}`;
 
         if (navigator.share) {
             navigator.share({
-                title: "NyumbaSmart Referral",
+                title: "TenaHub Referral",
                 text: referralMessage,
                 url: referralLink,
             })

@@ -123,7 +123,7 @@ const TrialModal: React.FC<TrialModalProps> = ({
               </div>
               <div>
                 <p className="text-gray-900 dark:text-white">
-                  I agree to the NyumbaSmart{" "}
+                  I agree to the TenaHub{" "}
                   <span className="text-primary-600">Terms of Service</span> and{" "}
                   <span className="text-primary-600">Privacy Policy</span>
                 </p>

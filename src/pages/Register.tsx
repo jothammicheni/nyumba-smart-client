@@ -299,7 +299,7 @@ console.log(4556)
         <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg overflow-hidden">
           <div className="px-6 py-8 sm:p-10">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">Create Your NyumbaSmart Account</h2>
+              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">Create Your TenaHub Account</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Join our platform and start managing your properties efficiently
               </p>

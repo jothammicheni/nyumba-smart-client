@@ -3,7 +3,7 @@
 
 import React, { useState } from "react"
 import { X } from "lucide-react"
-import type { Property } from "../types/property"
+import type { Property } from "../../types/properties"
 import { listingService } from "../../services/listingService.js"
 
 interface ContactAgentModalProps {
@@ -48,15 +48,19 @@ const ContactAgentModal: React.FC<ContactAgentModalProps> = ({ isOpen, onClose, 
 
     setLoading(true)
     try {
-      const res = await listingService.sendInquiryMessage({
-        name,
-        email,
-        phone,
-        inquiryMessage: message,
-        property_id: property.property._id,
-        PropertyName: property.property.name,
-        landlord_id: property.landlord_id,
-      })
+      if (!property.landlord_id) {
+  throw new Error("landlord_id is missing")
+}
+
+const res = await listingService.sendInquiryMessage({
+  name,
+  email,
+  phone,
+  inquiryMessage: message,
+  property_id: property.property._id,
+  PropertyName: property.property.name,
+  landlord_id: property.landlord_id,
+});
 
       if (res.success) {
         setFeedback("Message sent successfully!")

@@ -215,7 +215,7 @@ const CTASection: React.FC = () => {
             Simplify Your Property Management
           </motion.h2>
           <motion.p className="mt-4 max-w-2xl text-xl text-gray-600 dark:text-gray-300 mx-auto" variants={itemVariants}>
-            NyumbaSmart provides everything you need to manage your properties efficiently.
+            TenHub provides everything you need to manage your properties efficiently.
           </motion.p>
 
           {/* Benefits Row */}

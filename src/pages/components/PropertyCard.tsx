@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import React from "react"
 import { useNavigate } from "react-router-dom"
 import { MapPin, Bed, Bath, Square, Star, Heart, Eye } from "lucide-react"
-import type { Property } from "../types/property"
+import type { Property } from "../../types/properties"
 
 interface PropertyCardProps {
   property: Property
