@@ -29,7 +29,7 @@ const TenantSettings = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put('http://localhost:5000/api/auth/update-me',
+      await axios.put('https://nyumba-smart-server.onrender.com/api/auth/update-me',
         {
           name: tenantInfo.tenantName,
           email: tenantInfo.tenentEmail,

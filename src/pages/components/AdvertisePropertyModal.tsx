@@ -97,7 +97,7 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
     try {
       setLoading(true)
       // Replace with your actual API call
-      const response = await fetch("http://localhost:5000/api/listings", {
+      const response = await fetch("https://nyumba-smart-server.onrender.com/api/listings", {
         method: "POST",
         body: submitData,
       })

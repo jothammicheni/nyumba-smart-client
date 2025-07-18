@@ -38,7 +38,7 @@ const TenantPaymentsPage: React.FC = () => {
           axios.get("https://nyumba-smart-server.onrender.com/api/tenants/info", {
             headers: getAuthHeaders(),
           }),
-          axios.get("http://localhost:5000/api/payment/history", {
+          axios.get("https://nyumba-smart-server.onrender.com/api/payment/history", {
             headers: getAuthHeaders(),
           }),
         ]);

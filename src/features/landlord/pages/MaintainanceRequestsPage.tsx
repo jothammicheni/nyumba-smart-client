@@ -133,7 +133,7 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
       console.log("Request ID:", selectedRequest._id)
 
       const response = await axios.put(
-        `http://localhost:5000/api/maintenance/${selectedRequest._id}/assign-provider`,
+        `https://nyumba-smart-server.onrender.com/api/maintenance/${selectedRequest._id}/assign-provider`,
         data,
         {
           headers: getAuthHeaders(),
@@ -165,7 +165,7 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
   const handleUpdateRequestState = async (requestId: string, newState: string) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/maintenance/${requestId}/state`,
+        `https://nyumba-smart-server.onrender.com/api/maintenance/${requestId}/state`,
         { state: newState },
         { headers: getAuthHeaders() },
       )

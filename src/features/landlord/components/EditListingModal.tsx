@@ -104,7 +104,7 @@ const EditListingModal: React.FC<EditListingModalProps> = ({ isOpen, onClose, li
         submitData.append("deleteImages", JSON.stringify(imagesToDelete))
       }
 
-      const response = await axios.put(`http://localhost:5000/api/listings/${listing?._id}`,submitData, {
+      const response = await axios.put(`https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`,submitData, {
         headers:getAuthHeaders(true),        
       })
 
