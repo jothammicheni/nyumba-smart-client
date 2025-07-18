@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { jsPDF } from "jspdf";
-import * as html2canvas from "html2canvas";
+import html2canvas from "html2canvas";  // <-- fixed import here
 import { QRCodeSVG } from "qrcode.react";
 
 interface PaymentRecord {

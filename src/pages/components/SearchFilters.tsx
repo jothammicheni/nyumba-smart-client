@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { Search, Filter } from "lucide-react"
-import type { Filters } from "../types/property"
+import type { Filters } from "../../types/properties"
 
 interface SearchFiltersProps {
   searchTerm: string

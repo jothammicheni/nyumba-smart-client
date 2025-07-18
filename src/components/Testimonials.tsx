@@ -6,7 +6,7 @@ const testimonials = [
   {
     id: 1,
     quote:
-      "NyumbaSmart has completely transformed how I manage my rental properties. The M-Pesa integration makes rent collection effortless, and I love being able to see all my properties' financial status at a glance.",
+      "TenaHub has completely transformed how I manage my rental properties. The M-Pesa integration makes rent collection effortless, and I love being able to see all my properties' financial status at a glance.",
     author: "James Mwangi",
     role: "Property Owner, Nairobi",
     image: "https://randomuser.me/api/portraits/men/32.jpg",
@@ -73,7 +73,7 @@ const Testimonials: React.FC = () => {
         >
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">Customer Reviews</h2>
           <p className="mt-4 max-w-2xl text-xl text-gray-600 dark:text-gray-300 mx-auto">
-            Hear from landlords and tenants who are using NyumbaSmart to simplify property management.
+            Hear from landlords and tenants who are using TenaHub to simplify property management.
           </p>
         </motion.div>
 

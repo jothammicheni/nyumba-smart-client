@@ -40,7 +40,7 @@ const AboutPage: React.FC = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center animate-fade-in">
             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
-              About NyumbaSmart
+              About TenaHub
             </h1>
             <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500 dark:text-gray-300 leading-relaxed">
               Transforming property management in Kenya with innovative technology
@@ -61,12 +61,12 @@ const AboutPage: React.FC = () => {
                 Revolutionizing Property Management
               </h2>
               <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-                NyumbaSmart is a revolutionary property management platform designed specifically for the Kenyan market. Our
+                TenaHub is a revolutionary property management platform designed specifically for the Kenyan market. Our
                 mission is to simplify property management for landlords, provide a seamless experience for tenants, and
                 create opportunities for agents and service providers.
               </p>
               <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-                Founded in 2023, NyumbaSmart has quickly grown to become a trusted solution for property management across
+                Founded in 2023, TenaHub has quickly grown to become a trusted solution for property management across
                 Kenya. Our platform combines innovative technology with local expertise to address the unique challenges of
                 the Kenyan real estate market.
               </p>
@@ -75,7 +75,7 @@ const AboutPage: React.FC = () => {
               <div className="relative bg-gradient-to-br from-primary-500 to-primary-600 rounded-3xl p-6 transform rotate-3 hover:rotate-6 transition-transform duration-300 shadow-2xl">
                 <img
                   src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=500&h=500&fit=crop&crop=center"
-                  alt="Modern building representing NyumbaSmart's innovative approach to property management"
+                  alt="Modern building representing TenaHub's innovative approach to property management"
                   className="w-full h-full object-cover rounded-2xl"
                 />
                 <div className="absolute bottom-4 left-4 right-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4">
@@ -160,7 +160,7 @@ const AboutPage: React.FC = () => {
                 Ready to Transform Your Property Management?
               </h2>
               <p className="text-xl mb-5 text-blue-100">
-                Join thousands of property owners who trust NyumbaSmart
+                Join thousands of property owners who trust TenaHub
               </p>
               <button className="bg-primary-600/20 pulse-animation text-primary-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors duration-300 hover:scale-105 transform">
                 Get Started Today

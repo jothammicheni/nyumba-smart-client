@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import type React from "react"
@@ -7,7 +8,6 @@ import { Home } from "lucide-react"
 import PropertyCard from "../components/PropertyCard.js"
 import SearchFilters from "../components/SearchFilters.js"
 import Pagination from "../components/Pagination.js"
-import PropertyModal from "../components/PropertyModal.js"
 import type { Property, Filters } from "../../types/properties.js"
 
 const PropertiesPage = () => {
@@ -240,12 +240,12 @@ const PropertiesPage = () => {
       </div>
 
       {/* Property Details Modal */}
-      <PropertyModal
+      {/* <PropertyModal
         isOpen={isModalOpen}
         property={selectedProperty}
         onClose={closeModal}
         formatCurrency={formatCurrency}
-      />
+      /> */}
     </div>
   )
 }
