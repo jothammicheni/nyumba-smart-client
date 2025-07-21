@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type React from "react"
 import { useState, useEffect } from "react"
 import axios from "axios"
@@ -5,7 +6,6 @@ import { Home } from "lucide-react"
 import PropertyCard from "./components/PropertyCard.js"
 import SearchFilters from "./components/SearchFilters.js"
 import Pagination from "./components/Pagination.js"
-import PropertyModal from "./components/PropertyModal.js"
 import type { Property, Filters } from "../types/properties.js"
 import { trackImpression, trackClick } from "../services/listingService.js"; // Adjust the import path as necessary
 import PropertyListingSEO from "../SEO/PropertyListingSEO.js"

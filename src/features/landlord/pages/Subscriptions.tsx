@@ -542,7 +542,7 @@ const handleMpesaPayment = () => {
                 Ready to Transform Your Property Management?
               </h2>
               <p className="text-xl mb-5 text-blue-100">
-                Join thousands of property owners who trust NyumbaSmart
+                Join thousands of property owners who trust TenaHub
               </p>
               <button className="bg-primary-600/20 pulse-animation text-primary-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors duration-300 hover:scale-105 transform">
                 Get Started Today

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rental Listings</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .listing {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .listing h3 {
+      margin: 0 0 0.5rem;
+    }
+
+    .listing a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+
+    .listing a:hover {
+      text-decoration: underline;
+    }
+
+    .price {
+      font-weight: bold;
+      color: green;
+    }
+
+    .location {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Available Rentals</h1>
+  <div id="rentals-container">Loading listings...</div>
+
+  <script>
+    async function fetchRentals() {
+      const API_URL = 'http://localhost:5000/api/scrape-rentals'; // adjust if hosted elsewhere
+
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        const listings = data.listings || data; // depending on how your server responds
+        const container = document.getElementById('rentals-container');
+        container.innerHTML = '';
+
+        if (!Array.isArray(listings) || listings.length === 0) {
+          container.textContent = 'No listings found.';
+          return;
+        }
+
+        listings.forEach(listing => {
+          const div = document.createElement('div');
+          div.className = 'listing';
+          div.innerHTML = `
+            <h3><a href="${listing.link}" target="_blank">${listing.title}</a></h3>
+            <p class="price">${listing.price}</p>
+            <p class="location">${listing.location}</p>
+          `;
+          container.appendChild(div);
+        });
+      } catch (err) {
+        console.error('Error:', err);
+        document.getElementById('rentals-container').innerHTML = '<p style="color:red;">Failed to load listings.</p>';
+      }
+    }
+
+    fetchRentals();
+  </script>
+</body>
+</html>

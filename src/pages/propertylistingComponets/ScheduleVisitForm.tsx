@@ -2,7 +2,7 @@
 
 import React from "react"
 import { X } from "lucide-react"
-import type { Property } from "../types/property.js"
+import type { Property } from "../../types/properties"
 
 interface ScheduleVisitModalProps {
   isOpen: boolean

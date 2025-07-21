@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react"
 import WelcomeInfo from "../components/WelcomeInfo.js"
 import Referralcode from "../components/Referralcode.js"
 import Referrals from "../components/Referrals.js"
-import { Percent, TrendingUp } from "lucide-react"
-import  triggerAgentRegistrationBonus  from "../../../services/agentservice.js"
+// import { Percent, TrendingUp } from "lucide-react"
+import  triggerAgentRegistrationBonus  from "../../../services/agentService.js"
 
 const AgentDashboard: React.FC = () => {
   const [walletBalance, setWalletBalance] = useState<number | null>(null)

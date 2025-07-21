@@ -5,9 +5,9 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { ArrowRight, Building, Plus, RefreshCw } from "lucide-react"
 import { getProperties, createProperty } from "../../../services/propertyService.js"
-import PropertyCard from "../components/PropertyCard.js"
+import PropertyCard from "../components/PropertyCard.js" 
 import AddPropertyModal from "../components/AddPropertyModal.js"
-import { Loader } from "../../../components/Loader.js"
+import { Loader } from "../../../components/Loader.js" 
 
 interface Property {
   _id: string
@@ -75,7 +75,14 @@ const PropertiesPage: React.FC = () => {
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Property
+            Add Property/s
+          </button>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Assign Overall Caretaker
           </button>
         </div>
       </div>

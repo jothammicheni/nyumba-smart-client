@@ -18,7 +18,7 @@ function WelcomeInfo() {
     useEffect(() => {
         const fetchAgentInfo = async () => {
             try {
-                const response = await axios.get("https://nyumba-smart-server.onrender.com/api/agents/info", {
+                const response = await axios.get("http://localhost:5000/api/agents/info", {
                     headers: getAuthHeaders(),
                 });
                 setAgentInfo(response.data.data);
@@ -34,11 +34,11 @@ function WelcomeInfo() {
 
     const handleShare = () => {
         const referralLink = `${window.location.origin}/?ref=${agentInfo.agentProfile.referralCode}`;
-        const referralMessage = `Join NyumbaSmart using my referral code! Register here: ${referralLink}`;
+        const referralMessage = `Join TenaHub using my referral code! Register here: ${referralLink}`;
 
         if (navigator.share) {
             navigator.share({
-                title: "NyumbaSmart Referral",
+                title: "TenaHub Referral",
                 text: referralMessage,
                 url: referralLink,
             })

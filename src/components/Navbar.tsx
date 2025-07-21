@@ -1,76 +1,93 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
 import { useTheme } from "./ThemeProvider.js"
-import { Sun, Moon, Menu, X, LogIn } from "lucide-react"
+
+
+import { Link, useLocation } from "react-router-dom"
+import { Sun, Moon, Menu, LogIn } from "lucide-react"
+import { Button } from "../components/ui/button"
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "../components/ui/sheet"
 
 const Navbar: React.FC = () => {
   const { theme, toggleTheme } = useTheme()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const location = useLocation()
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
 
   const isActive = (path: string) => {
     return location.pathname === path
   }
 
   return (
-    <nav className="bg-white dark:bg-gray-950/90 shadow-md fixed w-full z-50">
-      <div className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20">
+    <nav className="bg-white dark:bg-gray-950/90 shadow-md fixed w-full z-50 backdrop-blur-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16 md:h-20 items-center">
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="lg:text-2xl sm:text-xl font-bold pl-4 text-primary-600 dark:text-primary-500">
-                𝙽𝚢𝚞𝚖𝚋𝚊𝚂𝚖𝚊𝚛𝚝
+              <Link to="/" className="text-xl md:text-2xl font-bold text-primary-600 dark:text-primary-500">
+                TenaHub
               </Link>
             </div>
           </div>
 
           {/* Desktop menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <Link
               to="/"
-              className={`text-gray-900 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 px-3 py-2 font-medium ${isActive("/") ? "text-primary-500 dark:text-primary-400" : ""
-                }`}
+              className={`text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 px-3 py-2 font-medium transition-colors ${
+                isActive("/") ? "text-primary-600 dark:text-primary-400 font-semibold" : ""
+              }`}
             >
-              𝙷𝚘𝚖𝚎
+              Home
             </Link>
             <Link
               to="/properties"
-              className={`text-gray-900 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 px-3 py-2 font-medium ${isActive("/properties") ? "text-primary-500 dark:text-primary-400" : ""
-                }`}
+              className={`text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 px-3 py-2 font-medium transition-colors ${
+                isActive("/properties") ? "text-primary-600 dark:text-primary-400 font-semibold" : ""
+              }`}
             >
-              𝙿𝚛𝚘𝚙𝚎𝚛𝚝𝚢 𝙻𝚒𝚜𝚝𝚒𝚗𝚐
+              Property Listing
+            </Link>
+            <Link
+              to="/relocate-search-home"
+              className={`text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 px-3 py-2 font-medium transition-colors ${
+                isActive("/relocate-search-home") ? "text-primary-600 dark:text-primary-400 font-semibold" : ""
+              }`}
+            >
+              Relocate/Home search
             </Link>
             <Link
               to="/about"
-              className={`text-gray-900 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 px-3 py-2 font-medium ${isActive("/about") ? "text-primary-500 dark:text-primary-400" : ""
-                }`}
+              className={`text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 px-3 py-2 font-medium transition-colors ${
+                isActive("/about") ? "text-primary-600 dark:text-primary-400 font-semibold" : ""
+              }`}
             >
-              𝙰𝚋𝚘𝚞𝚝
+              About
             </Link>
             <Link
               to="/contact"
-              className={`text-gray-900 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 px-3 py-2 font-medium ${isActive("/contact") ? "text-primary-500 dark:text-primary-400" : ""
-                }`}
+              className={`text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 px-3 py-2 font-medium transition-colors ${
+                isActive("/contact") ? "text-primary-600 dark:text-primary-400 font-semibold" : ""
+              }`}
             >
-              𝙲𝚘𝚗𝚝𝚊𝚌𝚝
+              Contact
             </Link>
-            <Link
-              to="/login"
-              className=" flex items-center justify-center text-white bg-primary-500 hover:bg-primary-600 px-3 py-2 rounded-md font-medium transition-colors"
+             <Link
+              to="/blogs"
+              className={`text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 px-3 py-2 font-medium transition-colors ${
+                isActive("/contact") ? "text-primary-600 dark:text-primary-400 font-semibold" : ""
+              }`}
             >
-              <LogIn className="lg:h-4 lg:w-4 sm:h-3 sm:w-3  mr-2" />
-              𝙻𝚘𝚐𝚒𝚗
+              Our Blogs
             </Link>
-            <button
+              <Link to="/login" className="flex items-center text-primary-500 animate-pulse">
+                <LogIn className="h-4 w-4 mr-2  text-primary-500" />
+                Login
+              </Link>
+           
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-900/20 dark:hover:bg-gray-800 focus:outline-none"
               aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
               {theme === "dark" ? (
@@ -78,77 +95,106 @@ const Navbar: React.FC = () => {
               ) : (
                 <Moon className="h-5 w-5 text-gray-900" />
               )}
-            </button>
+            </Button>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button and theme toggle */}
           <div className="md:hidden flex items-center">
-            
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={toggleTheme}
-              className="p-2 mr-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
               aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              className="mr-2"
             >
               {theme === "dark" ? (
                 <Sun className="h-5 w-5 text-yellow-300" />
               ) : (
                 <Moon className="h-5 w-5 text-gray-700" />
               )}
-            </button>
-            <button
-              onClick={toggleMenu}
-              className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-800 focus:outline-none"
-              aria-expanded={isMenuOpen}
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+            </Button>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Toggle menu">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[250px] sm:w-[300px] bg-white dark:bg-gray-950/90">
+                <div className="flex flex-col space-y-4 pt-8">
+                  <SheetClose asChild>
+                    <Link
+                      to="/"
+                      className={`block px-4 py-2 text-lg font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+                        isActive("/") ? "bg-gray-100 dark:bg-gray-800/50 font-semibold" : ""
+                      }`}
+                    >
+                      Home
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link
+                      to="/properties"
+                      className={`block px-4 py-2 text-lg font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+                        isActive("/properties") ? "bg-gray-100 dark:bg-gray-800/50 font-semibold" : ""
+                      }`}
+                    >
+                      Property Listing
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link
+                      to="/relocate-search-home"
+                      className={`block px-4 py-2 text-lg font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+                        isActive("/relocate-search-home") ? "bg-gray-100 dark:bg-gray-800/50 font-semibold" : ""
+                      }`}
+                    >
+                      Relocate/Home search
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link
+                      to="/about"
+                      className={`block px-4 py-2 text-lg font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+                        isActive("/about") ? "bg-gray-100 dark:bg-gray-800/50 font-semibold" : ""
+                      }`}
+                    >
+                      About
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link
+                      to="/contact"
+                      className={`block px-4 py-2 text-lg font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+                        isActive("/contact") ? "bg-gray-100 dark:bg-gray-800/50 font-semibold" : ""
+                      }`}
+                    >
+                      Contact
+                    </Link>
+                  </SheetClose>
+
+ <SheetClose asChild>
+                    <Link
+                      to="/blogs"
+                      className={`block px-4 py-2 text-lg font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+                        isActive("/contact") ? "bg-gray-100 dark:bg-gray-800/50 font-semibold" : ""
+                      }`}
+                    >
+                      Our Blogs
+                    </Link>
+                  </SheetClose>
+
+                  <SheetClose asChild>
+                <Link to="/login" className="flex items-center text-primary-500 animate-pulse ml-3 mr-3">
+                <LogIn className="h-4 w-4 mr-2  text-primary-500" />
+                Login
+              </Link>
+                  </SheetClose>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
-
-      {/* Mobile menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-gray-900/70 shadow-lg">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link
-              to="/"
-              className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive("/") ? "bg-gray-200 dark:bg-gray-800/50" : ""
-                }`}
-            >
-              Home
-            </Link>
-            <Link
-              to="/properties"
-              className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive("/properties") ? "bg-gray-200 dark:bg-gray-800/50" : ""
-                }`}
-            >
-              Property Listing
-            </Link>
-            <Link
-              to="/about"
-              className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive("/about") ? "bg-gray-200 dark:bg-gray-800/50" : ""
-                }`}
-            >
-              About
-            </Link>
-            <Link
-              to="/contact"
-              className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 ${isActive("/contact") ? "bg-gray-200 dark:bg-gray-800/50" : ""
-                }`}
-            >
-              Contact
-            </Link>
-            <Link
-              to="/login"
-              className="flex items-center w-full text-white text-center justify-center bg-primary-500 hover:bg-primary-600 px-3 py-2 rounded-md font-medium transition-colors mr-2"
-            >
-              <LogIn className="lg:h-4 lg:w-4 sm:h-3 sm:w-3 mr-1" />
-              𝙻𝚘𝚐𝚒𝚗
-            </Link>
-          </div>
-        </div>
-      )}
     </nav>
   )
 }
