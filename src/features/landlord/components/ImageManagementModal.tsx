@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-
 import type React from "react"
 import { useState, useEffect } from "react"
 import { X, Upload, Trash2, Plus, Eye, RotateCcw } from "lucide-react"
@@ -49,6 +47,7 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDeleteExistingImage = (imageUrl: string) => {
     if (!imagesToDelete.includes(imageUrl)) {
       setImagesToDelete((prev) => [...prev, imageUrl])
@@ -68,7 +67,7 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
     setError("")
 
     try {
-      const response = await axios.delete(`http://localhost:5000/api/listings/${listing?._id}`, {
+      const response = await axios.delete(`https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`, {
         headers: getAuthHeaders(),
         data: {
           deleteImages: [imageUrl],
@@ -102,7 +101,7 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
         formData.append("images", image)
       })
 
-      const response = await fetch(`http://localhost:5000/api/listings/${listing?._id}`, {
+      const response = await fetch(`https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`, {
         method: "PUT",
         body: formData,
         headers: {
@@ -142,7 +141,7 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
         formData.append("deleteImages", JSON.stringify(imagesToDelete))
       }
 
-      const response = await fetch(`http://localhost:5000/api/listings/${listing?._id}`, {
+      const response = await fetch(`https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`, {
         method: "PUT",
         body: formData,
         headers: {
@@ -171,60 +170,65 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
   const totalFinalImages = visibleImages.length + newImages.length
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-4xl shadow-xl max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Manage Images</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4">
+      <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-lg w-full max-w-4xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Manage Images</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="p-1 sm:p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Close modal"
           >
             <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-4">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-3 sm:px-4 py-2 sm:py-3 rounded-lg mb-3 sm:mb-4 text-sm sm:text-base">
             {error}
           </div>
         )}
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Property Info */}
-          <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
-            <h3 className="font-semibold text-gray-900 dark:text-white">{listing.property?.name}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="bg-gray-50 dark:bg-gray-950/50 p-3 sm:p-4 rounded-lg">
+            <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">
+              {listing.property?.name}
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
               {listing.property?.city} • {listing.property?.type}
             </p>
           </div>
 
           {/* Current Images */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 sm:mb-4">
               Current Images ({visibleImages.length})
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
               {visibleImages.map((imageUrl, index) => (
                 <div key={index} className="relative group">
                   <img
                     src={imageUrl || "/placeholder.svg"}
                     alt={`Property ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-lg cursor-pointer"
+                    className="w-full h-24 sm:h-32 object-cover rounded-lg cursor-pointer"
                     onClick={() => setPreviewImage(imageUrl)}
                   />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center space-x-2">
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center space-x-1 sm:space-x-2">
                     <button
                       onClick={() => setPreviewImage(imageUrl)}
-                      className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+                      className="p-1 sm:p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+                      aria-label="Preview image"
                     >
-                      <Eye className="h-4 w-4 text-white" />
+                      <Eye className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                     </button>
                     <button
                       onClick={() => handleDeleteSingleImage(imageUrl)}
                       disabled={loading}
-                      className="p-2 bg-red-500/80 rounded-full hover:bg-red-500 transition-colors disabled:opacity-50"
+                      className="p-1 sm:p-2 bg-red-500/80 rounded-full hover:bg-red-500 transition-colors disabled:opacity-50"
+                      aria-label="Delete image"
                     >
-                      <Trash2 className="h-4 w-4 text-white" />
+                      <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                     </button>
                   </div>
                 </div>
@@ -235,23 +239,24 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
           {/* Images to Delete */}
           {imagesToDelete.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
+              <h3 className="text-base sm:text-lg font-semibold text-red-600 dark:text-red-400 mb-2 sm:mb-4">
                 Images to Delete ({imagesToDelete.length})
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
                 {imagesToDelete.map((imageUrl, index) => (
                   <div key={index} className="relative group opacity-50">
                     <img
                       src={imageUrl || "/placeholder.svg"}
                       alt={`To delete ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg"
+                      className="w-full h-24 sm:h-32 object-cover rounded-lg"
                     />
                     <div className="absolute inset-0 bg-red-500/50 rounded-lg flex items-center justify-center">
                       <button
                         onClick={() => handleRestoreImage(imageUrl)}
-                        className="p-2 bg-green-500 rounded-full hover:bg-green-600 transition-colors"
+                        className="p-1 sm:p-2 bg-green-500 rounded-full hover:bg-green-600 transition-colors"
+                        aria-label="Restore image"
                       >
-                        <RotateCcw className="h-4 w-4 text-white" />
+                        <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                       </button>
                     </div>
                   </div>
@@ -263,23 +268,24 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
           {/* New Images */}
           {newImages.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold text-green-600 dark:text-green-400 mb-4">
+              <h3 className="text-base sm:text-lg font-semibold text-green-600 dark:text-green-400 mb-2 sm:mb-4">
                 New Images ({newImages.length})
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
                 {newImages.map((image, index) => (
                   <div key={index} className="relative group">
                     <img
                       src={URL.createObjectURL(image) || "/placeholder.svg"}
                       alt={`New ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg"
+                      className="w-full h-24 sm:h-32 object-cover rounded-lg"
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
                       <button
                         onClick={() => handleRemoveNewImage(index)}
-                        className="p-2 bg-red-500 rounded-full hover:bg-red-600 transition-colors"
+                        className="p-1 sm:p-2 bg-red-500 rounded-full hover:bg-red-600 transition-colors"
+                        aria-label="Remove image"
                       >
-                        <X className="h-4 w-4 text-white" />
+                        <X className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                       </button>
                     </div>
                   </div>
@@ -289,13 +295,15 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
           )}
 
           {/* Upload Section */}
-          <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6">
+          <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 dark:bg-gray-950/50 rounded-lg p-3 sm:p-6">
             <div className="text-center">
-              <Upload className="mx-auto h-12 w-12 text-gray-400" />
-              <div className="mt-4">
+              <Upload className="mx-auto h-8 sm:h-12 w-8 sm:w-12 text-gray-400" />
+              <div className="mt-2 sm:mt-4">
                 <label htmlFor="image-upload" className="cursor-pointer">
-                  <span className="mt-2 block text-sm font-medium text-gray-900 dark:text-white">Add more images</span>
-                  <span className="mt-1 block text-sm text-gray-500 dark:text-gray-400">
+                  <span className="mt-1 sm:mt-2 block text-sm font-medium text-gray-900 dark:text-white">
+                    Add more images
+                  </span>
+                  <span className="mt-1 block text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                     PNG, JPG up to 10MB each (Max {5 - totalFinalImages} more)
                   </span>
                 </label>
@@ -309,13 +317,13 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
                   className="hidden"
                 />
               </div>
-              <div className="mt-4">
+              <div className="mt-2 sm:mt-4">
                 <button
                   onClick={() => document.getElementById("image-upload")?.click()}
                   disabled={totalFinalImages >= 5}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center px-3 sm:px-4 py-1 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                   Choose Images
                 </button>
               </div>
@@ -323,39 +331,41 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
           </div>
 
           {/* Image Count Info */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 sm:p-4 rounded-lg">
+            <p className="text-xs sm:text-sm text-blue-800 dark:text-blue-200">
               <strong>Total images after update:</strong> {totalFinalImages} / 5
             </p>
             {totalFinalImages === 0 && (
-              <p className="text-sm text-red-600 dark:text-red-400 mt-1">⚠️ Your listing must have at least one image</p>
+              <p className="text-xs sm:text-sm text-red-600 dark:text-red-400 mt-1">
+                ⚠️ Your listing must have at least one image
+              </p>
             )}
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex space-x-3">
+        <div className="flex flex-col xs:flex-row justify-between gap-2 sm:gap-3 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
             <button
               onClick={handleReplaceAllImages}
               disabled={loading || newImages.length === 0}
-              className="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium transition-colors"
+              className="px-3 sm:px-4 py-1 sm:py-2 rounded-lg bg-orange-600 hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium transition-colors text-xs sm:text-sm"
             >
               Replace All Images
             </button>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
             <button
               onClick={onClose}
               disabled={loading}
-              className="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium transition-colors disabled:opacity-50"
+              className="px-4 sm:px-6 py-1 sm:py-2 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium transition-colors disabled:opacity-50 text-xs sm:text-sm"
             >
               Cancel
             </button>
             <button
               onClick={handleUpdateImages}
               disabled={loading || totalFinalImages === 0}
-              className="px-6 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium transition-colors"
+              className="px-4 sm:px-6 py-1 sm:py-2 rounded-lg bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium transition-colors text-xs sm:text-sm"
             >
               {loading ? "Updating..." : "Update Images"}
             </button>
@@ -365,13 +375,14 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
 
       {/* Image Preview Modal */}
       {previewImage && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/80">
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/80 p-2 sm:p-4">
           <div className="relative max-w-4xl max-h-[90vh]">
             <button
               onClick={() => setPreviewImage(null)}
-              className="absolute top-4 right-4 p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+              className="absolute top-2 sm:top-4 right-2 sm:right-4 p-1 sm:p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+              aria-label="Close preview"
             >
-              <X className="h-6 w-6 text-white" />
+              <X className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
             </button>
             <img
               src={previewImage || "/placeholder.svg"}

@@ -38,7 +38,7 @@ export default function WelcomeInfo() {
       setError('')
       try {
         console.log('Auth Headers:', getAuthHeaders())
-        const response = await axios.get('http://localhost:5000/api/providers/info', {
+        const response = await axios.get('https://nyumba-smart-server.onrender.com/api/providers/info', {
           headers: getAuthHeaders(),
         })
         setProviderInfo(response.data.data)

@@ -124,7 +124,7 @@ export default function ProviderAssignmentPage({ maintenanceRequest, onAssign, o
       if (searchFilters.serviceType) queryParams.append('serviceType', searchFilters.serviceType)
       queryParams.append('isActive', 'true')
 
-      const response = await axios.get('http://localhost:5000/api/provider-service/search',
+      const response = await axios.get('https://nyumba-smart-server.onrender.com/api/provider-service/search',
         { headers: getAuthHeaders() }
       )
       if (response.data.success && Array.isArray(response.data.providers)) {

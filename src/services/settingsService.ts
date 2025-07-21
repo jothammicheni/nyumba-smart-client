@@ -1,7 +1,7 @@
 import axios from "axios"
 import { getAuthHeaders } from "./authService.js"
 
-const BASE_URL = "http://localhost:5000/api/settings"
+const BASE_URL = "https://nyumba-smart-server.onrender.com/api/settings"
 
 export const settingsService = {
   getCurrentUserSettings: async () => {

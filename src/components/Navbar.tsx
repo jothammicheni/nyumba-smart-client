@@ -23,7 +23,8 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between h-16 md:h-20 items-center">
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="text-xl md:text-2xl font-bold text-primary-600 dark:text-primary-500">
+
+              <Link to="/" className="lg:text-2xl sm:text-xl font-bold pl-4 text-primary-600 dark:text-primary-500">
                 TenaHub
               </Link>
             </div>

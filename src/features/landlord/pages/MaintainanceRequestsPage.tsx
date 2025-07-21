@@ -13,7 +13,6 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "../../../components/ui/dialog.js"
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select.js"
 import { Wrench, Calendar, MapPin, User, AlertCircle, ChevronRight } from "lucide-react"
 import { fetchLandlordMaintenanceRequests } from "../../../services/maintananceService.js"
 import ServiceProviderAssignment from "../../../components/service/ServiceProviderAssignment.js"
@@ -21,6 +20,7 @@ import { Link } from "react-router-dom"
 import { Toaster, toast } from "sonner"
 import { getAuthHeaders } from "../../../services/authService.js"
 import axios from "axios"
+import { Loader } from "../../../components/Loader.js"
 
 interface MaintenanceRequest {
   _id: string
@@ -102,15 +102,19 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
   const [requests, setRequests] = useState<MaintenanceRequest[]>([])
   const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null)
   const [assignDialogOpen, setAssignDialogOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchRequests = async () => {
       try {
+        setIsLoading(true)
         const data = await fetchLandlordMaintenanceRequests()
         setRequests(data)
       } catch (error) {
         console.error("Failed to fetch maintenance requests", error)
         toast.error("Failed to load maintenance requests")
+      } finally {
+        setIsLoading(false)
       }
     }
     fetchRequests()
@@ -122,6 +126,11 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
       return
     }
 
+    if (selectedRequest.status === 'assigned' || selectedRequest.assignedTo) {
+      toast.error("This request is already assigned to a provider")
+      return
+    }
+
     try {
       const data = {
         serviceProviderId,
@@ -129,18 +138,11 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
         notes,
       }
 
-      console.log("Assigning service provider:", data)
-      console.log("Request ID:", selectedRequest._id)
-
       const response = await axios.put(
-        `http://localhost:5000/api/maintenance/${selectedRequest._id}/assign-provider`,
+        `https://nyumba-smart-server.onrender.com/api/maintenance/${selectedRequest._id}/assign-provider`,
         data,
-        {
-          headers: getAuthHeaders(),
-        },
+        { headers: getAuthHeaders() }
       )
-
-      console.log("Assignment response:", response.data)
 
       if (response.data.success) {
         const updatedRequests = await fetchLandlordMaintenanceRequests()
@@ -153,25 +155,37 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
       }
     } catch (error) {
       console.error("Failed to assign service provider:", error)
-      if (axios.isAxiosError(error) && error.response?.data?.error) {
-        console.error(error.response.data.error)
-      } else {
-        console.error("Failed to assign service provider")
-      }
-      toast.error("Failed to assign service provider")
+      toast.error(axios.isAxiosError(error) && error.response?.data?.error
+        ? error.response.data.error
+        : "Failed to assign service provider")
     }
   }
 
   const handleUpdateRequestState = async (requestId: string, newState: string) => {
     try {
+      const payload = newState === 'cancelled'
+        ? { status: newState, unassignProvider: true }
+        : { status: newState }
+
       const response = await axios.put(
-        `http://localhost:5000/api/maintenance/${requestId}/state`,
+<<<<<<< Updated upstream
+        `https://nyumba-smart-server.onrender.com/api/maintenance/${requestId}/state`,
         { state: newState },
         { headers: getAuthHeaders() },
+=======
+        `http://localhost:5000/api/maintenance/${requestId}/status`,
+        payload,
+        { headers: getAuthHeaders() }
+>>>>>>> Stashed changes
       )
 
       if (response.data.success) {
-        toast.success(`Request marked as ${newState.replace("_", " ")}`)
+        toast.success(
+          newState === 'cancelled'
+            ? 'Request cancelled and provider unassigned'
+            : `Request marked as ${newState.replace("_", " ")}`
+        )
+
         const updatedRequests = await fetchLandlordMaintenanceRequests()
         setRequests(updatedRequests)
       } else {
@@ -210,7 +224,12 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
       </CardHeader>
 
       <CardContent className="px-3 sm:px-4 md:px-6 pb-4 sm:pb-6">
-        {requests.length > 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center space-y-1">
+            <Loader />
+            <p className="text-gray-600 dark:text-primary-600">Loading requests...</p>
+          </div>
+        ) : requests.length > 0 ? (
           <div className="space-y-4 sm:space-y-5">
             {requests.map((request) => (
               <div
@@ -218,7 +237,6 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                 className="border dark:border-primary-600/10 rounded-lg p-3 sm:p-4 md:p-5 hover:shadow-sm dark:bg-gray-900/70 transition-all duration-200"
               >
                 <div className="flex flex-col gap-4">
-                  {/* Status badges */}
                   <div className="flex flex-wrap items-center gap-2">
                     {request.status && (
                       <Badge
@@ -246,11 +264,9 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                     )}
                   </div>
 
-                  {/* Main content */}
                   <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-4">
                     <div className="flex-1 space-y-3 sm:space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
-                        {/* Left column */}
                         <div className="space-y-2 sm:space-y-3">
                           <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded hover:bg-gray-950/50">
                             <div className="p-1.5 sm:p-2 rounded-full bg-primary-600/30 dark:bg-primary-600/30 flex-shrink-0">
@@ -272,12 +288,10 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="text-xs sm:text-sm text-gray-500">Property</p>
-                              {/* <p className='font-medium dark:text-gray-400 text-gray-900 text-sm sm:text-base truncate'>{request.property.name}</p> */}
                             </div>
                           </div>
                         </div>
 
-                        {/* Right column */}
                         <div className="space-y-2 sm:space-y-3">
                           <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded hover:bg-gray-950/50">
                             <div className="p-1.5 sm:p-2 rounded-full bg-primary-600/30 dark:bg-primary-600/30 flex-shrink-0">
@@ -301,10 +315,6 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                                 <p className="font-medium text-gray-700 text-xs truncate">
                                   {request.assignedTo.userId?.name || "Not Specified"}
                                 </p>
-                                {/* <p className="text-xs sm:text-sm text-gray-500">Services: </p>
-                                <p className="text-xs text-gray-600 mt-1 truncate">
-                                  {request.assignedTo.services.join(", ") || "Not specified"}
-                                </p> */}
                               </div>
                             </div>
                           )}
@@ -312,9 +322,8 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                       </div>
                     </div>
 
-                    {/* Action buttons */}
                     <div className="flex flex-col sm:flex-row xl:flex-col gap-2 w-full xl:w-auto xl:min-w-[200px]">
-                      {request.status === "pending" && (
+                      {request.status === "pending" || request.status === "cancelled" ? (
                         <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
                           <DialogTrigger asChild>
                             <Button
@@ -345,17 +354,16 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                             )}
                           </DialogContent>
                         </Dialog>
-                      )}
-
-                      {request.status === "assigned" && (
+                      ) : request.status === "assigned" ? (
                         <Button
                           variant="destructive"
                           size="sm"
                           onClick={() => handleUpdateRequestState(request._id, 'cancelled')}
-                          className="w-full h-9 sm:h-10 text-sm bg-red-600 hover:bg-red-700">
+                          className="w-full h-9 sm:h-10 text-sm bg-red-600 hover:bg-red-700"
+                        >
                           Cancel Request
                         </Button>
-                      )}
+                      ) : null}
 
                       <Button
                         variant="outline"
@@ -371,7 +379,6 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
                     </div>
                   </div>
 
-                  {/* Description */}
                   <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-primary-600/10">
                     <div className="flex items-start gap-2 sm:gap-3">
                       <div className="p-1.5 sm:p-2 rounded-full bg-primary-600/30 dark:bg-primary-600/30 mt-0.5 flex-shrink-0">
@@ -402,26 +409,6 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
             <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 max-w-sm px-4">
               Once tenants submit their service requests, you'll see them listed here.
             </p>
-            <Button
-              variant="outline"
-              className="mt-3 sm:mt-4 text-sm bg-transparent"
-              onClick={() => (window.location.href = "/maintenance-requests")}
-            >
-              View All Requests
-            </Button>
-          </div>
-        )}
-
-        {requests.length > 0 && (
-          <div className="mt-4 sm:mt-6 flex justify-center xl:hidden">
-            <Button
-              variant="outline"
-              className="flex items-center gap-2 text-sm"
-              onClick={() => (window.location.href = "/maintenance-requests")}
-            >
-              View All Requests
-              <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
-            </Button>
           </div>
         )}
       </CardContent>
