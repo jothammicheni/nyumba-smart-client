@@ -102,9 +102,9 @@ export const generateDashboardReport = async (user: any) => {
     addFooter()
 
     const authHeaders = { headers: getAuthHeaders() }
-    const statsRes = await axios.get("https://nyumba-smart-server.onrender.com/api/landlord/financeStats", authHeaders)
+    const statsRes = await axios.get("http://localhost:5000/api/landlord/financeStats", authHeaders)
     const { financialStats, propertyStats } = statsRes.data
-    const revenueRes = await axios.get("https://nyumba-smart-server.onrender.com/api/payment/landlord/revenue", authHeaders)
+    const revenueRes = await axios.get("http://localhost:5000/api/payment/landlord/revenue", authHeaders)
     const { payments } = revenueRes.data
 
     autoTable(doc, {

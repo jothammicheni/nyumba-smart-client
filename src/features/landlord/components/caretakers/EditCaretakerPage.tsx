@@ -17,7 +17,7 @@ const EditCaretakerPage: React.FC = () => {
     name: "",
     email: "",
     phone: "",
-    password: "",
+    password: "", // NEW password (blank by default)
     property: "",
     permissions: [] as string[],
   });
@@ -41,7 +41,7 @@ const EditCaretakerPage: React.FC = () => {
           name: user.name || "",
           email: user.email || "",
           phone: user.phone || "",
-          password: user.password || "", // If you allow editing password directly
+          password: "", // keep password empty (don't pre-fill hashed one)
           property: user.hasFullAccess ? "all" : (user.propertyAccessIds?.[0] || ""),
           permissions: user.caretakerPermissions || [],
         });
@@ -75,14 +75,23 @@ const EditCaretakerPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+
     try {
-      const payload = {
-        ...formData,
+      const payload: any = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
         propertyAccessIds: formData.property === "all" ? [] : [formData.property],
         hasFullAccess: formData.property === "all",
         caretakerPermissions: formData.permissions,
       };
 
+      // Only add password if the user entered one
+      if (formData.password.trim() !== "") {
+        payload.password = formData.password;
+      }
+
+      console.log('new data',payload)
       await updateUser(id as string, payload);
       toast.success("Caretaker updated successfully!");
       setTimeout(() => navigate(-1), 1000); // Go back
@@ -101,13 +110,13 @@ const EditCaretakerPage: React.FC = () => {
       <ToastContainer position="top-right" autoClose={3000} />
       <h2 className="text-2xl font-semibold mb-4">Edit Caretaker</h2>
       <form onSubmit={handleSubmit} className="space-y-5">
-        {["name", "email", "phone", "password"].map(field => (
+        {["name", "email", "phone"].map(field => (
           <div key={field}>
             <label className="block text-sm font-medium text-gray-700 capitalize">{field}</label>
             <input
-              type={field === "email" ? "email" : field === "password" ? "text" : "text"}
+              type={field === "email" ? "email" : "text"}
               name={field}
-              required={field !== "password"}
+              required
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               value={(formData as any)[field]}
               onChange={handleChange}
@@ -115,6 +124,19 @@ const EditCaretakerPage: React.FC = () => {
             />
           </div>
         ))}
+
+        {/* Optional Password Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">New Password (optional)</label>
+          <input
+            type="password"
+            name="password"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Change current password"
+          />
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700">Property Access</label>

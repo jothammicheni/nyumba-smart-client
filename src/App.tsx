@@ -73,6 +73,9 @@ import EditCaretakerPage from "./features/landlord/components/caretakers/EditCar
 
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import RelocationHomeSearch from './pages/ RelocationHomeSearch';
+import Blogs from "./pages/Blogs.js"
+import { HelmetProvider } from "react-helmet-async"
 // -------- CaretakerRedirect Component --------
 // const CaretakerRedirect = () => {
 //   const { user } = useAuth()
@@ -249,10 +252,13 @@ const AppContent = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/blogs" element={<Blogs/>} />
+
         <Route path="/properties" element={<PropertiesPage />} />
+        <Route path="/relocate-search-home" element={<RelocationHomeSearch/>} />
         <Route path="/properties/:id" element={<PropertyDetailsPage />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/cookies" element={<Cookies />} />
+        <Route path="/terms" element={<Terms/>} />
+        <Route path="/cookies" element={<Cookies/>} />
         <Route path="/services/rent-collection" element={<RentCollection />} />
         <Route path="/services/agent-refferals" element={<AgentRefferals />} />
         <Route path="/services/maintanance" element={<MaintananceTracking />} />
@@ -420,12 +426,14 @@ function App() {
   return (
     <Router>
       <SEO />
+       <HelmetProvider>
       <AuthProvider>
         <ThemeProvider >
           <ToastContainer position="top-right" autoClose={3000} />
           <AppContent />
         </ThemeProvider>
       </AuthProvider>
+      </HelmetProvider>
     </Router>
   )
 }

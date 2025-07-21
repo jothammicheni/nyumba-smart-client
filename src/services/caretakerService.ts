@@ -2,7 +2,7 @@
 import axios from "axios";
 import { getAuthHeaders } from "./authService";
 
-const API_BASE_URL = "https://nyumba-smart-server.onrender.com/api";
+const API_BASE_URL = "http://localhost:5000/api";
 
 export const getProperties = async () => {
   try {

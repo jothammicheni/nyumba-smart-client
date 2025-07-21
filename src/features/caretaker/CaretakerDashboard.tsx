@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import React, { useEffect, useState } from "react"
@@ -53,10 +55,10 @@ const CaretakerDashboard: React.FC = () => {
     const fetchDashboardData = async () => {
       try {
         const [tenantsRes, financeRes] = await Promise.all([
-          axios.get("https://nyumba-smart-server.onrender.com/api/tenants/", {
+          axios.get("http://localhost:5000/api/tenants/", {
             headers: getAuthHeaders(),
           }),
-          axios.get("https://nyumba-smart-server.onrender.com/api/landlord/financeStats", {
+          axios.get("http://localhost:5000/api/landlord/financeStats", {
             headers: getAuthHeaders(),
           }),
         ])

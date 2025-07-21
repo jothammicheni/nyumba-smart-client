@@ -35,7 +35,7 @@ const TenantPaymentsPage: React.FC = () => {
     const fetchData = async () => {
       try {
         const [tenantRes, paymentsRes] = await Promise.all([
-          axios.get("https://nyumba-smart-server.onrender.com/api/tenants/info", {
+          axios.get("http://localhost:5000/api/tenants/info", {
             headers: getAuthHeaders(),
           }),
           axios.get("https://nyumba-smart-server.onrender.com/api/payment/history", {
