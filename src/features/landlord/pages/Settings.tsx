@@ -1,9 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { toast } from "react-toastify"
+import { User, Lock, Bell, Eye, EyeOff, AlertTriangle, Settings as SettingsIcon } from "lucide-react"
+import { toast } from "sonner"
 import { settingsService } from "../../../services/settingsService.js"
+import { Button } from "../../../components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../components/ui/card"
+import { Input } from "../../../components/ui/input"
+import { Label } from "../../../components/ui/label"
+import { Switch } from "../../../components/ui/switch"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../components/ui/tabs"
+import { Skeleton } from "../../../components/ui/skeleton.js"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../components/ui/tooltip"
+import { PasswordStrengthMeter } from "../../../components/ui/password-strength.js"
 
 type Section = "profile" | "account" | "notifications" | "paymentPhone"
 
@@ -17,400 +26,563 @@ interface UserSettings {
 const Settings: React.FC = () => {
   const [activeSection, setActiveSection] = useState<Section>("profile")
   const [settings, setSettings] = useState<UserSettings | null>(null)
+  const [loading, setLoading] = useState({
+    profile: false,
+    password: false,
+    phone: false,
+    general: true
+  })
 
   // Form state
-  const [username, setUsername] = useState("")
-  const [email, setEmail] = useState("")
-  const [paymentPhone, setPaymentPhone] = useState("")
-  const [oldPassword, setOldPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [passwordError, setPasswordError] = useState("")
-  const [paymentPhoneError, setPaymentPhoneError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [successMsg, setSuccessMsg] = useState("")
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false)
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    paymentPhone: "",
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  })
 
-  // Show/hide password toggles
+  const [errors, setErrors] = useState({
+    password: "",
+    paymentPhone: ""
+  })
+
   const [showPasswords, setShowPasswords] = useState({
     old: false,
     new: false,
-    confirm: false,
+    confirm: false
+  })
+
+  const [notifications, setNotifications] = useState({
+    email: false,
+    sms: false,
+    push: false
   })
 
   useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await settingsService.getCurrentUserSettings()
+        setSettings(data)
+        setFormData({
+          name: data.name,
+          email: data.email,
+          paymentPhone: data.payoutPhone || "",
+          oldPassword: "",
+          newPassword: "",
+          confirmPassword: ""
+        })
+        // Simulate fetching notification preferences
+        setNotifications({
+          email: true,
+          sms: false,
+          push: true
+        })
+      } catch {
+        toast.error("Failed to load settings")
+      } finally {
+        setLoading(prev => ({ ...prev, general: false }))
+      }
+    }
+
     fetchSettings()
   }, [])
 
-  const fetchSettings = async () => {
-    try {
-      const data = await settingsService.getCurrentUserSettings()
-      setSettings(data)
-      setUsername(data.name)
-      setEmail(data.email)
-      setPaymentPhone(data.payoutPhone || "")
-    } catch (err: any) {
-      toast.error("Failed to load settings: " + err.message)
-    }
-  }
-
-  const handleSaveProfile = async (e: React.FormEvent) => {
+  const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
+    setLoading(prev => ({ ...prev, profile: true }))
     try {
-      await settingsService.updateProfile({ name: username, email })
-      toast.success("Profile updated!")
-      setSuccessMsg("Profile updated successfully!")
-    } catch (err: any) {
-      toast.error("Failed to update profile: " + (err.response?.data?.message || err.message))
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleSavePaymentPhone = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setPaymentPhoneError("")
-
-    if (!paymentPhone.match(/^\d{10,15}$/)) {
-      setPaymentPhoneError("Enter a valid phone number (10-15 digits)")
-      return
-    }
-
-    setLoading(true)
-    try {
-      const data = await settingsService.updatePaymentPhone(paymentPhone)
-      toast.success(data.message)
-      setSuccessMsg("Payment phone updated successfully!")
-    } catch (err: any) {
-      toast.error("Failed to update phone: " + (err.response?.data?.message || err.message))
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setPasswordError("")
-    setSuccessMsg("")
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError("New passwords don't match")
-      return
-    }
-
-    setLoading(true)
-    try {
-      const res = await settingsService.changePassword({
-        oldPassword,
-        newPassword,
-        confirmPassword,
+      await settingsService.updateProfile({ 
+        name: formData.name, 
+        email: formData.email 
       })
-
-      toast.success(res.message || "Password updated successfully!")
-      setSuccessMsg("Password updated successfully!")
-      setOldPassword("")
-      setNewPassword("")
-      setConfirmPassword("")
-    } catch (err: any) {
-      toast.error("Failed to update password: " + (err.response?.data?.message || err.message))
+      toast.success("Profile updated successfully")
+    } catch {
+      toast.error("Failed to update profile")
     } finally {
-      setLoading(false)
+      setLoading(prev => ({ ...prev, profile: false }))
     }
   }
 
-  const handleSectionChange = (section: Section) => {
-    setActiveSection(section)
-    setSuccessMsg("")
-    setPasswordError("")
-    setPaymentPhoneError("")
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setErrors({ ...errors, password: "" })
+
+    if (formData.newPassword !== formData.confirmPassword) {
+      setErrors({ ...errors, password: "Passwords don't match" })
+      return
+    }
+
+    if (formData.newPassword.length < 8) {
+      setErrors({ ...errors, password: "Password must be at least 8 characters" })
+      return
+    }
+
+    setLoading(prev => ({ ...prev, password: true }))
+    try {
+      await settingsService.changePassword({
+        oldPassword: formData.oldPassword,
+        newPassword: formData.newPassword,
+        confirmPassword: formData.confirmPassword
+      })
+      toast.success("Password updated successfully")
+      setFormData({ ...formData, oldPassword: "", newPassword: "", confirmPassword: "" })
+    } catch {
+      toast.error("Failed to update password")
+    } finally {
+      setLoading(prev => ({ ...prev, password: false }))
+    }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const togglePasswordVisibility = (field: "old" | "new" | "confirm") => {
-    setShowPasswords((prev) => ({
+  const handlePaymentPhoneSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setErrors({ ...errors, paymentPhone: "" })
+
+    if (!formData.paymentPhone.match(/^\d{10,15}$/)) {
+      setErrors({ ...errors, paymentPhone: "Enter a valid phone number (10-15 digits)" })
+      return
+    }
+
+    setLoading(prev => ({ ...prev, phone: true }))
+    try {
+      await settingsService.updatePaymentPhone(formData.paymentPhone)
+      toast.success("Payment phone updated successfully")
+    } catch {
+      toast.error("Failed to update payment phone")
+    } finally {
+      setLoading(prev => ({ ...prev, phone: false }))
+    }
+  }
+
+  const handleNotificationChange = (type: keyof typeof notifications) => {
+    setNotifications(prev => ({
       ...prev,
-      [field]: !prev[field],
+      [type]: !prev[type]
     }))
+    toast.success(`Notifications ${!notifications[type] ? "enabled" : "disabled"}`)
+  }
+
+  if (loading.general) {
+    return (
+      <div className="container mx-auto p-4 md:p-6 max-w-6xl">
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-full md:w-64 space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <div className="space-y-2">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))}
+            </div>
+          </div>
+          <div className="flex-1 space-y-4">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col md:flex-row">
-      {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-white dark:bg-gray-800 shadow-md p-6 flex flex-col">
-        <h2 className="text-2xl font-semibold mb-6 text-primary-600 dark:text-primary-400 cursor-default">Settings</h2>
-        <nav className="flex flex-col space-y-3 text-gray-700 dark:text-gray-300">
-          <button
-            onClick={() => handleSectionChange("profile")}
-            className={`text-left py-2 px-3 rounded-md w-full ${
-              activeSection === "profile"
-                ? "bg-primary-600 dark:bg-primary-500 text-white font-medium"
-                : "hover:bg-primary-100 dark:hover:bg-primary-700"
-            }`}
-          >
-            Profile
-          </button>
-          <button
-            onClick={() => handleSectionChange("account")}
-            className={`text-left py-2 px-3 rounded-md w-full ${
-              activeSection === "account"
-                ? "bg-primary-600 dark:bg-primary-500 text-white font-medium"
-                : "hover:bg-primary-100 dark:hover:bg-primary-700"
-            }`}
-          >
-            Account
-          </button>
-          <button
-            onClick={() => handleSectionChange("notifications")}
-            className={`text-left py-2 px-3 rounded-md w-full ${
-              activeSection === "notifications"
-                ? "bg-primary-600 dark:bg-primary-500 text-white font-medium"
-                : "hover:bg-primary-100 dark:hover:bg-primary-700"
-            }`}
-          >
-            Notifications
-          </button>
-          <button
-            onClick={() => handleSectionChange("paymentPhone")}
-            className={`text-left py-2 px-3 rounded-md w-full ${
-              activeSection === "paymentPhone"
-                ? "bg-red-600 dark:bg-red-700 text-white font-semibold"
-                : "hover:bg-red-100 dark:hover:bg-red-700 text-red-700 dark:text-red-400"
-            }`}
-          >
-            ⚠️ Update Payment Phone
-          </button>
-        </nav>
-      </aside>
-
-      {/* Main content */}
-      <main className="flex-1 p-8 max-w-4xl mx-auto w-full">
-        {/* Success message */}
-        {successMsg && (
-          <div className="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 p-3 rounded mb-6">
-            {successMsg}
-          </div>
-        )}
-
-        {/* Sections */}
-        {activeSection === "profile" && (
-          <>
-            <h3 className="text-xl font-semibold mb-4">Profile Settings</h3>
-            <form onSubmit={handleSaveProfile} className="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-              <div>
-                <label htmlFor="username" className="block text-sm font-medium mb-1">
-                  Username
-                </label>
-                <input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-500 outline-none text-gray-900 dark:text-gray-100"
-                  required
-                />
+    <div className="container mx-auto p-4 md:p-6 max-w-6xl">
+      <Tabs 
+        value={activeSection}
+        onValueChange={(value) => setActiveSection(value as Section)}
+        className="flex flex-col md:flex-row gap-6"
+        orientation="vertical"
+      >
+        {/* Sidebar Navigation */}
+        <div className="w-full md:w-80">
+          <Card className="border-0 bg-white border shadow-md dark:bg-gray-950">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <SettingsIcon className="h-7 w-7 text-primary-600 dark:text-primary-600" />
+                <div>
+                  <CardTitle className="text-xl">Settings</CardTitle>
+                  <CardDescription>Manage your account</CardDescription>
+                </div>
               </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-1">
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-500 outline-none text-gray-900 dark:text-gray-100"
-                  required
-                />
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`px-6 py-2 rounded bg-primary-600 text-white font-semibold transition ${
-                    loading ? "opacity-60 cursor-not-allowed" : "hover:bg-primary-700"
-                  }`}
+            </CardHeader>
+            <CardContent>
+              <TabsList className="flex flex-col items-start gap-4 h-auto bg-transparent p-1">
+                <TabsTrigger 
+                  value="profile" 
+                  className="w-full justify-start gap-3 px-4 py-3 rounded-lg data-[state=active]:bg-primary-50 dark:bg-primary-900/10 dark:text-white data-[state=active]:text-black dark:data-[state=active]:bg-primary-900/20"
                 >
-                  {loading ? "Saving..." : "Save Changes"}
-                </button>
-              </div>
-            </form>
-          </>
-        )}
-
-        {activeSection === "account" && (
-           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-      <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">🔒 Change Password</h3>
-      <form onSubmit={handlePasswordChange} className="space-y-6">
-        {/* Current Password */}
-        <div>
-          <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Current Password
-          </label>
-          <div className="relative">
-            <input
-              type={showPasswords.old ? "text" : "password"}
-              id="oldPassword"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              required
-              placeholder="Enter current password"
-              className="w-full px-4 py-2 pr-10 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPasswords({ ...showPasswords, old: !showPasswords.old })}
-              className="absolute right-2 top-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
-            >
-              {showPasswords.old ? "🙈" : "👁️"}
-            </button>
-          </div>
-        </div>
-
-        {/* New Password */}
-        <div>
-          <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            New Password
-          </label>
-          <div className="relative">
-            <input
-              type={showPasswords.new ? "text" : "password"}
-              id="newPassword"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-              placeholder="e.g. *Bma8ku#"
-              className="w-full px-4 py-2 pr-10 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
-              className="absolute right-2 top-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
-            >
-              {showPasswords.new ? "🙈" : "👁️"}
-            </button>
-          </div>
-        </div>
-
-        {/* Confirm New Password */}
-        <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Confirm New Password
-          </label>
-          <div className="relative">
-            <input
-              type={showPasswords.confirm ? "text" : "password"}
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 pr-10 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
-              className="absolute right-2 top-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
-            >
-              {showPasswords.confirm ? "🙈" : "👁️"}
-            </button>
-          </div>
-        </div>
-
-        {/* Error */}
-        {passwordError && <p className="text-sm text-red-600 dark:text-red-400">{passwordError}</p>}
-
-        {/* Success/Error Message */}
-        {successMsg && (
-          <p className="text-sm text-green-600 dark:text-green-400">
-            {successMsg}
-          </p>
-        )}
-        {passwordError && (
-          <p className="text-sm text-red-600 dark:text-red-400">
-            {passwordError}
-          </p>
-        )}
-
-        {/* Submit Button */}
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`px-6 py-2 rounded bg-primary-600 text-white font-semibold transition ${
-              loading ? "opacity-60 cursor-not-allowed" : "hover:bg-primary-700"
-            }`}
-          >
-            {loading ? "Saving..." : "Update Password"}
-          </button>
-        </div>
-      </form>
-    </div>
-        )}
-
-        {activeSection === "notifications" && (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4">Notification Settings</h3>
-            <label className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                checked={notificationsEnabled}
-                onChange={() => setNotificationsEnabled(!notificationsEnabled)}
-                className="h-5 w-5 text-primary-600 dark:text-primary-500 focus:ring-primary-500 border-gray-300 rounded"
-              />
-              <span>Enable email notifications</span>
-            </label>
-          </div>
-        )}
-
-        {activeSection === "paymentPhone" && (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border-2 border-red-600 dark:border-red-700">
-            <h3 className="text-xl font-semibold mb-4 text-red-700 dark:text-red-400 flex items-center gap-2">
-              ⚠️ Update Payment Phone <span className="text-sm font-normal">(Danger Zone — must be correct)</span>
-            </h3>
-
-            {/* Display Current Payment Phone */}
-            <div className="mb-6">
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Current Payment Phone</p>
-              <div className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-mono">
-                {settings?.payoutPhone || "Not set"}
-              </div>
-            </div>
-
-            {/* Form to Update Payment Phone */}
-            <form onSubmit={handleSavePaymentPhone} className="space-y-6">
-              <div>
-                <label htmlFor="paymentPhone" className="block text-sm font-medium mb-1 text-red-700 dark:text-red-400">
-                  New Payment Phone Number
-                </label>
-                <input
-                  id="paymentPhone"
-                  type="tel"
-                  placeholder="Enter phone number"
-                  value={paymentPhone}
-                  onChange={(e) => setPaymentPhone(e.target.value)}
-                  className={`w-full px-4 py-2 rounded border ${
-                    paymentPhoneError ? "border-red-600 dark:border-red-400" : "border-gray-300 dark:border-gray-700"
-                  } bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-red-600 dark:focus:ring-red-400 outline-none text-gray-900 dark:text-gray-100`}
-                />
-                {paymentPhoneError && (
-                  <p className="mt-1 text-red-600 dark:text-red-400 text-sm">{paymentPhoneError}</p>
-                )}
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`px-6 py-2 rounded bg-red-600 text-white font-semibold transition ${
-                    loading ? "opacity-60 cursor-not-allowed" : "hover:bg-red-700"
-                  }`}
+                  <User className="h-4 w-4" />
+                  <span>Profile</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="account" 
+                  className="w-full justify-start gap-3 px-4 py-3 rounded-lg data-[state=active]:bg-primary-50 dark:bg-primary-900/10 dark:text-white data-[state=active]:text-black dark:data-[state=active]:bg-primary-900/20"
                 >
-                  {loading ? "Saving..." : "Update Phone"}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-      </main>
+                  <Lock className="h-4 w-4" />
+                  <span>Account</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="notifications" 
+                  className="w-full justify-start gap-3 px-4 py-3 rounded-lg data-[state=active]:bg-primary-50 dark:bg-primary-900/10 dark:text-white data-[state=active]:text-black dark:data-[state=active]:bg-primary-900/20"
+                >
+                  <Bell className="h-4 w-4" />
+                  <span>Notifications</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="paymentPhone" 
+                  className="w-full justify-start gap-3 px-4 py-3 rounded-lg data-[state=active]:bg-primary-50 dark:bg-primary-900/10 dark:text-white data-[state=active]:text-black dark:data-[state=active]:bg-primary-900/20"
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                  <span>Payment Phone</span>
+                </TabsTrigger>
+              </TabsList>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 space-y-6">
+          {/* Profile Section */}
+          <TabsContent value="profile">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <User className="h-5 w-5" />
+                  <div>
+                    <span>Profile Information</span>
+                    <CardDescription>
+                      Update your personal details and contact information
+                    </CardDescription>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleProfileSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Full Name</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        placeholder="Your full name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-3 pt-4">
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      onClick={() => setFormData({
+                        ...formData,
+                        name: settings?.name || "",
+                        email: settings?.email || ""
+                      })}
+                    >
+                      Reset
+                    </Button>
+                    <Button type="submit" disabled={loading.profile}>
+                      {loading.profile ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Saving...
+                        </>
+                      ) : "Save Changes"}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Account Security Section */}
+          <TabsContent value="account">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <Lock className="h-5 w-5" />
+                  <div>
+                    <span>Account Security</span>
+                    <CardDescription>
+                      Manage your password and security settings
+                    </CardDescription>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handlePasswordSubmit} className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="oldPassword">Current Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="oldPassword"
+                          type={showPasswords.old ? "text" : "password"}
+                          value={formData.oldPassword}
+                          onChange={(e) => setFormData({...formData, oldPassword: e.target.value})}
+                          placeholder="Enter your current password"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          type="button"
+                          className="absolute right-0 top-0 h-full px-3"
+                          onClick={() => setShowPasswords({...showPasswords, old: !showPasswords.old})}
+                        >
+                          {showPasswords.old ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="newPassword">New Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="newPassword"
+                          type={showPasswords.new ? "text" : "password"}
+                          value={formData.newPassword}
+                          onChange={(e) => setFormData({...formData, newPassword: e.target.value})}
+                          placeholder="Create a new password"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          type="button"
+                          className="absolute right-0 top-0 h-full px-3"
+                          onClick={() => setShowPasswords({...showPasswords, new: !showPasswords.new})}
+                        >
+                          {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                      {formData.newPassword && (
+                        <PasswordStrengthMeter password={formData.newPassword} />
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="confirmPassword"
+                          type={showPasswords.confirm ? "text" : "password"}
+                          value={formData.confirmPassword}
+                          onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                          placeholder="Confirm your new password"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          type="button"
+                          className="absolute right-0 top-0 h-full px-3"
+                          onClick={() => setShowPasswords({...showPasswords, confirm: !showPasswords.confirm})}
+                        >
+                          {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {errors.password && (
+                      <div className="text-sm text-red-600 dark:text-red-400">{errors.password}</div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-2">
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      onClick={() => setFormData({
+                        ...formData,
+                        oldPassword: "",
+                        newPassword: "",
+                        confirmPassword: ""
+                      })}
+                    >
+                      Clear
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      disabled={loading.password || !formData.oldPassword || !formData.newPassword || !formData.confirmPassword}
+                    >
+                      {loading.password ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Updating...
+                        </>
+                      ) : "Update Password"}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Notifications Section */}
+          <TabsContent value="notifications">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <Bell className="h-5 w-5" />
+                  <div>
+                    <span>Notification Preferences</span>
+                    <CardDescription>
+                      Choose how you want to receive notifications
+                    </CardDescription>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <Label htmlFor="email-notifications">Email Notifications</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive important updates via email
+                      </p>
+                    </div>
+                    <Switch
+                      id="email-notifications"
+                      checked={notifications.email}
+                      onCheckedChange={() => handleNotificationChange('email')}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <Label htmlFor="sms-notifications">SMS Notifications</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Get text message alerts
+                      </p>
+                    </div>
+                    <Switch
+                      id="sms-notifications"
+                      checked={notifications.sms}
+                      onCheckedChange={() => handleNotificationChange('sms')}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <Label htmlFor="push-notifications">Push Notifications</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Enable app notifications
+                      </p>
+                    </div>
+                    <Switch
+                      id="push-notifications"
+                      checked={notifications.push}
+                      onCheckedChange={() => handleNotificationChange('push')}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Payment Phone Section */}
+          <TabsContent value="paymentPhone">
+            <Card className="border-red-600 dark:border-red-700">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-red-600 dark:text-red-400">
+                  <AlertTriangle className="h-5 w-5" />
+                  <div>
+                    <span>Payment Phone Number</span>
+                    <CardDescription className="text-red-600 dark:text-red-400">
+                      This is where your rental payments will be sent
+                    </CardDescription>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+                    <p className="text-sm text-muted-foreground">Current Payment Phone</p>
+                    <p className="font-medium text-lg">
+                      {settings?.payoutPhone ? (
+                        <span className="text-green-600 dark:text-green-400">
+                          {settings.payoutPhone}
+                        </span>
+                      ) : (
+                        <span className="text-red-600 dark:text-red-400">
+                          Not set up yet
+                        </span>
+                      )}
+                    </p>
+                  </div>
+
+                  <form onSubmit={handlePaymentPhoneSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="paymentPhone" className="text-red-600 dark:text-red-400">
+                        New Payment Phone Number
+                      </Label>
+                      
+                      <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            id="paymentPhone"
+                            type="tel"
+                            value={formData.paymentPhone}
+                            onChange={(e) => setFormData({...formData, paymentPhone: e.target.value})}
+                            placeholder="e.g. 254712345678"
+                            className={errors.paymentPhone ? "border-red-600 dark:border-red-400" : ""}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Enter your M-Pesa registered phone number</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      </TooltipProvider>
+                      {errors.paymentPhone && (
+                        <p className="text-sm text-red-600 dark:text-red-400">{errors.paymentPhone}</p>
+                      )}
+                    </div>
+
+                    <div className="flex justify-end gap-3">
+                      <Button 
+                        type="button" 
+                        variant="outline"
+                        onClick={() => setFormData({...formData, paymentPhone: settings?.payoutPhone || ""})}
+                      >
+                        Reset
+                      </Button>
+                      <Button 
+                        type="submit" 
+                        variant="destructive"
+                        disabled={loading.phone || !formData.paymentPhone}
+                      >
+                        {loading.phone ? (
+                          <>
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Updating...
+                          </>
+                        ) : "Update Payment Phone"}
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </div>
+      </Tabs>
     </div>
   )
 }
