@@ -2,10 +2,17 @@
 "use client"
 import type React from "react"
 import { useState, useEffect } from "react"
-import { X, Upload, Trash2 } from "lucide-react"
+import { X, Upload, Trash2, Loader2 } from "lucide-react"
 import type { Property } from "../../../types/properties.js"
 import axios from "axios"
 import { getAuthHeaders } from "../../../services/authService.js"
+import { Button } from "../../../components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
+import { Input } from "../../../components/ui/input"
+import { Textarea } from "../../../components/ui/textarea.js"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
+import { Checkbox } from "../../../components/ui/checkbox.js"
+import { Toaster, toast } from "sonner"
 
 interface EditListingModalProps {
   isOpen: boolean
@@ -31,7 +38,6 @@ const EditListingModal: React.FC<EditListingModalProps> = ({ isOpen, onClose, li
   })
   const [newImages, setNewImages] = useState<File[]>([])
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([])
-  const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -52,16 +58,16 @@ const EditListingModal: React.FC<EditListingModalProps> = ({ isOpen, onClose, li
       })
       setNewImages([])
       setImagesToDelete([])
-      setError("")
     }
   }, [listing, isOpen])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-    }))
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,17 +78,16 @@ const EditListingModal: React.FC<EditListingModalProps> = ({ isOpen, onClose, li
   }
 
   const handleDeleteImage = (imageUrl: string) => {
-    setImagesToDelete((prev) => [...prev, imageUrl])
+    setImagesToDelete(prev => [...prev, imageUrl])
   }
 
   const handleRestoreImage = (imageUrl: string) => {
-    setImagesToDelete((prev) => prev.filter((url) => url !== imageUrl))
+    setImagesToDelete(prev => prev.filter(url => url !== imageUrl))
   }
 
   const handleSubmit = async () => {
-    setError("")
     setLoading(true)
-
+    
     try {
       const submitData = new FormData()
 
@@ -94,7 +99,7 @@ const EditListingModal: React.FC<EditListingModalProps> = ({ isOpen, onClose, li
       })
 
       // Add new images
-      newImages.forEach((image) => {
+      newImages.forEach(image => {
         submitData.append("images", image)
       })
 
@@ -103,25 +108,21 @@ const EditListingModal: React.FC<EditListingModalProps> = ({ isOpen, onClose, li
         submitData.append("deleteImages", JSON.stringify(imagesToDelete))
       }
 
-<<<<<<< Updated upstream
-      const response = await axios.put(`https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`,submitData, {
-        headers:getAuthHeaders(true),        
-=======
-      const response = await axios.put(`http://localhost:5000/api/listings/${listing?._id}`, submitData, {
-        headers: getAuthHeaders(true),
->>>>>>> Stashed changes
-      })
+      const response = await axios.put(
+        `https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`,
+        submitData,
+        { headers: getAuthHeaders(true) }
+      )
 
-      const result = response.data
-
-      if (result.success) {
+      if (response.data.success) {
+        toast.success("Listing updated successfully",)
         onSuccess()
         onClose()
       } else {
-        setError(result.message || "Failed to update listing")
+        toast.error("Failed to update listing",)
       }
-    } catch (err: any) {
-      setError(err.message || "Error updating listing")
+    } catch {
+      toast.error("Error updating listing",)
     } finally {
       setLoading(false)
     }
@@ -129,284 +130,263 @@ const EditListingModal: React.FC<EditListingModalProps> = ({ isOpen, onClose, li
 
   if (!isOpen || !listing) return null
 
-  const currentImages = listing.images?.filter((img) => !imagesToDelete.includes(img)) || []
+  const currentImages = listing.images?.filter(img => !imagesToDelete.includes(img)) || []
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4">
-      <div className="bg-slate-100 dark:bg-gray-950 p-3 sm:p-6 rounded-lg w-full max-w-6xl mx-2 shadow-xl max-h-[95vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-3 sm:mb-6">
-          <h2 className="text-lg sm:text-2xl font-semibold text-gray-900 dark:text-white">Edit Listing</h2>
-          <button
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <Toaster position="top-right" richColors/>
+
+      <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto dark:bg-gray-900">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b border-primary-600">
+          <CardTitle className="text-xl font-semibold">Edit Listing</CardTitle>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onClose}
-            className="p-1 sm:p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            aria-label="Close modal"
+            className="h-8 w-8"
           >
-            <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-          </button>
-        </div>
-
-        {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-3 py-2 sm:px-4 sm:py-3 rounded-lg mb-3 sm:mb-4 text-xs sm:text-sm">
-            {error}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6">
+            <X className="h-4 w-4" />
+          </Button>
+        </CardHeader>
+        
+        <CardContent className="grid grid-cols-1 lg:grid-cols-2 pt-4 gap-6">
           {/* Left Column - Form Fields */}
-          <div className="space-y-2 sm:space-y-4">
-            <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Property Name
-              </label>
-              <input
-                type="text"
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="property_name">Property Name</label>
+              <Input
+                id="property_name"
                 name="property_name"
                 value={formData.property_name}
+                className="dark:bg-gray-950/50 border-gray-800"
                 onChange={handleInputChange}
-                className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
               />
             </div>
 
-            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 sm:gap-4">
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">City</label>
-                <input
-                  type="text"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="city">City</label>
+                <Input
+                  id="city"
                   name="city"
                   value={formData.city}
+                  className="dark:bg-gray-950/50 border-gray-800"
                   onChange={handleInputChange}
-                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
                 />
               </div>
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Area (m²)
-                </label>
-                <input
-                  type="number"
+              <div className="space-y-2">
+                <label htmlFor="area">Area (m²)</label>
+                <Input
+                  id="area"
                   name="area"
+                  type="number"
                   value={formData.area}
+                  className="dark:bg-gray-950/50 border-gray-800"
                   onChange={handleInputChange}
-                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Specific Location
-              </label>
-              <input
-                type="text"
+            <div className="space-y-2">
+              <label htmlFor="specific_location">Specific Location</label>
+              <Input
+                id="specific_location"
                 name="specific_location"
                 value={formData.specific_location}
+                className="dark:bg-gray-950/50 border-gray-800"
                 onChange={handleInputChange}
-                className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
               />
             </div>
 
-            <div className="grid grid-cols-1 xs:grid-cols-3 gap-2 sm:gap-4">
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
-                <select
-                  name="type"
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="type">Type</label>
+                <Select
                   value={formData.type}
-                  onChange={handleInputChange}
-                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
+                  onValueChange={(value) => handleSelectChange("type", value)}
                 >
-                  <option value="Single">Single</option>
-                  <option value="Bedseater">Bedseater</option>
-                  <option value="1 Bedroom">1 Bedroom</option>
-                  <option value="2 Bedroom">2 Bedroom</option>
-                  <option value="3 Bedroom">3 Bedroom</option>
-                  <option value="4 Bedroom">4 Bedroom</option>
-                </select>
+                  <SelectTrigger className="dark:bg-gray-950/50 border-gray-800">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Single">Single</SelectItem>
+                    <SelectItem value="Bedseater">Bedseater</SelectItem>
+                    <SelectItem value="1 Bedroom">1 Bedroom</SelectItem>
+                    <SelectItem value="2 Bedroom">2 Bedroom</SelectItem>
+                    <SelectItem value="3 Bedroom">3 Bedroom</SelectItem>
+                    <SelectItem value="4 Bedroom">4 Bedroom</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Bathrooms
-                </label>
-                <select
-                  name="bathrooms"
+              <div className="space-y-2">
+                <label htmlFor="bathrooms">Bathrooms</label>
+                <Select
                   value={formData.bathrooms}
-                  onChange={handleInputChange}
-                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
+                  onValueChange={(value) => handleSelectChange("bathrooms", value)}
                 >
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                </select>
+                  <SelectTrigger className="dark:bg-gray-950/50 border-gray-800">
+                    <SelectValue placeholder="Select bathrooms" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Bedrooms
-                </label>
-                <input
-                  type="number"
+              <div className="space-y-2">
+                <label htmlFor="bedrooms">Bedrooms</label>
+                <Input
+                  id="bedrooms"
                   name="bedrooms"
-                  value={formData.bedrooms}
-                  onChange={handleInputChange}
+                  type="number"
                   min="0"
-                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
+                  value={formData.bedrooms}
+                  className="dark:bg-gray-950/50 border-gray-800"
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 sm:gap-4">
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Price (KES)
-                </label>
-                <input
-                  type="number"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="price">Price (KES)</label>
+                <Input
+                  id="price"
                   name="price"
+                  type="number"
                   value={formData.price}
+                  className="dark:bg-gray-950/50 border-gray-800"
                   onChange={handleInputChange}
-                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
                 />
               </div>
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Deposit (KES)
-                </label>
-                <input
-                  type="number"
+              <div className="space-y-2">
+                <label htmlFor="deposit">Deposit (KES)</label>
+                <Input
+                  id="deposit"
                   name="deposit"
+                  type="number"
                   value={formData.deposit}
+                  className="dark:bg-gray-950/50 border-gray-800"
                   onChange={handleInputChange}
-                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Description
-              </label>
-              <textarea
+            <div className="space-y-2">
+              <label htmlFor="description">Description</label>
+              <Textarea
+                id="description"
                 name="description"
                 value={formData.description}
+                className="dark:bg-gray-950/50 border-gray-800"
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
               />
             </div>
 
-            <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Amenities (comma-separated)
-              </label>
-              <input
-                type="text"
+            <div className="space-y-2">
+              <label htmlFor="amenities">Amenities (comma-separated)</label>
+              <Input
+                id="amenities"
                 name="amenities"
                 value={formData.amenities}
+                className="dark:bg-gray-950/50 border-gray-800"
                 onChange={handleInputChange}
-                className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
               />
             </div>
 
             <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                name="featured"
+              <Checkbox
+                id="featured"
                 checked={formData.featured}
-                onChange={handleInputChange}
-                className="h-3 w-3 sm:h-4 sm:w-4 rounded border-gray-300 text-primary-600 focus:ring-1 focus:ring-primary-500"
+                onCheckedChange={(checked: any) => 
+                  setFormData(prev => ({ ...prev, featured: Boolean(checked) }))
+                }
               />
-              <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">Featured Listing</span>
+              <label htmlFor="featured">Featured Listing</label>
             </div>
           </div>
 
           {/* Right Column - Images */}
-          <div className="space-y-2 sm:space-y-4 mt-3 sm:mt-0">
-            <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Current Images
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label>Current Images</label>
+              <div className="grid grid-cols-3 gap-2">
                 {currentImages.map((imageUrl, index) => (
                   <div key={index} className="relative group">
                     <img
                       src={imageUrl || "/placeholder.svg"}
                       alt={`Property ${index + 1}`}
-                      className="w-full h-16 sm:h-20 md:h-24 object-cover rounded-lg"
+                      className="w-full h-24 object-cover rounded-lg"
                     />
-                    <button
+                    <Button
+                      variant="destructive"
+                      size="icon"
                       onClick={() => handleDeleteImage(imageUrl)}
-                      className="absolute top-0.5 right-0.5 p-0.5 sm:p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      aria-label="Delete image"
+                      className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      <Trash2 className="h-2 w-2 sm:h-3 sm:w-3" />
-                    </button>
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
                   </div>
                 ))}
               </div>
             </div>
 
             {imagesToDelete.length > 0 && (
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-red-600 dark:text-red-400 mb-1">
-                  Images to Delete ({imagesToDelete.length})
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2">
+              <div className="space-y-2">
+                <label className="text-destructive">Images to Delete ({imagesToDelete.length})</label>
+                <div className="grid grid-cols-3 gap-2">
                   {imagesToDelete.map((imageUrl, index) => (
                     <div key={index} className="relative group opacity-50">
                       <img
                         src={imageUrl || "/placeholder.svg"}
                         alt={`To delete ${index + 1}`}
-                        className="w-full h-16 sm:h-20 md:h-24 object-cover rounded-lg"
+                        className="w-full h-24 object-cover rounded-lg"
                       />
-                      <button
+                      <Button
+                        variant="outline"
+                        size="icon"
                         onClick={() => handleRestoreImage(imageUrl)}
-                        className="absolute top-0.5 right-0.5 p-0.5 sm:p-1 bg-green-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        aria-label="Restore image"
+                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                       >
-                        <Upload className="h-2 w-2 sm:h-3 sm:w-3" />
-                      </button>
+                        <Upload className="h-3 w-3" />
+                      </Button>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Upload New Images (Max 5)
-              </label>
-              <div className="flex flex-col space-y-1 sm:space-y-2">
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/jpg"
-                  multiple
-                  onChange={handleImageUpload}
-                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-xs sm:text-sm"
-                />
-                {newImages.length > 0 && (
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {newImages.length} new image(s) selected
-                  </p>
-                )}
-              </div>
+            <div className="space-y-2">
+              <label htmlFor="newImages">Upload New Images (Max 5)</label>
+              <Input
+                id="newImages"
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                multiple
+                className="dark:bg-primary-600 cursor-pointer border-gray-800"
+                onChange={handleImageUpload}
+              />
+              {newImages.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  {newImages.length} new image(s) selected
+                </p>
+              )}
             </div>
           </div>
-        </div>
+        </CardContent>
 
-        <div className="flex flex-col xs:flex-row justify-end gap-1 sm:gap-3 mt-3 sm:mt-6 pt-3 border-t border-gray-200 dark:border-gray-700">
-          <button
-            onClick={onClose}
-            className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-900 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium transition-colors text-xs sm:text-sm"
-          >
+        <div className="flex justify-end gap-2 p-6 pt-0">
+          <Button variant="outline" onClick={onClose} className="hover:bg-red-600">
             Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium transition-colors text-xs sm:text-sm"
-          >
+          </Button>
+          <Button onClick={handleSubmit} disabled={loading} className="hover:bg-primary-600 hover:text-white">
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {loading ? "Updating..." : "Update Listing"}
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
     </div>
   )
 }
