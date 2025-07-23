@@ -18,7 +18,7 @@ function WelcomeInfo() {
     useEffect(() => {
         const fetchAgentInfo = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/agents/info", {
+                const response = await axios.get("https://nyumba-smart-server.onrender.com/api/agents/info", {
                     headers: getAuthHeaders(),
                 });
                 setAgentInfo(response.data.data);

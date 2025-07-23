@@ -87,7 +87,6 @@ const AdvertiseRooms = () => {
         })
 
         setError(null)
-        toast.success('Listings updated successfully')
       } else {
         setError("Failed to fetch listings")
         toast.error("Failed to fetch listings")

@@ -260,7 +260,7 @@ export default function LandlordDashboardLayout() {
         {/* Mobile device topbar */}
         <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-gradient-to-br from-primary-gray-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 shadow">
           <button
-            type="button"
+            type="button" 
             className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >

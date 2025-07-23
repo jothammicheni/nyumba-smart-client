@@ -196,7 +196,7 @@ const RelocationHomeSearch: React.FC = () => {
         },
       }
 
-      const response = await fetch("http://localhost:5000/api/home-search-relocation-requests", {
+      const response = await fetch("https://nyumba-smart-server.onrender.com/api/home-search-relocation-requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" }, // Crucial header
         body: JSON.stringify(dataToSend),
@@ -244,7 +244,7 @@ const RelocationHomeSearch: React.FC = () => {
         },
       }
 
-      const response = await fetch("http://localhost:5000/api/home-search-relocation-requests", {
+      const response = await fetch("https://nyumba-smart-server.onrender.com/api/home-search-relocation-requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" }, // Crucial header
         body: JSON.stringify(dataToSend),

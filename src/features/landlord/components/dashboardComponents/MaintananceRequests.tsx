@@ -43,7 +43,6 @@ const MaintenanceRequests: React.FC = () => {
     try {
       const data = await fetchLandlordMaintenanceRequests();
       setRequests(data);
-      toast.success('Maintenance requests updated');
     } catch (error) {
       setError("Failed to fetch maintenance requests");
       toast.error("Failed to load maintenance requests");
