@@ -331,11 +331,11 @@ export default function LandlordDashboardLayout() {
                     className="max-w-xs flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                   >
                     <span className="sr-only">Open user menu</span>
-                    <img
+{/*                     <img
                       className="h-8 w-8 rounded-full"
                       src="https://randomuser.me/api/portraits/men98/1.jpg"
                       alt="User profile"
-                    />
+                    /> */}
                   </button>
                 </div>
               </div>
