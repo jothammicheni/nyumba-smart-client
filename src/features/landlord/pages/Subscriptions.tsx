@@ -503,7 +503,7 @@ const Subscriptions = () => {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 mb-10">
-        <Card className="bg-gray-900/50">
+        <Card className="bg-white dark:bg-gray-900/50 ">
           <CardHeader className="flex flex-row items-center gap-4">
             <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
               <span className="text-xl font-bold text-primary-600">1</span>
@@ -518,7 +518,7 @@ const Subscriptions = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900/50">
+        <Card className="bg-white dark:bg-gray-900/50 ">
           <CardHeader className="flex flex-row items-center gap-4">
             <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
               <span className="text-xl font-bold text-primary-600">2</span>
@@ -533,7 +533,7 @@ const Subscriptions = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900/50">
+        <Card className="bg-white dark:bg-gray-900/50 ">
           <CardHeader className="flex flex-row items-center gap-4">
             <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
               <span className="text-xl font-bold text-primary-600">3</span>
