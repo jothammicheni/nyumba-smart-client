@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { User, Edit2, Trash2, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 import { getAuthHeaders } from '../../../../services/authService';
+import { Button } from '../../../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../../components/ui/select';
+import { Badge } from '../../../../components/ui/badge';
+import { toast } from 'sonner';
 
 interface Property {
   name: string;
   location: string;
 }
 
-interface User {
+interface UserData {
   _id: string;
   name: string;
   email: string;
@@ -20,9 +26,9 @@ interface User {
 }
 
 const ManageCaretakers: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
   const [filteredRole, setFilteredRole] = useState<'caretaker' | 'agent'>('caretaker');
-  const [showDeleteModal, setShowDeleteModal] = useState<User | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState<UserData | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,11 +36,13 @@ const ManageCaretakers: React.FC = () => {
       try {
         const res = await axios.get('https://nyumba-smart-server.onrender.com/api/users/caretakers',{ 
           headers:getAuthHeaders(),
+
         });
         const data = Array.isArray(res.data) ? res.data : res.data.data;
-        setUsers(data.filter((u: User) => u.role === 'caretaker' || u.role === 'agent'));
+        setUsers(data.filter((u: UserData) => u.role === 'caretaker' || u.role === 'agent'));
       } catch (err) {
         console.error('Failed to fetch users', err);
+        toast.error('Failed to load users data');
       }
     };
 
@@ -43,113 +51,162 @@ const ManageCaretakers: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`https://nyumba-smart-server.onrender.com/api/users/${id}`);
+
+       await axios.delete(`https://nyumba-smart-server.onrender.com/api/users/${id}`, {
+        headers: getAuthHeaders()
+      });
       setUsers(prev => prev.filter(user => user._id !== id));
       setShowDeleteModal(null);
+      toast.success('User deleted successfully');
     } catch (err) {
       console.error('Delete error:', err);
-      alert('Failed to delete user');
+      toast.error('Failed to delete user');
     }
   };
 
   const visibleUsers = users.filter(user => user.role === filteredRole);
 
   return (
-    <div className="p-4 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl md:text-3xl font-bold mb-4 text-center">
-        Manage {filteredRole === 'caretaker' ? 'Caretakers' : 'Agents'}
-      </h1>
+    <div className="container mx-auto p-4 space-y-6 h-full dark:bg-black/10">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            Manage {filteredRole === 'caretaker' ? 'Caretakers' : 'Agents'}
+          </h1>
+          <p className="text-muted-foreground">
+            View and manage all {filteredRole === 'caretaker' ? 'caretakers' : 'agents'} in your properties
+          </p>
+        </div>
 
-      <div className="flex justify-center gap-4 mb-6">
-        <button
-          onClick={() => setFilteredRole('caretaker')}
-          className={`px-4 py-2 rounded-md text-sm font-medium ${
-            filteredRole === 'caretaker' ? 'bg-blue-600 text-white' : 'bg-white border text-blue-600'
-          }`}
+        <Select 
+          value={filteredRole}
+          onValueChange={(value: 'caretaker' | 'agent') => setFilteredRole(value)}
         >
-          View Caretakers
-        </button>
-        <button
-          onClick={() => setFilteredRole('agent')}
-          className={`px-4 py-2 rounded-md text-sm font-medium ${
-            filteredRole === 'agent' ? 'bg-blue-600 text-white' : 'bg-white border text-blue-600'
-          }`}
-        >
-          View Agents
-        </button>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="caretaker">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span>Caretakers</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="agent">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span>Agents</span>
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Cards */}
+      {/* Users Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {visibleUsers.map(user => (
-          <div
-            key={user._id}
-            className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all text-sm md:text-base"
-          >
-            <h2 className="text-lg font-semibold text-gray-800 break-words">{user.name}</h2>
-            <p className="text-gray-600 break-words">Phone: {user.phone}</p>
+          <Card key={user._id} className="transition shadow-lg dark:bg-gray-900">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary-100 dark:bg-primary-600/30 p-2 rounded-full">
+                    <User className="h-5 w-5 text-primary-600 dark:text-primary-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">{user.name}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{user.phone}</p>
+                  </div>
+                </div>
+                <Badge variant={user.role === 'caretaker' ? 'default' : 'outline'} className='bg-gray-950 dark:bg-white'>
+                  {user.role}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-1">
+                <p className="text-sm font-medium">Permissions</p>
+                <div className="flex flex-wrap gap-1">
+                  {user.caretakerPermissions?.length > 0 ? (
+                    user.caretakerPermissions.map(permission => (
+                      <Badge key={permission} variant="default" className="capitalize bg-gray-950 dark:bg-white">
+                        {permission}
+                      </Badge>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No permissions</p>
+                  )}
+                </div>
+              </div>
 
-            <p className="text-gray-600">Permissions: 
-              <span className="text-gray-800 ml-1">
-                {user.caretakerPermissions?.length ? user.caretakerPermissions.join(', ') : 'None'}
-              </span>
-            </p>
-
-            <div className="text-gray-600">
-              <p className="font-medium">Properties:</p>
-              <ul className="list-disc ml-5">
+              <div className="space-y-1">
+                <p className="text-sm font-medium">Properties</p>
                 {user.properties && user.properties.length > 0 ? (
-                  user.properties.map((prop, i) => (
-                    <li key={i}>{prop.name} ({prop.location})</li>
-                  ))
+                  <div className="space-y-1">
+                    {user.properties.slice(0, 2).map((prop, i) => (
+                      <div key={i} className="flex items-center text-sm">
+                        <ChevronRight className="h-4 w-4 text-muted-foreground mr-1" />
+                        <span>{prop.name}</span>
+                      </div>
+                    ))}
+                    {user.properties.length > 2 && (
+                      <p className="text-xs text-muted-foreground">
+                        +{user.properties.length - 2} more properties
+                      </p>
+                    )}
+                  </div>
                 ) : (
-                  <li>No properties</li>
+                  <p className="text-sm text-muted-foreground">No properties assigned</p>
                 )}
-              </ul>
-            </div>
+              </div>
 
-            <div className="flex justify-end gap-3 pt-2">
-              <button
-                onClick={() => navigate(`/landlord/dashboard/manage/agents&caretakers/edit/${user._id}`)}
-                className="px-3 py-1 rounded-md text-xs md:text-sm bg-yellow-400 hover:bg-yellow-500 text-white"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => setShowDeleteModal(user)}
-                className="px-3 py-1 rounded-md text-xs md:text-sm bg-red-600 hover:bg-red-700 text-white"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate(`/landlord/dashboard/manage/agents&caretakers/edit/${user._id}`)}
+                >
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setShowDeleteModal(user)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-md w-full max-w-sm space-y-4">
-            <h2 className="text-lg font-semibold text-gray-800">Confirm Delete</h2>
-            <p className="text-gray-700 text-sm">
-              Are you sure you want to delete <span className="font-semibold">{showDeleteModal.name}</span>?
-            </p>
-
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowDeleteModal(null)}
-                className="bg-gray-300 px-4 py-1 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleDelete(showDeleteModal._id)}
-                className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <Card className="w-full max-w-sm dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-lg">Confirm Deletion</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Are you sure you want to delete <span className="font-semibold text-foreground">{showDeleteModal.name}</span>?
+                This action cannot be undone.
+              </p>
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setShowDeleteModal(null)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => handleDelete(showDeleteModal._id)}
+                >
+                  Confirm Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>

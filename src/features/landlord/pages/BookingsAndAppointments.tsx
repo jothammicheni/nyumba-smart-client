@@ -217,7 +217,7 @@ export default function BookingsAndAppointments() {
 
           {/* Detail Panel */}
           <div className="lg:col-span-1 dark:bg-gray-900/40 mt-4">
-            <Card className="bg-gray-900/50">
+            <Card className="dark:bg-gray-900/50 bg-white shadow-sm">
               <CardHeader>
                 <CardTitle className="uppercase text-md">
                   {selected
