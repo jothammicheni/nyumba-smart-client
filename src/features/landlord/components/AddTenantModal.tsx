@@ -103,7 +103,7 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-gray-950 p-6 rounded-lg w-full max-w-md mx-4 border shadow-lg">
+      <div className="bg-white dark:bg-gray-950 p-6 rounded-lg w-full max-w-md mx-4 border shadow-lg">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">Add New Tenant</h2>
@@ -128,7 +128,7 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="bg-gray-900"
+                className="bg-white dark:bg-gray-900"
                 placeholder="John Doe"
               />
             </div>
@@ -140,7 +140,7 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-900"
+                className="bg-white dark:bg-gray-900"
                 placeholder="john@example.com"
               />
             </div>
@@ -151,7 +151,7 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
                 id="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="bg-gray-900"
+                className="bg-white dark:bg-gray-900"
                 placeholder="+254 700 000000"
               />
             </div>

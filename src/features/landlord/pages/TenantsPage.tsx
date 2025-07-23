@@ -119,7 +119,7 @@ const TenantsPage: React.FC = () => {
     if (amount === undefined || amount === null) return "$0.00"
     return amount.toLocaleString("en-US", {
       style: "currency",
-      currency: "USD"
+      currency: "KES"
     })
   }
 
@@ -317,7 +317,7 @@ const TenantsPage: React.FC = () => {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="block w-full pl-9 pr-3 py-3 text-sm border rounded-md bg-gray-900"
+                  className="block w-full pl-9 pr-3 py-3 text-sm border rounded-md bg-white/90 dark:bg-gray-900"
                   placeholder="Search tenants..."
                 />
               </div>
@@ -364,10 +364,10 @@ const TenantsPage: React.FC = () => {
                 const balance = tenant.lease?.balance ?? 0
 
                 return (
-                  <Card key={tenant._id} className="hover-scale bg-gray-950/50">
+                  <Card key={tenant._id} className="hover-scale bg-white/90 shadow-lg dark:bg-gray-950/50">
                     <CardContent className="pt-4">
                       <div className="flex items-center space-x-3 mb-4">
-                        <div className="h-10 w-10 bg-gray-200 dark:bg-primary-600/30 rounded-full flex items-center justify-center">
+                        <div className="h-10 w-10 bg-gray-100 dark:bg-primary-600/30 rounded-full flex items-center justify-center">
                           <User className="h-6 w-6 text-primary-600 dark:text-primary-600" />
                         </div>
                         <div>

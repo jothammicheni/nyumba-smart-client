@@ -16,7 +16,6 @@ import {
   X,
   LogOut,
   Menu,
-  Bell,
   BellRing,
   Calendar,
   FileText,
@@ -314,7 +313,7 @@ export default function LandlordDashboardLayout() {
               </button>
 
               {/* Notification dropdown */}
-              <div className="ml-3 relative">
+              {/* <div className="ml-3 relative">
                 <button
                   type="button"
                   className="p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
@@ -322,7 +321,7 @@ export default function LandlordDashboardLayout() {
                   <span className="sr-only">View notifications</span>
                   <Bell className="h-6 w-6" />
                 </button>
-              </div>
+              </div> */}
 
               {/* Profile dropdown */}
               <div className="ml-3 relative">
