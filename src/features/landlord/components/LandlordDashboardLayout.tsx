@@ -333,7 +333,7 @@ export default function LandlordDashboardLayout() {
                     <span className="sr-only">Open user menu</span>
                     <img
                       className="h-8 w-8 rounded-full"
-                      src="https://randomuser.me/api/portraits/men/1.jpg"
+                      src="https://randomuser.me/api/portraits/men98/1.jpg"
                       alt="User profile"
                     />
                   </button>
