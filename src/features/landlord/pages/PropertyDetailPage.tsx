@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import type React from "react";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -9,11 +8,12 @@ import {
   ArrowLeft,
   Plus,
   Trash2,
-   Pencil,
-    Megaphone ,
+  Pencil,
+  Megaphone,
   User,
   AlertTriangle,
   RefreshCw,
+  // Loader2,
 } from "lucide-react";
 import {
   getProperty,
@@ -25,8 +25,11 @@ import {
 import AddRoomModal from "../components/AddRoomModal.js";
 import AssignTenantModal from "../components/AssignTenantModal.js";
 import AdvertisePropertyModal from "../components/AdvertisePropertyModal.js";
-import { Loader } from "../../../components/Loader.js";
-import { toast } from "react-toastify";
+import { Button } from "../../../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../components/ui/card";
+import { Badge } from "../../../components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
+import { Toaster, toast } from "sonner";
 import { getAuthHeaders } from "../../../services/authService.js";
 import axios from "axios";
 
@@ -73,35 +76,41 @@ const PropertyDetailPage: React.FC = () => {
     try {
       const response = await getProperty(id!);
       setProperty(response.data);
+      toast.success('Property data loaded');
     } catch (err: any) {
-      setError(err.response?.data?.error || "Failed to fetch property details");
+      const errorMsg = err.response?.data?.error || "Failed to fetch property details";
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
- const handleAddRoom = async (roomData: any): Promise<boolean> => {
-  try {
-    await createRoom(id!, roomData);
-    setIsAddRoomModalOpen(false);
-    fetchProperty();
-    toast.success("Room added successfully!");
-    return true;  // success
-  } catch (err: any) {
-    const errorMsg = err.response?.data?.error || "Failed to add room";
-    setError(errorMsg);
-    toast.error(errorMsg);
-    return false; // failure
-  }
-};
+  const handleAddRoom = async (roomData: any): Promise<boolean> => {
+    try {
+      await createRoom(id!, roomData);
+      setIsAddRoomModalOpen(false);
+      fetchProperty();
+      toast.success("Room added successfully!");
+      return true;
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || "Failed to add room";
+      setError(errorMsg);
+      toast.error(errorMsg);
+      return false;
+    }
+  };
 
   const handleDeleteRoom = async (roomId: string) => {
     if (window.confirm("Are you sure you want to delete this room?")) {
       try {
         await deleteRoom(roomId);
         fetchProperty();
+        toast.success("Room deleted successfully");
       } catch (err: any) {
-        setError(err.response?.data?.error || "Failed to delete room");
+        const errorMsg = err.response?.data?.error || "Failed to delete room";
+        setError(errorMsg);
+        toast.error(errorMsg);
       }
     }
   };
@@ -111,8 +120,11 @@ const PropertyDetailPage: React.FC = () => {
       await assignTenant(selectedRoomId, userId);
       setIsAssignTenantModalOpen(false);
       fetchProperty();
+      toast.success("Tenant assigned successfully");
     } catch (err: any) {
-      setError(err.response?.data?.error || "Failed to assign tenant");
+      const errorMsg = err.response?.data?.error || "Failed to assign tenant";
+      setError(errorMsg);
+      toast.error(errorMsg);
     }
   };
 
@@ -121,312 +133,332 @@ const PropertyDetailPage: React.FC = () => {
       try {
         await removeTenant(roomId);
         fetchProperty();
+        toast.success("Tenant removed successfully");
       } catch (err: any) {
-        setError(err.response?.data?.error || "Failed to remove tenant");
+        const errorMsg = err.response?.data?.error || "Failed to remove tenant";
+        setError(errorMsg);
+        toast.error(errorMsg);
       }
     }
   };
 
-  // Edit Handler
-const handleEdit = () => {
-  toast.info("Redirecting to edit page...")
-  navigate(`/landlord/properties/${property?._id}/edit`)
-}
+  const handleEdit = () => {
+    navigate(`/landlord/properties/${property?._id}/edit`);
+  };
 
-// Delete Handler
-const handleDelete = async () => {
-  const confirmDelete = window.confirm(`Are you sure you want to delete "${property?.name}"?`)
-  if (!confirmDelete) return
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(`Are you sure you want to delete "${property?.name}"?`);
+    if (!confirmDelete) return;
 
-  toast.loading("Deleting property...")
+    toast.loading("Deleting property...");
 
-  try {
-    await axios.delete(
-      `http://localhost:5000/api/properties/${property?._id}`,
-      {
-        headers: getAuthHeaders(),
-      }
-    )
-
-    toast.dismiss() // Remove loading toast
-    toast.success("Property deleted successfully!")
-    navigate("/landlord/properties")
-  } catch (error) {
-    toast.dismiss()
-    toast.error("Failed to delete property. Try again.")
-    console.error("Delete error:", error)
-  }
-}
+    try {
+      await axios.delete(
+        `https://nyumba-smart-server.onrender.com/api/properties/${property?._id}`,
+        { headers: getAuthHeaders() }
+      );
+      toast.dismiss();
+      toast.success("Property deleted successfully!");
+      navigate("/landlord/properties");
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Failed to delete property. Try again.");
+      console.error("Delete error:", error);
+    }
+  };
 
   const openAssignTenantModal = (roomId: string) => {
     setSelectedRoomId(roomId);
     setIsAssignTenantModalOpen(true);
   };
 
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case "vacant":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "occupied":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-      case "maintenance":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-      case "reserved":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
-    }
+  const getStatusBadge = (status: string) => {
+    const variants = {
+      vacant: "success",
+      occupied: "default",
+      maintenance: "warning",
+      reserved: "outline"
+    } as const;
+
+    return (
+      <Badge variant={variants[status as keyof typeof variants] || "default"} className="capitalize">
+        {status}
+      </Badge>
+    );
   };
 
-  if (loading) return <div><Loader/></div>
+  if (loading && !property) {
+    return (
+      <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+        <div className="flex flex-col space-y-4">
+          <div className="h-8 bg-muted/10 rounded animate-pulse" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-32 bg-muted/10 rounded animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
-      <div className="p-6">
-        <div className="mb-6">
-          <button
-            onClick={() => navigate("/landlord/dashboard/properties")}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Properties
-          </button>
+      <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate("/landlord/dashboard/properties")}
+          className="bg-primary-600 text-white"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Properties
+        </Button>
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
+          {error}
         </div>
-        <div className="p-4 bg-red-100 text-red-700 rounded-md">{error}</div>
       </div>
     );
   }
 
   if (!property) {
     return (
-      <div className="p-6">
-        <div className="mb-6">
-          <button
-            onClick={() => navigate("/landlord/properties")}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Properties
-          </button>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
-          <AlertTriangle className="h-12 w-12 mx-auto text-yellow-500" />
-          <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
-            Property not found
-          </h3>
-        </div>
+      <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate("/landlord/properties")}
+          className="bg-primary-600 text-white"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Properties
+        </Button>
+        <Card className="dark:bg-gray-900/50 shadow-md text-center py-12">
+          <AlertTriangle className="h-12 w-12 mx-auto text-warning" />
+          <h3 className="mt-4 text-lg font-medium">Property not found</h3>
+        </Card>
       </div>
     );
   }
 
- return (
-  <div className="p-4 sm:p-6">
-    {/* Back Button */}
-    <div className="mb-6">
-      <button
-        onClick={() => navigate("/landlord/properties")}
-        className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
-      >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Properties
-      </button>
-    </div>
-
-    {/* Property Header */}
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-6">
-      <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center">
-          <Building className="h-10 w-10 text-primary-600 dark:text-primary-500 mr-4" />
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-              {property.name}
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {property.area}, {property.city}
-            </p>
-          </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3 mt-4 sm:mt-0">
-  {/* Row for Edit + Delete on all screens */}
-  <div className="flex flex-row gap-2">
-    <button
-      onClick={handleEdit}
-      className="inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md shadow"
-    >
-      <Pencil className="h-4 w-4 mr-2" />
-      Edit
-    </button>
-
-    <button
-      onClick={handleDelete}
-      className="inline-flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md shadow"
-    >
-      <Trash2 className="h-4 w-4 mr-2" />
-      Delete
-    </button>
-  </div>
-
-  {/* Advertise button appears below on mobile */}
-  <button
-    onClick={() => setIsAdvertiseModalOpen(true)}
-    className="inline-flex items-center justify-center px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-md shadow w-full sm:w-auto"
-  >
-    <Megaphone className="h-4 w-4 mr-2" />
-    Advertise {property.name}
-  </button>
-</div>
-
+  return (
+    <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+      <Toaster position="top-right" richColors />
+      
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <Button 
+          variant="outline" 
+          onClick={() => navigate("/landlord/properties")}
+          className="w-full sm:w-auto bg-primary-600 text-white"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Properties
+        </Button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 sm:px-6 pb-6">
-        <div className="bg-gray-50 dark:bg-gray-950/80 p-4 rounded-md">
-          <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Total Units
+      {/* Property Header */}
+      <Card className="dark:bg-gray-900/50 shadow-md">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-lg bg-primary-100 dark:bg-primary-900/30">
+                <Building className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+              </div>
+              <div>
+                <CardTitle>{property.name}</CardTitle>
+                <CardDescription>
+                  {property.area}, {property.city}
+                </CardDescription>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button
+                onClick={handleEdit}
+                variant="outline"
+                className="bg-primary-600 text-white"
+              >
+                <Pencil className="h-4 w-4 mr-2" />
+                Edit
+              </Button>
+              <Button
+                onClick={handleDelete}
+                variant="destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+              <Button
+                onClick={() => setIsAdvertiseModalOpen(true)}
+                variant="outline"
+                className="bg-warning text-warning-foreground"
+              >
+                <Megaphone className="h-4 w-4 mr-2" />
+                Advertise
+              </Button>
+            </div>
           </div>
-          <div className="mt-1 text-xl font-semibold text-gray-900 dark:text-white">
-            {property.rooms.length}
+        </CardHeader>
+        
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Card className="hover-scale">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Total Units</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{property.rooms.length}</div>
+              </CardContent>
+            </Card>
+            
+            <Card className="hover-scale">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Vacant Units</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {property.rooms.filter((room) => room.status === "vacant").length}
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </div>
-        <div className="bg-gray-50 dark:bg-gray-950/80 p-4 rounded-md">
-          <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Vacant Units
-          </div>
-          <div className="mt-1 text-xl font-semibold text-gray-900 dark:text-white">
-            {
-              property.rooms.filter((room) => room.status === "vacant").length
-            }
-          </div>
-        </div>
-      </div>
-    </div>
+        </CardContent>
+      </Card>
 
-    {/* Room Table */}
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow">
-      <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-primary-600/30 flex flex-col sm:flex-row justify-between gap-4 sm:items-center">
-        <h2 className="text-lg font-medium text-gray-900 dark:text-white">Rooms</h2>
-        <div className="flex flex-col sm:flex-row gap-2">
-          <button
-            onClick={fetchProperty}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </button>
-          <button
-            onClick={() => setIsAddRoomModalOpen(true)}
-            className="inline-flex items-center px-3 py-2 border border-primary-600 dark:border-primary-500 shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Room
-          </button>
-        </div>
-      </div>
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-primary-600/30">
-          <thead className="bg-gray-50 dark:bg-gray-900">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Room</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Tenant</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-primary-600/10">
-            {property.rooms.map((room) => (
-              <tr key={room._id}>
-                <td className="px-6 py-4 whitespace-nowrap">{room.room_number}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(room.status)}`}
-                  >
-                    {room.status.charAt(0).toUpperCase() + room.status.slice(1)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {room.status === "occupied" && room.tenantInfo ? (
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 mr-2 text-gray-400" />
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-white">
-                          {room.tenantInfo.name}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {room.tenantInfo.email}
+      {/* Rooms Section */}
+      <Card className="dark:bg-gray-900/50 shadow-md">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <CardTitle>Rooms</CardTitle>
+              <CardDescription>Manage rooms in this property</CardDescription>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button 
+                variant="outline" 
+                onClick={fetchProperty}
+                className="bg-primary-600 text-white"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+              <Button
+                onClick={() => setIsAddRoomModalOpen(true)}
+                className="bg-primary-600 text-white"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Room
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Room</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Tenant</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {property.rooms.map((room) => (
+                <TableRow key={room._id}>
+                  <TableCell className="font-medium">
+                    {room.room_number}
+                  </TableCell>
+                  <TableCell>
+                    {getStatusBadge(room.status)}
+                  </TableCell>
+                  <TableCell>
+                    {room.status === "occupied" && room.tenantInfo ? (
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <div>{room.tenantInfo.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {room.tenantInfo.email}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <span className="text-gray-400">No tenant assigned</span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                  {room.status === "occupied" ? (
-                    <button
-                      onClick={() => handleRemoveTenant(room._id)}
-                      className="inline-flex items-center px-2 py-1 border border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white"
+                    ) : (
+                      <span className="text-muted-foreground">No tenant</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right space-x-2">
+                    {room.status === "occupied" ? (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleRemoveTenant(room._id)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Remove
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openAssignTenantModal(room._id)}
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        Assign
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteRoom(room._id)}
                     >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Remove
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => openAssignTenantModal(room._id)}
-                      className="inline-flex items-center px-2 py-1 border border-primary-600 text-primary-600 rounded hover:bg-primary-600 hover:text-white"
-                    >
-                      <User className="h-4 w-4 mr-1" />
-                      Assign
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleDeleteRoom(room._id)}
-                    className="inline-flex items-center px-2 py-1 border border-gray-400 text-gray-600 rounded hover:bg-gray-400 hover:text-white"
-                  >
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          
+          {property.rooms.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No rooms found for this property</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-    {/* Modals */}
-    <AddRoomModal
-      isOpen={isAddRoomModalOpen}
-      onClose={() => setIsAddRoomModalOpen(false)}
-      onSubmit={handleAddRoom}
-      propertyId={id!}
-    />
-
-    <AssignTenantModal
-      isOpen={isAssignTenantModalOpen}
-      onClose={() => setIsAssignTenantModalOpen(false)}
-      onSubmit={handleAssignTenant}
-      roomId={selectedRoomId}
-    />
-
-    {property && (
-      <AdvertisePropertyModal
-        isOpen={isAdvertiseModalOpen}
-        onClose={() => setIsAdvertiseModalOpen(false)}
-        property={{
-          _id: property._id,
-          name: property.name,
-          city: property.city,
-          area: property.area,
-        }}
-        onSuccess={() => alert("Property listed successfully!")}
+      {/* Modals */}
+      <AddRoomModal
+        isOpen={isAddRoomModalOpen}
+        onClose={() => setIsAddRoomModalOpen(false)}
+        onSubmit={handleAddRoom}
+        propertyId={id!}
       />
-    )}
-  </div>
-);
 
+      <AssignTenantModal
+        isOpen={isAssignTenantModalOpen}
+        onClose={() => setIsAssignTenantModalOpen(false)}
+        onSubmit={handleAssignTenant}
+        roomId={selectedRoomId}
+      />
+
+      {property && (
+        <AdvertisePropertyModal
+          isOpen={isAdvertiseModalOpen}
+          onClose={() => setIsAdvertiseModalOpen(false)}
+          property={{
+            _id: property._id,
+            name: property.name,
+            city: property.city,
+            area: property.area,
+          }}
+          onSuccess={() => toast.success("Property listed successfully!")}
+        />
+      )}
+    </div>
+  );
 };
 
 export default PropertyDetailPage;

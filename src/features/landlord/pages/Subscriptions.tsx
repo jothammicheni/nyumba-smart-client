@@ -7,8 +7,11 @@ import {
   ClipboardList,
   Gem,
   Crown,
-  BadgeCheck,
   Clock,
+  RefreshCw,
+  Check,
+  X,
+  Loader2
 } from "lucide-react";
 import {
   createSubscription,
@@ -16,32 +19,50 @@ import {
   validateSubscription,
 } from "../../../services/subscriptionService.js";
 import { toast, Toaster } from "sonner";
-import TrialModal from "../components/TrialModal.js";
-import InitiatePaymentModal from "../components/paymentsModals/InitiatePaymentModal.js";
-import ConfirmPaymentModal from "../components/paymentsModals/ConfirmPaymentModal.js";
-import PaymentResultModal from "../components/paymentsModals/PaymentResultModal.js";
+import { Button } from "../../../components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Badge } from "../../../components/ui/badge";
 import {
   initiateMpesaPayment,
-  checkMpesaPaymentStatus, // ✅ correct name
-} from "../../../services/payment.service/subscriptions/subscription.payment.service.js"
+  checkMpesaPaymentStatus,
+} from "../../../services/payment.service/subscriptions/subscription.payment.service.js";
+
+interface Tier {
+  name: string;
+  icon: React.ReactNode;
+  priceMonthly: number;
+  priceYearly: number;
+  properties: number | string;
+  rooms: number | string;
+  vacancyListings: number | string;
+  topOffers: number | string;
+  trial: boolean;
+  current: boolean;
+  description: string;
+  features: string[];
+}
+
+interface Subscription {
+  tier: string;
+  is_active: boolean;
+  is_free_trial_active: boolean;
+  free_trial_end_date?: string;
+  end_date?: string;
+}
+
 const Subscriptions = () => {
-  const [selectedTier, setSelectedTier] = useState<any>(null);
+  const [selectedTier, setSelectedTier] = useState<Tier | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [activeSub, setActiveSub] = useState<any>(null);
+  const [activeSub, setActiveSub] = useState<Subscription | null>(null);
   const [countdown, setCountdown] = useState<string>("");
-  const [showPayment, setShowPayment] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState<string>("");
-
-    // Payment modal states
-  const [showInitiate, setShowInitiate] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<"idle" | "initiating" | "confirming" | "completed">("idle");
   const [paymentResult, setPaymentResult] = useState<{
     success: boolean;
     message: string;
   } | null>(null);
-
 
   // Fetch active subscription from backend
   useEffect(() => {
@@ -51,7 +72,6 @@ const Subscriptions = () => {
         if (res.success) {
           setActiveSub(res.data);
         }
-        console.log("Active subscription:", res.data);
       } catch (err) {
         console.error("Failed to fetch subscription:", err);
       }
@@ -90,19 +110,15 @@ const Subscriptions = () => {
 
       if (activeSub.is_free_trial_active && days <= 3) {
         setAlertMessage(
-          `🚨 Free trial ends in ${days} day(s). Consider upgrading.`
+          `Free trial ends in ${days} day(s). Consider upgrading.`
         );
         setShowAlert(true);
-        setShowPayment(false);
       } else if (!activeSub.is_active && !activeSub.is_free_trial_active) {
-        setAlertMessage(`🔒 Pay for your subscription to unlock all features.`);
+        setAlertMessage(`Pay for your subscription to unlock all features.`);
         setShowAlert(true);
-        setShowPayment(true);
-        console.log(showPayment);
       } else {
         setAlertMessage("");
         setShowAlert(false);
-        setShowPayment(false);
       }
     };
 
@@ -111,25 +127,22 @@ const Subscriptions = () => {
     return () => clearInterval(interval);
   }, [activeSub]);
 
-// validate tier
+  useEffect(() => {
+    const check = async () => {
+      try {
+        await validateSubscription();
+      } catch (err) {
+        console.error('Validation failed:', err);
+      }
+    };
 
-useEffect(() => {
-  const check = async () => {
-    try {
-      await validateSubscription();
-    } catch (err) {
-      console.error('Validation failed:', err);
-    }
-  };
+    check();
+  }, []);
 
-  check();
-}, []);
-
-
-  const tiers = [
+  const tiers: Tier[] = [
     {
       name: "Mwananchi",
-      icon: <Home className="w-6 h-6" />,
+      icon: <Home className="w-5 h-5" />,
       priceMonthly: 0,
       priceYearly: 0,
       properties: 1,
@@ -147,7 +160,7 @@ useEffect(() => {
     },
     {
       name: "Silver",
-      icon: <Star className="w-6 h-6" />,
+      icon: <Star className="w-5 h-5" />,
       priceMonthly: 1200,
       priceYearly: 6000,
       properties: 4,
@@ -155,7 +168,7 @@ useEffect(() => {
       vacancyListings: 2,
       topOffers: 1,
       trial: true,
-      current: activeSub?.tier === "Gold",
+      current: activeSub?.tier === "Silver",
       description: "Ideal for small property portfolios",
       features: [
         "Advanced analytics",
@@ -165,7 +178,7 @@ useEffect(() => {
     },
     {
       name: "Gold",
-      icon: <Gem className="w-6 h-6" />,
+      icon: <Gem className="w-5 h-5" />,
       priceMonthly: 3000,
       priceYearly: 9000,
       properties: 4,
@@ -173,7 +186,7 @@ useEffect(() => {
       vacancyListings: 4,
       topOffers: 2,
       trial: true,
-      current: activeSub?.tier === "Silver",
+      current: activeSub?.tier === "Gold",
       description: "Most popular for professional managers",
       features: [
         "Premium listing visibility",
@@ -183,7 +196,7 @@ useEffect(() => {
     },
     {
       name: "Diamond",
-      icon: <Crown className="w-6 h-6" />,
+      icon: <Crown className="w-5 h-5" />,
       priceMonthly: 5000,
       priceYearly: 15000,
       properties: 4,
@@ -201,7 +214,6 @@ useEffect(() => {
     },
   ];
 
-  // Add the trial start function to database
   const startTrial = async () => {
     if (!selectedTier) return;
     try {
@@ -219,371 +231,419 @@ useEffect(() => {
         setActiveSub(res.data);
         setAcceptedTerms(false);
         setCountdown("45d 0h 0m 0s");
-        toast.success('Your trial has started')
-        console.log("✅ Trial started:", res.data);
+        toast.success('Your trial has started successfully');
       }
     } catch (err) {
-      console.error("❌ Failed to start trial:", err);
+      toast.error('Failed to start trial');
+      console.error("Failed to start trial:", err);
     }
   };
 
- const confirmPayment = async () => {
-  setLoading(true);
-  setShowInitiate(false);
-  setShowConfirm(true);
+  const handlePayment = async () => {
+    if (!selectedTier) return;
 
-  try {
-    const phone = "254113730593"; // Ideally get from user profile or input
-    // const amount = selectedTier?.priceMonthly || 0;
-    const amount=1
+    setPaymentStatus("initiating");
+    setLoading(true);
 
-    const initRes = await initiateMpesaPayment(phone, amount, "subscription");
-    console.log("📤 Payment initiated:", initRes);
+    try {
+      const phone = "254113730593"; // Ideally get from user profile or input
+      const amount = 1; // selectedTier?.priceMonthly || 0;
 
-    let retries = 0;
-    let statusResponse = null;
+      const initRes = await initiateMpesaPayment(phone, amount, "subscription");
 
-    while (retries < 6) {
-      await new Promise((res) => setTimeout(res, 5000)); // Wait 5s between checks
-      statusResponse = await checkMpesaPaymentStatus(initRes.checkoutRequestId);
-      console.log("📥 Payment status:", statusResponse);
+      setPaymentStatus("confirming");
 
-      if (statusResponse.status === "success" || statusResponse.status === "failed") break;
-      retries++;
+      let retries = 0;
+      let statusResponse = null;
+
+      while (retries < 6) {
+        await new Promise((res) => setTimeout(res, 5000));
+        statusResponse = await checkMpesaPaymentStatus(initRes.checkoutRequestId);
+
+        if (statusResponse.status === "success" || statusResponse.status === "failed") break;
+        retries++;
+      }
+
+      const paymentSuccess = statusResponse?.status === "success";
+      setPaymentResult({
+        success: paymentSuccess,
+        message: paymentSuccess
+          ? "Payment successful. Subscription activated."
+          : "Payment failed or expired.",
+      });
+
+      if (paymentSuccess) {
+        const res = await getSubscription();
+        if (res.success) setActiveSub(res.data);
+      }
+    } catch (error: any) {
+      setPaymentResult({
+        success: false,
+        message: error.message || "Payment processing failed",
+      });
+    } finally {
+      setLoading(false);
+      setPaymentStatus("completed");
+      setTimeout(() => {
+        setPaymentResult(null);
+        setSelectedTier(null);
+      }, 3000);
     }
+  };
 
-    const paymentSuccess = statusResponse?.status === "success";
-
-    setPaymentResult({
-      success: paymentSuccess,
-      message: paymentSuccess
-        ? "✅ Payment successful. Subscription activated."
-        : "❌ Payment failed or expired.",
-    });
-
-    if (paymentSuccess) {
-      const res = await getSubscription();
-      if (res.success) setActiveSub(res.data);
-    }
-  } catch (error: any) {
-    setPaymentResult({
-      success: false,
-      message: error.message || "Something went wrong.",
-    });
-  } finally {
-    setLoading(false);
-    setShowConfirm(false);
-  }
-};
-
-const handleMpesaPayment = () => {
-  setShowInitiate(true);
-};
+  const formatCurrency = (amount: number) => `Ksh ${amount.toLocaleString()}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto p-4 space-y-6 animate-fade-in">
       <Toaster richColors position="top-right" />
-      <div className="max-w-7xl mx-auto">
-        {/* Hero Section */}
 
-        {/* 🔔 Alert Banner */}
-       {/* Alert Banner */}
-        {showAlert && (
-          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 px-4 py-4 rounded-lg mb-6 shadow-md">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-              <div className="text-sm sm:text-base font-medium flex items-center">
-                ⏳ {alertMessage}
-              </div>
-              {showPayment && (
-                <button
-                  onClick={handleMpesaPayment}
-                  className="w-full sm:w-auto py-2 px-4 rounded-md text-white font-semibold bg-green-600 hover:bg-green-700 transition"
-                >
-                  Pay via M-Pesa
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-
-        <div className="relative pt-8 pb-12 mb-16 text-center">
-          <div className="absolute inset-0 bg-[#FBFBFB]/10 shadow-xl dark:bg-gray-900/60"></div>
-          <div className="relative">
-            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
-              Nyumba Smart <span className="text-primary-600">Plans</span>
-            </h1>
-            <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500 dark:text-gray-300 leading-relaxed">
-              Scale your real estate management with our flexible tiers
-            </p>
-          </div>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight"> <b className="text-primary-600">Tenahub</b> Subscription Plans</h1>
+          <p className="text-muted-foreground">
+            Choose the plan that fits your property management needs
+          </p>
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-12 mb-20">
-          {tiers.map((tier, index) => (
-            <div
-              key={index}
-              className={`group relative rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl
-                ${tier.current
-                  ? "ring-2 ring-primary-600 dark:ring-primary-500 transform scale-[1.02] border-primary-600"
-                  : "border border-gray-100 dark:border-gray-800"
-                }
-                bg-[#FBFBFB] dark:bg-gray-900/60 shadow-lg`}>
-
-              {/* Trial Days Counter */}
-              {countdown !== null && tier.current && (
-                <div className="absolute top-4 left-24 bg-yellow-500/90 text-white px-3 py-1 rounded-full flex items-center text-sm font-medium">
-                  <Clock className="w-4 h-4 mr-1" />
-                  <span>{countdown} days left</span>
-                </div>
-              )}
-
-              {/* Current Plan Badge */}
-              {tier.current && (
-                <div className="absolute top-4 right-4 bg-primary-600 dark:bg-primary-600/50 text-white px-3 py-1 rounded-full flex items-center text-sm font-medium">
-                  <BadgeCheck className="w-4 h-4 mr-1" />
-                  <span>Current Plan</span>
-                  
-                </div>
-              )}
-
-              <div className="p-8">
-                {/* Tier Header */}
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-primary-600/30 dark:bg-primary-600/30 rounded-xl flex items-center justify-center mr-4">
-                    <div className="text-primary-600 dark:text-primary-600">{tier.icon}</div>
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {tier.name}
-                  </h2>
-                </div>
-
-                {/* Pricing */}
-                <div className="mb-6">
-                  <div className="flex items-end">
-                    <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                      {tier.priceMonthly === 0
-                        ? "Free"
-                        : `Ksh ${tier.priceMonthly.toLocaleString()}`}
-                    </span>
-                    <span className="text-gray-600 dark:text-gray-400 ml-2">
-                      /month
-                    </span>
-                  </div>
-                  {tier.priceYearly > 0 && (
-                    <p className="text-gray-600 dark:text-gray-400 mt-2">
-                      or Ksh {tier.priceYearly.toLocaleString()}/year
-                      <span className="text-green-600 dark:text-green-400 ml-2">
-                        (Save{" "}
-                        {Math.round(
-                          (1 - tier.priceYearly / (tier.priceMonthly * 12)) *
-                          100
-                        )}
-                        %)
-                      </span>
-                    </p>
-                  )}
-                </div>
-
-                {/* Description */}
-                <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                  {tier.description}
-                </p>
-
-                {/* Features */}
-                <div className="border-t border-gray-200 dark:border-primary-600/20 pt-6 mb-8">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Plan Features
-                  </h3>
-                  <ul className="space-y-3">
-                    <li className="flex items-center">
-                      <DoorOpen className="w-5 h-5 text-primary-600 dark:text-primary-600 mr-2" />
-                      <span className="text-gray-600 dark:text-gray-300">
-                        {tier.properties} propertie(s)
-                      </span>
-                    </li>
-                    <li className="flex items-center">
-                      <Home className="w-5 h-5 text-primary-600 dark:text-primary-600 mr-2" />
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Up to {tier.rooms} rooms
-                      </span>
-                    </li>
-                    <li className="flex items-center">
-                      <ClipboardList className="w-5 h-5 text-primary-600 dark:text-primary-600 mr-2" />
-                      <span className="text-gray-600 dark:text-gray-300">
-                        {tier.vacancyListings} vacancy listings
-                      </span>
-                    </li>
-                    <li className="flex items-center">
-                      <Star className="w-5 h-5 text-primary-600 dark:text-primary-600 mr-2" />
-                      <span className="text-gray-600 dark:text-gray-300">
-                        {tier.topOffers} top listing offers
-                      </span>
-                    </li>
-                    {tier.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center">
-                        <div className="w-5 h-5 rounded-full bg-primary-100 dark:bg-primary-600/30 flex items-center justify-center mr-2">
-                          <div className="w-2 h-2 rounded-full bg-primary-600 dark:bg-primary-600"></div>
-                        </div>
-                        <span className="text-gray-600 dark:text-gray-300">
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Action Button */}
-                <button
-                  onClick={() =>
-                    tier.priceMonthly > 0 &&
-                    !tier.current &&
-                    setSelectedTier(tier)
-                  }
-                  className={`w-full py-3 px-4 rounded-xl font-bold transition-all duration-300 ${tier.current
-                      ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 hover:scale-105"
-                    }`}
-                  disabled={tier.current}
-                >
-                  {tier.current
-                    ? "Current Plan"
-                    : tier.priceMonthly === 0
-                      ? "Get Started"
-                      : "Start Free Trial"}
-                </button>
-
-                {/* Trial Notice */}
-                {tier.trial && tier.priceMonthly > 0 && (
-                  <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-3">
-                    45-day free trial included
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* How It Works */}
-        <div className="text-center mb-10">
-          <div className="inline-block px-4 py-2 bg-primary-600/30 dark:bg-primary-600/30 text-primary-600 dark:text-primary-600 rounded-full text-sm font-medium mb-4">
-            How It Works
-          </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">
-            Get Started in 3 Simple Steps
-          </h2>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
-          <div className="group">
-            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 h-full">
-              <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-primary-600/30 dark:bg-primary-600/30 rounded-xl flex items-center justify-center mr-4">
-                  <div className="text-2xl font-bold text-primary-600 dark:text-primary-600">
-                    1
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Choose Your Tier
-                </h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Select a subscription plan that matches your property management
-                needs
-              </p>
-            </div>
-          </div>
-
-          <div className="group">
-            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 h-full">
-              <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-primary-600/30 dark:bg-primary-600/30 rounded-xl flex items-center justify-center mr-4">
-                  <div className="text-2xl font-bold text-primary-600 dark:text-primary-600">
-                    2
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Start Free Trial
-                </h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Explore all premium features risk-free for 45 days (paid plans
-                only)
-              </p>
-            </div>
-          </div>
-
-          <div className="group">
-            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 h-full">
-              <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-primary-600/30 dark:bg-primary-600/30 rounded-xl flex items-center justify-center mr-4">
-                  <div className="text-2xl font-bold text-primary-600 dark:text-primary-600">
-                    3
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Manage Properties
-                </h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Access dashboard, list vacancies, and manage tenants seamlessly
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="mt-10 text-center">
-          <div className="bg-gray-900 rounded-3xl p-12 text-white relative overflow-hidden">
-            <div className="absolute inset-0 bg-black/10"></div>
-            <div className="relative">
-              <h2 className="text-3xl md:text-3xl font-bold mb-4">
-                Ready to Transform Your Property Management?
-              </h2>
-              <p className="text-xl mb-5 text-blue-100">
-                Join thousands of property owners who trust TenaHub
-              </p>
-              <button className="bg-primary-600/20 pulse-animation text-primary-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors duration-300 hover:scale-105 transform">
-                Get Started Today
-              </button>
-            </div>
-          </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => window.location.reload()}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
         </div>
       </div>
 
-      {/* Trial Modal */}
+      {/* Alert Banner */}
+      {showAlert && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 px-4 py-4 rounded-lg mb-6 shadow-md">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div className="text-sm sm:text-base font-medium flex items-center">
+              ⏳ {alertMessage}
+            </div>
+            {alertMessage.includes("Pay for your subscription") && (
+              <Button
+                onClick={() => {
+                  const tierToSelect = tiers.find(t => t.name === activeSub?.tier);
+                  if (tierToSelect) setSelectedTier(tierToSelect);
+                }}
+                className="w-full sm:w-auto"
+              >
+                Upgrade Now
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Pricing Tiers */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 p-2">
+        {tiers.map((tier, index) => (
+          <Card key={index} className={`relative overflow-hidden transition-all dark:bg-gray-900/50 border border-primary-600/5 hover:shadow-lg py-6 ${tier.current ? "ring-1 ring-primary-600" : ""
+            }`}>
+            {/* Current Plan Badge */}
+            {tier.current && (
+              <div className="absolute top-4 right-4">
+                <Badge variant="default" className="flex items-center">
+                  <Check className="h-4 w-4 mr-1" />
+                  Current Plan
+                </Badge>
+              </div>
+            )}
+
+            {/* Trial Days Counter */}
+            {countdown && tier.current && (
+              <div className="absolute top-4 left-4">
+                <Badge variant="default" className="flex items-center bg-yellow-500 p-1.5">
+                  <Clock className="h-4 w-4 mr-1" />
+                  {countdown}
+                </Badge>
+              </div>
+            )}
+
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
+                  {tier.icon}
+                </div>
+                <div>
+                  <CardTitle className="text-lg">{tier.name}</CardTitle>
+                  <CardDescription>{tier.description}</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              {/* Pricing */}
+              <div className="flex items-end border-b border-primary-600/20 pb-4">
+                <span className="text-3xl font-bold">
+                  {tier.priceMonthly === 0 ? "Free" : formatCurrency(tier.priceMonthly)}
+                </span>
+                <span className="text-muted-foreground ml-2">/month</span>
+              </div>
+
+              {tier.priceYearly > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  {formatCurrency(tier.priceYearly)} yearly (save{" "}
+                  {Math.round((1 - tier.priceYearly / (tier.priceMonthly * 12)) * 100)}%)
+                </p>
+              )}
+
+              {/* Features */}
+              <div className="space-y-4">
+                <h2 className="font-bold">Plan Features:</h2>
+                <div className="flex items-center gap-2">
+                  <DoorOpen className="h-5 w-5 text-primary-600" />
+                  <span>{tier.properties} property{tier.properties !== 1 && '(s)'}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Home className="h-5 w-5 text-primary-600" />
+                  <span>Up to {tier.rooms} rooms</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ClipboardList className="h-5 w-5 text-primary-600" />
+                  <span>{tier.vacancyListings} vacancy listings</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-primary-600" />
+                  <span>{tier.topOffers} top offers</span>
+                </div>
+                {tier.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-center">
+                    <div className="w-5 h-5 rounded-full bg-primary-100 dark:bg-primary-600/30 flex items-center justify-center mr-2">
+                      <div className="w-2 h-2 rounded-full bg-primary-600 dark:bg-primary-600"></div>
+                    </div>
+                    <span className="text-gray-600 dark:text-gray-300">
+                      {feature}
+                    </span>
+                  </li>
+                ))}
+              </div>
+
+              {/* Action Button */}
+              <Button
+                onClick={() => !tier.current && setSelectedTier(tier)}
+                disabled={tier.current}
+                className="w-full mt-6 hover:bg-primary-600 hover:text-white"
+              >
+                {tier.current
+                  ? "Current Plan"
+                  : tier.priceMonthly === 0
+                    ? "Get Started"
+                    : "Start Free Trial"}
+              </Button>
+
+              {tier.trial && tier.priceMonthly > 0 && (
+                <p className="text-center text-xs text-primary-600 mt-2">
+                  45-day free trial included
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* How It Works */}
+      <div className="text-center mt-10">
+        <Badge variant="outline" className="mb-4">
+          How It Works
+        </Badge>
+        <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          Get Started in 3 Simple Steps
+        </h2>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-6 mb-10">
+        <Card className="bg-gray-900/50">
+          <CardHeader className="flex flex-row items-center gap-4">
+            <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
+              <span className="text-xl font-bold text-primary-600">1</span>
+            </div>
+            <CardTitle>Choose Your Tier</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Select a subscription plan that matches your property management needs
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gray-900/50">
+          <CardHeader className="flex flex-row items-center gap-4">
+            <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
+              <span className="text-xl font-bold text-primary-600">2</span>
+            </div>
+            <CardTitle>Start Free Trial</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Explore all premium features risk-free for 45 days (paid plans only)
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gray-900/50">
+          <CardHeader className="flex flex-row items-center gap-4">
+            <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
+              <span className="text-xl font-bold text-primary-600">3</span>
+            </div>
+            <CardTitle>Manage Properties</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Access dashboard, list vacancies, and manage tenants seamlessly
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Tier Selection Modal */}
       {selectedTier && (
-        <TrialModal
-          selectedTier={selectedTier}
-          showPayment={showPayment}
-          acceptedTerms={acceptedTerms}
-          setAcceptedTerms={setAcceptedTerms}
-          setSelectedTier={setSelectedTier}
-          startTrial={startTrial}
-          handleMpesaPayment={handleMpesaPayment}
-        />
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-2">
+                {selectedTier.icon}
+                {selectedTier.name} Plan
+              </CardTitle>
+              <CardDescription>
+                {selectedTier.description}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <h4 className="font-medium">Plan Features</h4>
+                <ul className="space-y-2">
+                  {selectedTier.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {selectedTier.priceMonthly > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span>Monthly Price</span>
+                    <span className="font-bold">{formatCurrency(selectedTier.priceMonthly)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Yearly Price</span>
+                    <span className="font-bold">{formatCurrency(selectedTier.priceYearly)}</span>
+                  </div>
+                </div>
+              )}
+
+              {selectedTier.priceMonthly > 0 && (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                  <label htmlFor="terms" className="text-sm">
+                    I agree to the terms and conditions
+                  </label>
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedTier(null)}
+                  className="w-full"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={selectedTier.priceMonthly === 0 ? startTrial : handlePayment}
+                  disabled={selectedTier.priceMonthly > 0 && !acceptedTerms}
+                  className="w-full"
+                >
+                  {loading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : selectedTier.priceMonthly === 0 ? (
+                    "Get Started"
+                  ) : (
+                    "Start Free Trial"
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
-   {/* Payment Modals */}
-      {showInitiate && (
-        <InitiatePaymentModal
-          phoneNumber="+254712345678"
-          onClose={() => setShowInitiate(false)}
-          onConfirm={confirmPayment}
-          loading={loading}
-        />
+      {/* Payment Status Modals */}
+      {paymentStatus === "initiating" && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle>Initiating Payment</CardTitle>
+              <CardDescription>
+                Please wait while we process your payment request...
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </CardContent>
+          </Card>
+        </div>
       )}
-      {showConfirm && <ConfirmPaymentModal />}
+
+      {paymentStatus === "confirming" && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle>Confirming Payment</CardTitle>
+              <CardDescription>
+                Please check your phone and enter your M-Pesa PIN to complete payment
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {paymentResult && (
-        <PaymentResultModal
-          success={paymentResult.success}
-          message={paymentResult.message}
-          onClose={() => setPaymentResult(null)}
-        />
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {paymentResult.success ? (
+                  <>
+                    <Check className="h-6 w-6 text-green-500" />
+                    Payment Successful
+                  </>
+                ) : (
+                  <>
+                    <X className="h-6 w-6 text-red-500" />
+                    Payment Failed
+                  </>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p>{paymentResult.message}</p>
+              <Button
+                onClick={() => {
+                  setPaymentResult(null);
+                  setPaymentStatus("idle");
+                }}
+                className="w-full"
+              >
+                Close
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       )}
-
-
     </div>
   );
 };

@@ -167,7 +167,7 @@ export default function LandlordDashboardLayout() {
 
   // Component to render navigation items
   const NavItems = ({ onClick }: { onClick?: () => void }) => (
-    <nav className="px-2 py-4 space-y-2">
+    <nav className="px-2 py-4 space-y-5">
       {visibleNavItems.map((item) => {
         const IconComponent = item.icon
 

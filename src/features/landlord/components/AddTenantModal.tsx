@@ -7,6 +7,16 @@ import {
   fetchLandlordProperties,
   fetchVacantRooms,
 } from "../../../services/tenantService.js";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../components/ui/select";
+import { Loader2 } from "lucide-react";
 
 interface Property {
   _id: string;
@@ -51,6 +61,7 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
         .catch(() => setError("Failed to fetch vacant rooms"));
     } else {
       setRooms([]);
+      setRoomId("");
     }
   }, [propertyId]);
 
@@ -67,20 +78,21 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
         room_id: roomId,
       };
 
-      console.log("📤 Creating tenant with data:", payload);
-
       const res = await createTenant(payload);
-
-      console.log("✅ Tenant creation response:", res);
 
       if (res.success) {
         onSuccess();
         onClose();
+        // Reset form
+        setName("");
+        setEmail("");
+        setPhone("");
+        setPropertyId("");
+        setRoomId("");
       } else {
         setError(res.message || "Failed to create tenant");
       }
     } catch (err: any) {
-      console.error("❌ Error:", err);
       setError(err.response?.data?.message || "Failed to create tenant");
     } finally {
       setLoading(false);
@@ -90,81 +102,121 @@ const AddTenantModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg w-full max-w-md shadow-2xl border border-gray-200 dark:border-gray-700">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-          🏘️ Add New Tenant
-        </h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-gray-950 p-6 rounded-lg w-full max-w-md mx-4 border shadow-lg">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Add New Tenant</h2>
+            <button
+              onClick={onClose}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              X
+            </button>
+          </div>
 
-        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+          {error && (
+            <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">
+              {error}
+            </div>
+          )}
 
-        <div className="space-y-3">
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Tenant name"
-            className="w-full border px-3 py-2 rounded text-sm focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-          />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email address"
-            className="w-full border px-3 py-2 rounded text-sm focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-          />
-          <input
-            type="text"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Phone number"
-            className="w-full border px-3 py-2 rounded text-sm focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-          />
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <label htmlFor="name">Full Name</label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-gray-900"
+                placeholder="John Doe"
+              />
+            </div>
 
-          <select
-            value={propertyId}
-            onChange={(e) => setPropertyId(e.target.value)}
-            className="w-full border px-3 py-2 rounded text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-          >
-            <option value="">🏢 Select Property</option>
-            {properties.map((prop) => (
-              <option key={prop._id} value={prop._id}>
-                {prop.name}
-              </option>
-            ))}
-          </select>
+            <div className="space-y-1">
+              <label htmlFor="email">Email</label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-gray-900"
+                placeholder="john@example.com"
+              />
+            </div>
 
-          <select
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-            disabled={!propertyId}
-            className="w-full border px-3 py-2 rounded text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-          >
-            <option value="">🚪 Select Room</option>
-            {rooms.map((room) => (
-              <option key={room._id} value={room._id}>
-                Room {room.room_number}
-              </option>
-            ))}
-          </select>
-        </div>
+            <div className="space-y-1">
+              <label htmlFor="phone">Phone Number</label>
+              <Input
+                id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="bg-gray-900"
+                placeholder="+254 700 000000"
+              />
+            </div>
 
-        <div className="flex justify-end gap-2 mt-5">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={
-              loading || !name || !email || !phone || !propertyId || !roomId
-            }
-            className="px-4 py-2 text-sm rounded bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50"
-          >
-            {loading ? "Saving..." : "Save Tenant"}
-          </button>
+            <div className="space-y-1">
+              <label>Property</label>
+              <Select
+                value={propertyId}
+                onValueChange={setPropertyId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select property" />
+                </SelectTrigger>
+                <SelectContent>
+                  {properties.map((prop) => (
+                    <SelectItem key={prop._id} value={prop._id}>
+                      {prop.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1">
+              <label>Room</label>
+              <Select
+                value={roomId}
+                onValueChange={setRoomId}
+                disabled={!propertyId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={propertyId ? "Select room" : "Select property first"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {rooms.length > 0 ? (
+                    rooms.map((room) => (
+                      <SelectItem key={room._id} value={room._id}>
+                        Room {room.room_number}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="text-sm text-muted-foreground px-2 py-1.5">
+                      {propertyId ? "No vacant rooms available" : "Please select a property first"}
+                    </div>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              className="bg-primary-600 text-white hover:bg-primary-700"
+              disabled={
+                loading || !name || !email || !phone || !propertyId || !roomId
+              }
+            >
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {loading ? "Saving..." : "Save Tenant"}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

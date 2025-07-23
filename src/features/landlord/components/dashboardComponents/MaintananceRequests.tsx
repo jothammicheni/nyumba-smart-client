@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { fetchLandlordMaintenanceRequests } from "../../../../services/maintananceService.js";
-import { Wrench } from "lucide-react";
+import { Wrench, RefreshCw, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../../../../components/ui/card";
+import { Badge } from "../../../../components/ui/badge";
+import { Button } from "../../../../components/ui/button";
+import { Toaster, toast } from "sonner";
 
 interface MaintenanceRequest {
   _id: string;
@@ -12,98 +16,200 @@ interface MaintenanceRequest {
     property_id: {
       name: string;
     };
+    room_number: string;
   };
   description: string;
-  state: string;
+  status: string;
   createdAt: string;
+  priority?: string;
 }
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString();
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 };
 
 const MaintenanceRequests: React.FC = () => {
   const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const fetchRequests = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await fetchLandlordMaintenanceRequests();
+      setRequests(data);
+      toast.success('Maintenance requests updated');
+    } catch (error) {
+      setError("Failed to fetch maintenance requests");
+      toast.error("Failed to load maintenance requests");
+      console.error("Failed to fetch maintenance requests", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const data = await fetchLandlordMaintenanceRequests();
-        console.log("hello", data);
-
-        setRequests(data);
-      } catch (error) {
-        console.error("Failed to fetch maintenance requests", error);
-      }
-    };
-
     fetchRequests();
   }, []);
-  return (
-    <>
-      <div className="bg-white dark:bg-gray-950/50 shadow rounded-lg">
-        <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-primary-600/20">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
-            Maintenance Requests
-          </h3>
-        </div>
-        <div className="px-4 py-5 sm:p-6">
-          <div className="flow-root">
-            <ul className="-my-5 divide-y divide-gray-200 dark:divide-gray-700">
-              {requests.length > 0 ? (
-                requests.map((req) => (
-                  <li key={req._id} className="py-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
-                        <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-                          <Wrench className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                        </div>
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                          {req.tenant?.name}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                          {req.room.property_id?.name}
-                        </p>
-                        <p className="text-sm text-blue-500 dark:text-blue-400 truncate ">
-                          Issue: {req.description}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white capitalize">
-                          {req.state}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Reported: {formatDate(req.createdAt)}
-                        </p>
-                        <Link
-                          to="properties/requests/:tenantId"
-                          className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        >
-                          check
-                        </Link>
-                      </div>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li className="text-sm text-gray-500 dark:text-gray-400 py-4">
-                  No maintenance requests found.
-                </li>
-              )}
-            </ul>
-          </div>
-          <div className="mt-6">
-            <a
-              href="/landlord/dashboard/maintenance"
-              className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-700 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-900">
-              View all
-            </a>
+
+  const getPriorityBadge = (priority?: string) => {
+    if (!priority) return null;
+
+    const variants = {
+      high: 'destructive',
+      medium: 'warning',
+      low: 'default'
+    } as const;
+
+    return (
+      <Badge
+        variant={variants[priority as keyof typeof variants] || 'default'}
+        className="capitalize"
+      >
+        {priority}
+      </Badge>
+    );
+  };
+
+  const getStatusBadge = (status: string) => {
+    const variants = {
+      pending: 'warning',
+      completed: 'success',
+      in_progress: 'default',
+      cancelled: 'destructive'
+    } as const;
+
+    return (
+      <Badge
+        variant={variants[status as keyof typeof variants] || 'default'}
+        className="capitalize"
+      >
+        {/* {status.replace('_', ' ')} */}
+      </Badge>
+    );
+  };
+
+  if (loading && requests.length === 0) {
+    return (
+      <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+        <div className="flex flex-col space-y-4">
+          <div className="h-8 bg-muted/10 rounded animate-pulse" />
+          <div className="space-y-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-24 bg-muted/10 rounded animate-pulse" />
+            ))}
           </div>
         </div>
       </div>
-    </>
+    );
+  }
+
+  return (
+    <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+      <Toaster position="top-right" richColors />
+
+      <Card className="bg-white dark:bg-gray-950/50 shadow-md">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-primary-600/30 dark:bg-primary-600/30 rounded-full flex items-center justify-center mr-3">
+                  <Wrench className="w-5 h-5 text-primary-600 dark:text-primary-600" />
+                </div>
+                Maintenance Requests
+              </CardTitle>
+              <CardDescription>
+                Recent maintenance requests from your properties
+              </CardDescription>
+            </div>
+
+            <Button
+              variant="outline"
+              onClick={fetchRequests}
+              className="w-full sm:w-auto bg-primary-600 text-white"
+              disabled={loading}
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4 mr-2" />
+              )}
+              Refresh
+            </Button>
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          {error && (
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded mb-4">
+              ⚠️ {error}
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {requests.length > 0 ? (
+              requests.map((req) => (
+                <Card key={req._id} className="hover-scale dark:bg-gray-900/30 shadow-md">
+                  <CardContent className="pt-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <div>
+                            <h4 className="font-semibold">{req.tenant?.name || 'Unknown Tenant'}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {req.room.property_id?.name} • Room {req.room.room_number}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-blue-600">
+                          Issue: {req.description}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col items-end gap-4">
+                        <div className="flex gap-2 p-2">
+                          {getPriorityBadge(req.priority)}
+                          {getStatusBadge(req.status)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Reported: {formatDate(req.createdAt)}
+                        </p>
+                        <Link
+                          to={`properties/requests/${req._id}`}
+                          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary-600 hover:text-white h-10 px-4 py-2"
+                        >
+                          View Details
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No maintenance requests found</p>
+              </div>
+            )}
+          </div>
+
+          {requests.length > 0 && (
+            <div className="mt-6">
+              <Link
+                to="/landlord/dashboard/maintenance"
+                className="w-full flex justify-center items-center px-4 py-3 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md text-sm font-medium transition-colors"
+              >
+                View All Requests
+              </Link>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

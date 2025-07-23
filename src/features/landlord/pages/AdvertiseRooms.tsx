@@ -14,6 +14,7 @@ import {
   Filter,
   Search,
   MoreVertical,
+  RefreshCw,
 } from "lucide-react"
 import type { Property } from "../../../types/properties.js"
 import EditListingModal from "../components/EditListingModal.js"
@@ -22,6 +23,12 @@ import ListingStatsModal from "../components/ListingStatsModal.js"
 import ImageManagementModal from "../components/ImageManagementModal.js"
 import { getAuthHeaders } from "../../../services/authService.js"
 import axios from "axios"
+import { Button } from "../../../components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
+import { Badge } from "../../../components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../../components/ui/dropdown-menu"
+import { Toaster, toast } from "sonner"
 import { Loader } from "../../../components/Loader.js"
 
 const AdvertiseRooms = () => {
@@ -65,7 +72,6 @@ const AdvertiseRooms = () => {
         setListings(data.listings || [])
         setTotalPages(data.pagination?.totalPages || 1)
 
-        // Calculate stats
         const totalViews = data.listings.reduce((sum: number, listing: Property) => sum + (listing.totalClicks || 0), 0)
         const totalImpressions = data.listings.reduce(
           (sum: number, listing: Property) => sum + (listing.totalImpressions || 0),
@@ -81,11 +87,14 @@ const AdvertiseRooms = () => {
         })
 
         setError(null)
+        toast.success('Listings updated successfully')
       } else {
         setError("Failed to fetch listings")
+        toast.error("Failed to fetch listings")
       }
     } catch (err) {
       setError("Error fetching listings")
+      toast.error("Error fetching listings")
       console.error("Error:", err)
     } finally {
       setLoading(false)
@@ -93,14 +102,20 @@ const AdvertiseRooms = () => {
   }
 
   const handleDeleteListing = async (listingId: string) => {
-    const response = await axios.delete(`https://nyumba-smart-server.onrender.com/api/listings/${listingId}`, {
-      headers: getAuthHeaders(),
-    })
+    try {
+      const response = await axios.delete(`https://nyumba-smart-server.onrender.com/api/listings/${listingId}`, {
+        headers: getAuthHeaders(),
+      })
 
-    if (response.status >= 200 && response.status < 300) {
-      await fetchListings() // Refresh the list
-    } else {
-      throw new Error(response.data?.error || "Failed to delete listing")
+      if (response.status >= 200 && response.status < 300) {
+        await fetchListings()
+        toast.success('Listing deleted successfully')
+      } else {
+        throw new Error(response.data?.error || "Failed to delete listing")
+      }
+    } catch (err) {
+      toast.error("Failed to delete listing")
+      console.error("Error deleting listing:", err)
     }
   }
 
@@ -146,286 +161,304 @@ const AdvertiseRooms = () => {
     })
   }
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader /></div>
+  if (loading) return <Loader />
 
   return (
-    <div className="min-h-screen bg-white-90 dark:bg-gray-950/60 pt-16 pb-12 px-4 sm:px-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6 md:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-            Manage Your Listings
-          </h1>
-          <p className="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">
+    <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+      <Toaster position="top-right" richColors />
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Manage Your Listings</h1>
+          <p className="text-muted-foreground">
             View, edit, and manage all your property listings in one place
           </p>
         </div>
+      </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6">
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm sm:shadow-md p-3 sm:p-4 md:p-6">
-            <div className="flex items-center">
-              <div className="p-2 sm:p-3 rounded-full bg-blue-100 dark:bg-blue-900/20">
-                <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div className="ml-2 sm:ml-3 md:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Listings</p>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.totalListings}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm sm:shadow-md p-3 sm:p-4 md:p-6">
-            <div className="flex items-center">
-              <div className="p-2 sm:p-3 rounded-full bg-green-100 dark:bg-green-900/20">
-                <Eye className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-600 dark:text-green-400" />
-              </div>
-              <div className="ml-2 sm:ml-3 md:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Views</p>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.totalViews}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm sm:shadow-md p-3 sm:p-4 md:p-6">
-            <div className="flex items-center">
-              <div className="p-2 sm:p-3 rounded-full bg-purple-100 dark:bg-purple-900/20">
-                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div className="ml-2 sm:ml-3 md:ml-4 min-w-0">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 truncate">Impressions</p>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white truncate">{stats.totalImpressions}</p>
-              </div>
-
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm sm:shadow-md p-3 sm:p-4 md:p-6">
-            <div className="flex items-center">
-              <div className="p-2 sm:p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/20">
-                <Star className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-600 dark:text-yellow-400" />
-              </div>
-              <div className="ml-2 sm:ml-3 md:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Featured</p>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.featuredListings}</p>
-              </div>
-            </div>
-          </div>
+      {error && (
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
+          ⚠️ {error}
         </div>
+      )}
 
-        {/* Search and Filter */}
-        <div className="bg-white/90 dark:bg-gray-900 rounded-lg shadow-sm sm:shadow-md p-4 sm:p-5 md:p-6 mb-6">
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center">
-            <div className="w-full sm:w-auto sm:flex-grow relative">
-              <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 sm:h-5 sm:w-5 text-primary-600" />
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="hover-scale dark:bg-gray-900/50 shadow-md">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Listings</CardTitle>
+            <BarChart3 className="h-5 w-5 text-primary-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalListings}</div>
+            <p className="text-xs text-muted-foreground">
+              Across all properties
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="hover-scale dark:bg-gray-900/50 shadow-md">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+            <Eye className="h-5 w-5 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalViews}</div>
+            <p className="text-xs text-muted-foreground">
+              Property views
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="hover-scale dark:bg-gray-900/50 shadow-md">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Impressions</CardTitle>
+            <TrendingUp className="h-5 w-5 text-primary-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalImpressions}</div>
+            <p className="text-xs text-muted-foreground">
+              Listing impressions
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="hover-scale dark:bg-gray-900/50 shadow-md">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Featured</CardTitle>
+            <Star className="h-5 w-5 text-yellow-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.featuredListings}</div>
+            <p className="text-xs text-muted-foreground">
+              Featured listings
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Search and Filter */}
+      <Card className="dark:bg-gray-900/50 shadow-md">
+        <CardContent className="pt-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-grow">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-primary-600" />
               </div>
               <input
                 type="text"
                 placeholder="Search listings..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full pl-8 sm:pl-10 pr-3 py-1 sm:py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring focus:ring-primary-500 focus:border-primary-500"
+                className="block w-full pl-10 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
-            <div className="w-full sm:w-auto flex items-center space-x-2 sm:space-x-4">
-              <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-primary-600" />
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full sm:w-auto text-sm sm:text-base border border-gray-300 dark:border-gray-800 rounded-lg px-2 sm:px-3 py-1 sm:py-2 bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-              >
-                <option value="all">All Listings</option>
-                <option value="featured">Featured Only</option>
-                <option value="active">Regular Only</option>
-              </select>
+            
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-primary-600" />
+              <Select value={filterStatus} onValueChange={setFilterStatus}>
+                <SelectTrigger className="w-full sm:w-32 hover:bg-primary-600 dark:text-white">
+                  <SelectValue placeholder="Filter status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Listings</SelectItem>
+                  <SelectItem value="featured">Featured Only</SelectItem>
+                  <SelectItem value="active">Regular Only</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+
+            <Button
+              variant="outline"
+              onClick={fetchListings}
+              className="w-full sm:w-auto bg-primary-600 text-white"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-6">
-            {error}
-          </div>
-        )}
-
-        {/* Listings Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-6">
-          {filteredListings.length > 0 ? (
-            filteredListings.map((listing) => (
-              <div key={listing._id} className="bg-white dark:bg-gray-900 rounded-lg shadow-sm sm:shadow-md overflow-hidden">
-                <div className="relative h-40 sm:h-48">
-                  <img
-                    src={listing.images?.[0] || "/placeholder.svg"}
-                    alt={listing.property?.name}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                  {listing.featured && (
-                    <div className="absolute top-2 left-2">
-                      <span className="bg-primary-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                        Featured
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute top-2 right-2">
-                    <div className="relative">
-                      <button className="p-1 sm:p-2 bg-white/80 rounded-full hover:bg-white transition-colors">
-                        <MoreVertical className="h-4 w-4 text-gray-600" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-3 sm:p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white truncate">
-                      {listing.property?.name}
-                    </h3>
-                    <div className="flex items-center text-yellow-500">
-                      <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-current" />
-                      <span className="ml-1 text-xs sm:text-sm">{listing.rating || 4.0}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center text-gray-600 dark:text-gray-400 mb-2">
-                    <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="text-xs sm:text-sm truncate">
-                      {listing.property?.city} • {listing.property?.type}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center text-gray-600 dark:text-gray-400 mb-3">
-                    <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="text-xs sm:text-sm">Listed {formatDate(listing.createdAt)}</span>
-                  </div>
-
-                  <div className="flex justify-between items-center mb-4">
-                    <div>
-                      <p className="text-lg sm:text-xl font-bold text-primary-600 dark:text-primary-600">
-                        {formatCurrency(listing.property?.price || 0)}
-                      </p>
-                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">per month</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{listing.totalClicks || 0} views</p>
-                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                        {listing.totalImpressions || 0} impressions
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {/* Stats Button */}
-                    <button
-                      onClick={() => {
+      {/* Listings Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredListings.length > 0 ? (
+          filteredListings.map((listing) => (
+            <Card key={listing._id} className="hover-scale dark:bg-gray-900/50 shadow-md overflow-hidden">
+              <div className="relative h-48">
+                <img
+                  src={listing.images?.[0] || "/placeholder.svg"}
+                  alt={listing.property?.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                {listing.featured && (
+                  <Badge className="absolute top-2 left-2 bg-primary-600">
+                    Featured
+                  </Badge>
+                )}
+                <div className="absolute top-2 right-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => {
                         setSelectedListing(listing)
                         setShowStatsModal(true)
-                      }}
-                      className="group relative flex-1 min-w-[100px] bg-slate-100 dark:bg-gray-950/40 border border-blue-200/30 dark:border-blue-800/30 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-xs hover:shadow-sm"
-                    >
-                      <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-5 dark:group-hover:opacity-10 rounded-lg transition-opacity" />
-                      <BarChart3 className="h-4 w-4 flex-shrink-0" />
-                      <span className="text-sm font-medium">Stats</span>
-                    </button>
-
-                    {/* Images Button */}
-                    <button
-                      onClick={() => {
+                      }}>
+                        <BarChart3 className="h-4 w-4 mr-2" />
+                        View Stats
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => {
                         setSelectedListing(listing)
                         setShowImageModal(true)
-                      }}
-                      className="group relative flex-1 min-w-[100px] bg-slate-100 dark:bg-gray-950/40 border border-green-200/30 dark:border-green-800/30 hover:bg-green-50 dark:hover:bg-green-900/30 text-green-600 dark:text-green-400 py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-xs hover:shadow-sm"
-                    >
-                      <div className="absolute inset-0 bg-green-600 opacity-0 group-hover:opacity-5 dark:group-hover:opacity-10 rounded-lg transition-opacity" />
-                      <ImageIcon className="h-4 w-4 flex-shrink-0" />
-                      <span className="text-sm font-medium">Images</span>
-                    </button>
-
-                    {/* Edit Button */}
-                    <button
-                      onClick={() => {
+                      }}>
+                        <ImageIcon className="h-4 w-4 mr-2" />
+                        Manage Images
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => {
                         setSelectedListing(listing)
                         setShowEditModal(true)
-                      }}
-                      className="group relative flex-1 min-w-[100px] bg-slate-100 dark:bg-gray-950/40 border border-yellow-200/30 dark:border-yellow-800/30 hover:bg-yellow-50 dark:hover:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-xs hover:shadow-sm"
-                    >
-                      <div className="absolute inset-0 bg-yellow-600 opacity-0 group-hover:opacity-5 dark:group-hover:opacity-10 rounded-lg transition-opacity" />
-                      <Edit className="h-4 w-4 flex-shrink-0" />
-                      <span className="text-sm font-medium">Edit</span>
-                    </button>
-
-                    {/* Delete Button */}
-                    <button
-                      onClick={() => {
-                        setSelectedListing(listing)
-                        setShowDeleteModal(true)
-                      }}
-                      className="group relative min-w-[44px] h-[42px] text-slate-100 bg-red-600 dark:text-slate-100 dark:bg-red-600 border border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center shadow-xs hover:shadow-sm"
-                    >
-                      <div className="absolute inset-0 bg-red-600 opacity-0 group-hover:opacity-5 dark:group-hover:opacity-10 rounded-lg transition-opacity" />
-                      <Trash2 className="h-4 w-4 flex-shrink-0" />
-                      <span className="sr-only">Delete</span>
-                    </button>
-                  </div>
+                      }}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Listing
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-red-600"
+                        onClick={() => {
+                          setSelectedListing(listing)
+                          setShowDeleteModal(true)
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-8 sm:py-12 md:py-16">
-              <div className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-gray-400 mb-3 sm:mb-4">
-                <Plus className="h-full w-full" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-medium text-gray-900 dark:text-white">
-                No listings found
-              </h3>
-              <p className="mt-1 sm:mt-2 text-sm sm:text-base text-gray-500 dark:text-gray-400">
-                {searchTerm || filterStatus !== "all"
-                  ? "Try adjusting your search or filter"
-                  : "Start by creating your first property listing"}
-              </p>
+
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+                    {listing.property?.name}
+                  </h3>
+                  <div className="flex items-center text-yellow-500">
+                    <Star className="h-4 w-4 fill-current" />
+                    <span className="ml-1 text-sm">{listing.rating || 4.0}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center text-muted-foreground mb-2">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  <span className="text-sm truncate">
+                    {listing.property?.city} • {listing.property?.type}
+                  </span>
+                </div>
+
+                <div className="flex items-center text-muted-foreground mb-3">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  <span className="text-sm">Listed {formatDate(listing.createdAt)}</span>
+                </div>
+
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <p className="text-xl font-bold text-primary-600 dark:text-primary-600">
+                      {formatCurrency(listing.property?.price || 0)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">per month</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">{listing.totalClicks || 0} views</p>
+                    <p className="text-sm text-muted-foreground">
+                      {listing.totalImpressions || 0} impressions
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      setSelectedListing(listing)
+                      setShowEditModal(true)
+                    }}
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    onClick={() => {
+                      setSelectedListing(listing)
+                      setShowDeleteModal(true)
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <div className="col-span-full text-center py-12">
+            <div className="mx-auto h-12 w-12 text-muted-foreground mb-4">
+              <Plus className="h-full w-full" />
             </div>
-          )}
-        </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center">
-            <nav className="flex items-center space-x-1 sm:space-x-2">
-              <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Previous
-              </button>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded-lg font-medium transition-colors ${currentPage === page
-                    ? "bg-primary-600 text-white"
-                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    }`}
-                >
-                  {page}
-                </button>
-              ))}
-
-              <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Next
-              </button>
-            </nav>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+              No listings found
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {searchTerm || filterStatus !== "all"
+                ? "Try adjusting your search or filter"
+                : "Start by creating your first property listing"}
+            </p>
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="hover:bg-primary-600"
+            >
+              Previous
+            </Button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={currentPage === page ? "default" : "outline"}
+                onClick={() => setCurrentPage(page)}
+                className={currentPage === page ? "bg-primary-600" : "hover:bg-primary-600"}
+              >
+                {page}
+              </Button>
+            ))}
+
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="hover:bg-primary-600"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Modals */}
       <EditListingModal

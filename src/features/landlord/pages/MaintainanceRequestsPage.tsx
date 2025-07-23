@@ -168,15 +168,9 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
         : { status: newState }
 
       const response = await axios.put(
-<<<<<<< Updated upstream
-        `https://nyumba-smart-server.onrender.com/api/maintenance/${requestId}/state`,
-        { state: newState },
-        { headers: getAuthHeaders() },
-=======
         `http://localhost:5000/api/maintenance/${requestId}/status`,
         payload,
         { headers: getAuthHeaders() }
->>>>>>> Stashed changes
       )
 
       if (response.data.success) {

@@ -163,7 +163,7 @@ useEffect(() => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950/40 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">Sign in to your account</h2>
@@ -175,7 +175,7 @@ useEffect(() => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
+        <div className="bg-white dark:bg-gray-950/50 shadow-2xl rounded-lg p-8">
           {errors.general && (
             <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md flex items-start">
               <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
@@ -196,9 +196,9 @@ useEffect(() => {
                 value={formData.email}
                 onChange={handleChange}
                 className={`
-                  block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm
-                  ${errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-600"}
-                  bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                  block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 sm:text-sm
+                  ${errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-800/90"}
+                  bg-white/90 dark:bg-gray-900 text-gray-900 dark:text-gray-100
                 `}
               />
               {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
@@ -218,8 +218,8 @@ useEffect(() => {
                   onChange={handleChange}
                   className={`
                     block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm
-                    ${errors.password ? "border-red-500" : "border-gray-300 dark:border-gray-600"}
-                    bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+                    ${errors.password ? "border-red-500" : "border-gray-300 dark:border-gray-800/90"}
+                    bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
                   `}
                 />
                 <button
