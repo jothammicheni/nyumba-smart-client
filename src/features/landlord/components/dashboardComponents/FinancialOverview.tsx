@@ -35,7 +35,6 @@ const FinancialOverview = () => {
       })
       setFinancialStats(response.data.financialStats)
       setPropertyStats(response.data.propertyStats)
-      toast.success('Financial data updated successfully')
     } catch (error) {
       setError("Error fetching financial statistics")
       toast.error("Failed to load financial data")

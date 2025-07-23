@@ -35,7 +35,6 @@ function PropertyOverview() {
     try {
       const response = await getPropertyStats()
       setPropertyStats(response.data)
-      toast.success('Property stats updated successfully')
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to fetch property statistics")
       toast.error(err.response?.data?.error || "Failed to fetch property statistics")

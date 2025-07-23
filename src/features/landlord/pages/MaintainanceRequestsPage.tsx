@@ -168,7 +168,7 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
         : { status: newState }
 
       const response = await axios.put(
-        `http://localhost:5000/api/maintenance/${requestId}/status`,
+        `https://nyumba-smart-server.onrender.com/api/maintenance/${requestId}/status`,
         payload,
         { headers: getAuthHeaders() }
       )
