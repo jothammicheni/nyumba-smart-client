@@ -151,11 +151,6 @@ const CTASection: React.FC = () => {
     },
   ]
 
-  const benefits = [
-    { icon: CircleCheckBig, text: "No Setup Fees", color: "text-green-500" },
-    { icon: Headset, text: "24/7 Support", color: "text-green-500" },
-    { icon: Star, text: "5-Star Rated", color: "text-yellow-500" },
-  ]
 
   return (
     <section
@@ -217,31 +212,6 @@ const CTASection: React.FC = () => {
           <motion.p className="mt-4 max-w-2xl text-xl text-gray-600 dark:text-gray-300 mx-auto" variants={itemVariants}>
             TenHub provides everything you need to manage your properties efficiently.
           </motion.p>
-
-          {/* Benefits Row */}
-          <motion.div
-            className="flex items-center justify-center mt-8 space-x-6 flex-wrap gap-4"
-            variants={itemVariants}
-          >
-            {benefits.map((benefit, index) => {
-              const IconComponent = benefit.icon
-              return (
-                <motion.div
-                  key={index}
-                  className="flex items-center text-md text-gray-500"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.5 }}>
-                    <IconComponent className={`w-6 h-6 mr-2 ${benefit.color}`} />
-                  </motion.div>
-                  {benefit.text}
-                </motion.div>
-              )
-            })}
-          </motion.div>
         </motion.div>
 
         {/* Features Grid */}
@@ -316,31 +286,12 @@ const CTASection: React.FC = () => {
 
         {/* Service Providers Section */}
         <motion.div
-          className="relative bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-900 dark:to-gray-950/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 dark:border-gray-800 p-12 mb-20 overflow-hidden"
+          className="relative bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-900/40 dark:to-gray-950/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 dark:border-gray-800 p-12 mb-20 overflow-hidden"
           variants={itemVariants}
           initial="hidden"
           animate={controls}
         >
           {/* Animated Background Pattern */}
-          <motion.div
-            className="absolute inset-0 opacity-5"
-            animate={{
-              backgroundPosition: ["0% 0%", "100% 100%"],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "linear",
-            }}
-            style={{
-              backgroundImage: `
-                radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(147, 51, 234, 0.1) 0%, transparent 50%)
-              `,
-              backgroundSize: "100px 100px",
-            }}
-          />
-
           <div className="relative text-center mb-12">
             <motion.h3
               className="text-2xl font-bold text-gray-900 dark:text-white mb-4"
@@ -366,7 +317,7 @@ const CTASection: React.FC = () => {
               return (
                 <motion.div
                   key={index}
-                  className="group bg-white dark:bg-gray-950 shadow-xl backdrop-blur-sm rounded-2xl p-8 border border-blue-100/50 dark:border-primary-600/5 cursor-pointer"
+                  className="group bg-white dark:bg-gray-950/50 shadow-xl backdrop-blur-sm rounded-2xl p-8 border border-blue-100/50 dark:border-gray-800/50 cursor-pointer"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 + index * 0.1 }}

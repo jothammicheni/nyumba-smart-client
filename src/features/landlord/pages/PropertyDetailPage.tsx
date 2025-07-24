@@ -273,7 +273,7 @@ const [selectedTenant, setSelectedTenant] = useState<{
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-lg bg-primary-100 dark:bg-primary-900/30">
-                <Building className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                <Building className="h-6 w-6 text-primary-600 dark:text-primary-600" />
               </div>
               <div>
                 <CardTitle>{property.name}</CardTitle>
@@ -287,7 +287,7 @@ const [selectedTenant, setSelectedTenant] = useState<{
               <Button
                 onClick={handleEdit}
                 variant="outline"
-                className="bg-primary-600 text-white"
+                className="bg-black text-white dark:bg-white dark:text-black"
               >
                 <Pencil className="h-4 w-4 mr-2" />
                 Edit
@@ -302,6 +302,7 @@ const [selectedTenant, setSelectedTenant] = useState<{
               <Button
                 onClick={() => setIsAdvertiseModalOpen(true)}
                 variant="outline"
+                className="bg-black text-white dark:bg-white dark:text-black"
                 className="bg-warning text-warning-foreground bg-yellow-400"
               >
                 <Megaphone className="h-4 w-4 mr-2 " />

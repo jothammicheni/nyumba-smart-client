@@ -11,9 +11,6 @@ import {
   CheckCircle,
   ArrowBigRight,
   ArrowRight,
-  Sparkles,
-  Users,
-  TrendingUp,
 } from "lucide-react"
 import { motion, useInView, useAnimation, easeInOut } from "framer-motion"
 

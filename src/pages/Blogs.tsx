@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 import { Blog, blogs } from "../data/blogData/blogs";
 
 const additionalContent = `
@@ -21,8 +21,7 @@ We continuously evolve our platform based on user feedback, aiming to provide th
 `;
 
 const getPreview = (content: string) => {
-  // Strip markdown syntax roughly and limit to 150 chars
-  const plain = content.replace(/[#_*>\-\[\]\(\)!]/g, "").slice(0, 150);
+  const plain = content.replace(/[#_*>[\]()!-]/g, "").slice(0, 150);
   return plain.length < content.length ? plain + "..." : plain;
 };
 
@@ -44,29 +43,33 @@ const Blogs: React.FC = () => {
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
-
-        {/* Open Graph */}
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={seoDescription} />
         {seoImage && <meta property="og:image" content={seoImage} />}
         <meta property="og:type" content={selectedBlog ? "article" : "website"} />
-
-        {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={seoTitle} />
         <meta name="twitter:description" content={seoDescription} />
         {seoImage && <meta name="twitter:image" content={seoImage} />}
       </Helmet>
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {!selectedBlog ? (
           <>
-            <h1 className="text-4xl font-extrabold mb-8">Latest Blogs</h1>
-            <div className="grid gap-8 md:grid-cols-2">
+            <div className="text-center mb-16">
+              <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Latest Insights
+              </h1>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Expert articles on real estate management in Kenya
+              </p>
+            </div>
+
+            <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
               {blogs.map((blog) => (
-                <div
+                <article
                   key={blog.id}
-                  className="cursor-pointer rounded-lg border border-gray-300 dark:border-gray-700 p-6 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col"
+                  className="group relative bg-white dark:bg-gray-950/50 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-105 flex flex-col h-full"
                   onClick={() => setSelectedBlog(blog)}
                   role="button"
                   tabIndex={0}
@@ -74,55 +77,92 @@ const Blogs: React.FC = () => {
                     if (e.key === "Enter") setSelectedBlog(blog);
                   }}
                 >
-                  <img
-                    src={blog.image}
-                    alt={blog.title}
-                    className="w-full h-48 object-cover rounded-md mb-4"
-                    loading="lazy"
-                  />
-                  <h2 className="text-2xl font-semibold mb-2 text-primary">{blog.title}</h2>
-                  <p className="text-sm text-muted-foreground mb-4">{blog.published}</p>
-                  <p className="text-gray-700 dark:text-gray-300 flex-grow">
-                    {getPreview(blog.content)}
-                  </p>
-                  <button
-                    className="mt-4 inline-block bg-primary-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-primary-dark focus:outline-none focus:ring-4 focus:ring-primary-light animate-pulse self-start"
-                    onClick={() => setSelectedBlog(blog)}
-                    aria-label={`Read more about ${blog.title}`}
-                    type="button"
-                  >
-                    Read More
-                  </button>
-                </div>
+                  <div className="relative h-60 overflow-hidden">
+                    <img
+                      src={blog.image}
+                      alt={blog.title}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  </div>
+
+                  <div className="p-6 flex flex-col flex-grow">
+                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
+                      <span>{blog.published}</span>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
+                      {blog.title}
+                    </h2>
+
+                    <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3 flex-grow">
+                      {getPreview(blog.content)}
+                    </p>
+
+                    <button
+                      className="mt-auto w-full py-3 px-6 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                      onClick={() => setSelectedBlog(blog)}
+                      aria-label={`Read more about ${blog.title}`}
+                      type="button"
+                    >
+                      Read Article
+                    </button>
+                  </div>
+                </article>
               ))}
             </div>
           </>
         ) : (
-          <article>
+          <article className="max-w-4xl mx-auto">
             <button
               onClick={() => setSelectedBlog(null)}
-              className="mb-6 text-primary-600 hover:underline focus:outline-none font-semibold"
+              className="flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 mb-8 transition-colors duration-200"
               type="button"
               aria-label="Back to blog list"
             >
-              &larr; Back to Blogs
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to all articles
             </button>
 
-            <h1 className="text-4xl font-extrabold mb-6">{selectedBlog.title}</h1>
-            <img
-              src={selectedBlog.image}
-              alt={selectedBlog.title}
-              className="w-full max-h-96 object-cover rounded-lg mb-8"
-              loading="lazy"
-            />
+            <header className="mb-12">
+              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-4">
+                <span>{selectedBlog.published}</span>
+              </div>
 
-            <article className="prose prose-lg dark:prose-invert max-w-none mb-12">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                {selectedBlog.title}
+              </h1>
+
+              <div className="flex items-center">
+                <div className="flex-shrink-0 mr-4">
+                  <img
+                    className="h-12 w-12 rounded-full object-cover"
+                    src={selectedBlog.image}
+                    alt={selectedBlog.title}
+                  />
+                </div>
+              </div>
+            </header>
+
+            <figure className="mb-12 rounded-xl overflow-hidden shadow-xl">
+              <img
+                src={selectedBlog.image}
+                alt={selectedBlog.title}
+                className="w-full h-auto max-h-[32rem] object-cover"
+                loading="lazy"
+              />
+            </figure>
+
+            <article className="prose prose-lg dark:prose-dark max-w-none mb-16">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {selectedBlog.content}
               </ReactMarkdown>
             </article>
 
-            <section className="prose prose-lg dark:prose-invert max-w-none border-t pt-8 mt-8">
+            <section className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-8 md:p-10 mb-16">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {additionalContent}
               </ReactMarkdown>
@@ -130,13 +170,59 @@ const Blogs: React.FC = () => {
               <div className="mt-10 text-center">
                 <a
                   href="/contact"
-                  className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-primary-dark focus:outline-none focus:ring-4 focus:ring-primary-light animate-bounce"
+                  className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl shadow-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 transform hover:scale-105"
                   aria-label="Contact TenaHub Solutions"
                 >
-                  Contact TenaHub Solutions
+                  Get in Touch
+                  <svg className="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
                 </a>
               </div>
             </section>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-12">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+                More from our blog
+              </h2>
+              <div className="grid gap-8 md:grid-cols-2">
+                {blogs
+                  .filter(blog => blog.id !== selectedBlog.id)
+                  .slice(0, 2)
+                  .map(blog => (
+                    <article
+                      key={blog.id}
+                      className="flex flex-col sm:flex-row gap-6 group cursor-pointer"
+                      onClick={() => setSelectedBlog(blog)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") setSelectedBlog(blog);
+                      }}
+                    >
+                      <div className="flex-shrink-0 w-full sm:w-40 h-40 overflow-hidden rounded-lg">
+                        <img
+                          src={blog.image}
+                          alt={blog.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 mb-2">
+                          {blog.title}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                          {blog.published}
+                        </p>
+                        <p className="text-gray-600 dark:text-gray-300 line-clamp-2">
+                          {getPreview(blog.content)}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
+              </div>
+            </div>
           </article>
         )}
       </main>
