@@ -260,7 +260,7 @@ export default function LandlordDashboardLayout() {
         {/* Mobile device topbar */}
         <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-gradient-to-br from-primary-gray-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 shadow">
           <button
-            type="button"
+            type="button" 
             className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
@@ -331,11 +331,11 @@ export default function LandlordDashboardLayout() {
                     className="max-w-xs flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                   >
                     <span className="sr-only">Open user menu</span>
-                    <img
+{/*                     <img
                       className="h-8 w-8 rounded-full"
-                      src="https://randomuser.me/api/portraits/men/1.jpg"
+                      src="https://randomuser.me/api/portraits/men98/1.jpg"
                       alt="User profile"
-                    />
+                    /> */}
                   </button>
                 </div>
               </div>

@@ -11,7 +11,7 @@ import {
   RefreshCw,
   Check,
   X,
-  Loader2
+  Loader2,
 } from "lucide-react";
 import {
   createSubscription,
@@ -20,7 +20,13 @@ import {
 } from "../../../services/subscriptionService.js";
 import { toast, Toaster } from "sonner";
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../../components/ui/card";
 import { Badge } from "../../../components/ui/badge";
 import {
   initiateMpesaPayment,
@@ -68,7 +74,9 @@ const Subscriptions = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState<"idle" | "initiating" | "confirming" | "completed">("idle");
+  const [paymentStatus, setPaymentStatus] = useState<
+    "idle" | "initiating" | "confirming" | "completed"
+  >("idle");
   const [paymentResult, setPaymentResult] = useState<{
     success: boolean;
     message: string;
@@ -105,6 +113,12 @@ const Subscriptions = () => {
       }
 
       const end = new Date(endDate);
+      const end = new Date(
+        activeSub?.is_free_trial_active
+          ? activeSub.free_trial_end_date ?? new Date()
+          : activeSub.end_date ?? new Date()
+      );
+
       return Math.max(0, end.getTime() - now.getTime());
     };
 
@@ -125,7 +139,7 @@ const Subscriptions = () => {
 
       if (activeSub.free_trial && days <= 3) {
         setAlertMessage(
-          `Free trial ends in ${days} day(s). Consider upgrading.`
+          `Free trial ends in ${days} day(s). Consider Paying On Time.`
         );
         setShowAlert(true);
       } else if (!activeSub.is_active && !activeSub.free_trial) {
@@ -147,7 +161,7 @@ const Subscriptions = () => {
       try {
         await validateSubscription();
       } catch (err) {
-        console.error('Validation failed:', err);
+        console.error("Validation failed:", err);
       }
     };
 
@@ -246,10 +260,10 @@ const Subscriptions = () => {
         setActiveSub(res.data);
         setAcceptedTerms(false);
         setCountdown("45d 0h 0m 0s");
-        toast.success('Your trial has started successfully');
+        toast.success("Your trial has started successfully");
       }
     } catch (err) {
-      toast.error('Failed to start trial');
+      toast.error("Failed to start trial");
       console.error("Failed to start trial:", err);
     }
   };
@@ -273,9 +287,15 @@ const Subscriptions = () => {
 
       while (retries < 6) {
         await new Promise((res) => setTimeout(res, 5000));
-        statusResponse = await checkMpesaPaymentStatus(initRes.checkoutRequestId);
+        statusResponse = await checkMpesaPaymentStatus(
+          initRes.checkoutRequestId
+        );
 
-        if (statusResponse.status === "success" || statusResponse.status === "failed") break;
+        if (
+          statusResponse.status === "success" ||
+          statusResponse.status === "failed"
+        )
+          break;
         retries++;
       }
 
@@ -315,7 +335,10 @@ const Subscriptions = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight"> <b className="text-primary-600">Tenahub</b> Subscription Plans</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            {" "}
+            <b className="text-primary-600">Tenahub</b> Subscription Plans
+          </h1>
           <p className="text-muted-foreground">
             Choose the plan that fits your property management needs
           </p>
@@ -339,12 +362,14 @@ const Subscriptions = () => {
             {alertMessage.includes("Pay for your subscription") && (
               <Button
                 onClick={() => {
-                  const tierToSelect = tiers.find(t => t.name === activeSub?.tier);
+                  const tierToSelect = tiers.find(
+                    (t) => t.name === activeSub?.tier
+                  );
                   if (tierToSelect) setSelectedTier(tierToSelect);
                 }}
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto bg-green-700"
               >
-                Upgrade Now
+                Pay Via M-Pesa
               </Button>
             )}
           </div>
@@ -354,8 +379,12 @@ const Subscriptions = () => {
       {/* Pricing Tiers */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 p-2">
         {tiers.map((tier, index) => (
-          <Card key={index} className={`relative overflow-hidden transition-all dark:bg-gray-900/50 border border-primary-600/5 hover:shadow-lg py-6 ${tier.current ? "ring-1 ring-primary-600" : ""
-            }`}>
+          <Card
+            key={index}
+            className={`relative overflow-hidden transition-all dark:bg-gray-900/50 border border-primary-600/5 hover:shadow-lg py-6 ${
+              tier.current ? "ring-1 ring-primary-600" : ""
+            }`}
+          >
             {/* Current Plan Badge */}
             {tier.current && (
               <div className="absolute top-4 right-4">
@@ -369,7 +398,10 @@ const Subscriptions = () => {
             {/* Trial Days Counter */}
             {countdown && tier.current && (
               <div className="absolute top-4 left-4">
-                <Badge variant="default" className="flex items-center bg-yellow-500 p-1.5">
+                <Badge
+                  variant="default"
+                  className="flex items-center bg-yellow-500 p-1.5"
+                >
                   <Clock className="h-4 w-4 mr-1" />
                   {countdown}
                 </Badge>
@@ -392,7 +424,9 @@ const Subscriptions = () => {
               {/* Pricing */}
               <div className="flex items-end border-b border-primary-600/20 pb-4">
                 <span className="text-3xl font-bold">
-                  {tier.priceMonthly === 0 ? "Free" : formatCurrency(tier.priceMonthly)}
+                  {tier.priceMonthly === 0
+                    ? "Free"
+                    : formatCurrency(tier.priceMonthly)}
                 </span>
                 <span className="text-muted-foreground ml-2">/month</span>
               </div>
@@ -400,7 +434,10 @@ const Subscriptions = () => {
               {tier.priceYearly > 0 && (
                 <p className="text-sm text-muted-foreground">
                   {formatCurrency(tier.priceYearly)} yearly (save{" "}
-                  {Math.round((1 - tier.priceYearly / (tier.priceMonthly * 12)) * 100)}%)
+                  {Math.round(
+                    (1 - tier.priceYearly / (tier.priceMonthly * 12)) * 100
+                  )}
+                  %)
                 </p>
               )}
 
@@ -409,7 +446,9 @@ const Subscriptions = () => {
                 <h2 className="font-bold">Plan Features:</h2>
                 <div className="flex items-center gap-2">
                   <DoorOpen className="h-5 w-5 text-primary-600" />
-                  <span>{tier.properties} property{tier.properties !== 1 && '(s)'}</span>
+                  <span>
+                    {tier.properties} property{tier.properties !== 1 && "(s)"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Home className="h-5 w-5 text-primary-600" />
@@ -436,17 +475,32 @@ const Subscriptions = () => {
               </div>
 
               {/* Action Button */}
-              <Button
-                onClick={() => !tier.current && setSelectedTier(tier)}
-                disabled={tier.current}
-                className="w-full mt-6 hover:bg-primary-600 hover:text-white"
-              >
-                {tier.current
-                  ? "Current Plan"
-                  : tier.priceMonthly === 0
-                    ? "Get Started"
-                    : "Start Free Trial"}
-              </Button>
+     <Button
+  onClick={() => !tier.current && setSelectedTier(tier)}
+  disabled={tier.current && activeSub?.is_free_trial_active}
+  className={
+    tier.current && !activeSub?.is_free_trial_active
+      ? "w-full mt-6 bg-green-600 text-white hover:bg-green-700"
+      : "w-full mt-6 hover:bg-primary-600 hover:text-white"
+  }
+>
+  {tier.current ? (
+    activeSub?.is_free_trial_active ? (
+      "Current Plan"
+    ) : (
+      "Trial Ended. Activate Via Mpesa"
+    )
+  ) : !activeSub?.is_active && !activeSub?.is_free_trial_active ? (
+    "Activate This Now"
+  ) : tier.priceMonthly === 0 ? (
+    "Get Started"
+  ) : (
+    "Start Free Trial"
+  )}
+</Button>
+
+
+
 
               {tier.trial && tier.priceMonthly > 0 && (
                 <p className="text-center text-xs text-primary-600 mt-2">
@@ -469,7 +523,7 @@ const Subscriptions = () => {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 mb-10">
-        <Card className="bg-gray-900/50">
+        <Card className="bg-white dark:bg-gray-900/50 ">
           <CardHeader className="flex flex-row items-center gap-4">
             <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
               <span className="text-xl font-bold text-primary-600">1</span>
@@ -478,12 +532,13 @@ const Subscriptions = () => {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Select a subscription plan that matches your property management needs
+              Select a subscription plan that matches your property management
+              needs
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900/50">
+        <Card className="bg-white dark:bg-gray-900/50 ">
           <CardHeader className="flex flex-row items-center gap-4">
             <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
               <span className="text-xl font-bold text-primary-600">2</span>
@@ -492,12 +547,13 @@ const Subscriptions = () => {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Explore all premium features risk-free for 45 days (paid plans only)
+              Explore all premium features risk-free for 45 days (paid plans
+              only)
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900/50">
+        <Card className="bg-white dark:bg-gray-900/50 ">
           <CardHeader className="flex flex-row items-center gap-4">
             <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
               <span className="text-xl font-bold text-primary-600">3</span>
@@ -521,9 +577,7 @@ const Subscriptions = () => {
                 {selectedTier.icon}
                 {selectedTier.name} Plan
               </CardTitle>
-              <CardDescription>
-                {selectedTier.description}
-              </CardDescription>
+              <CardDescription>{selectedTier.description}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -542,11 +596,15 @@ const Subscriptions = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span>Monthly Price</span>
-                    <span className="font-bold">{formatCurrency(selectedTier.priceMonthly)}</span>
+                    <span className="font-bold">
+                      {formatCurrency(selectedTier.priceMonthly)}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Yearly Price</span>
-                    <span className="font-bold">{formatCurrency(selectedTier.priceYearly)}</span>
+                    <span className="font-bold">
+                      {formatCurrency(selectedTier.priceYearly)}
+                    </span>
                   </div>
                 </div>
               )}
@@ -574,19 +632,37 @@ const Subscriptions = () => {
                 >
                   Cancel
                 </Button>
-                <Button
-                  onClick={selectedTier.priceMonthly === 0 ? startTrial : handlePayment}
-                  disabled={selectedTier.priceMonthly > 0 && !acceptedTerms}
-                  className="w-full"
-                >
-                  {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : selectedTier.priceMonthly === 0 ? (
-                    "Get Started"
-                  ) : (
-                    "Start Free Trial"
-                  )}
-                </Button>
+
+                {!activeSub?.is_active && !activeSub?.is_free_trial_active ? (
+                  <Button
+                    onClick={handlePayment}
+                    disabled={
+                      !selectedTier ||
+                      selectedTier.priceMonthly === 0 ||
+                      loading
+                    }
+                    className="w-full bg-green-700 hover:bg-green-800"
+                  >
+                    Pay Now. Trial Ended
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={startTrial}
+                    disabled={
+                      !selectedTier ||
+                      (selectedTier.priceMonthly > 0 && !acceptedTerms)
+                    }
+                    className="w-full"
+                  >
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : selectedTier?.priceMonthly === 0 ? (
+                      "Get Started"
+                    ) : (
+                      "Start Free Trial"
+                    )}
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -616,7 +692,8 @@ const Subscriptions = () => {
             <CardHeader>
               <CardTitle>Confirming Payment</CardTitle>
               <CardDescription>
-                Please check your phone and enter your M-Pesa PIN to complete payment
+                Please check your phone and enter your M-Pesa PIN to complete
+                payment
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">

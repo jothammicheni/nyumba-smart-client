@@ -194,6 +194,10 @@ export default function ServiceProviderAssignment({ maintenanceRequest, onAssign
                   <span className='ml-2'>
                     {maintenanceRequest.priority}
                   </span>
+                  <Badge className='ml-2' variant={maintenanceRequest.priority === 'urgent' ? 'destructive' : 'default'}>
+  {maintenanceRequest.priority}
+</Badge>
+
                 </div>
               )}
             </CardContent>

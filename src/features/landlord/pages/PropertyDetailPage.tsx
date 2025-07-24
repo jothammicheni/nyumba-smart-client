@@ -32,6 +32,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Toaster, toast } from "sonner";
 import { getAuthHeaders } from "../../../services/authService.js";
 import axios from "axios";
+import TenantInfoModal from "../components/TenantInfoModal.js";
 
 interface Room {
   _id: string;
@@ -41,6 +42,7 @@ interface Room {
   tenantInfo?: {
     name: string;
     email: string;
+    phone:string;
   };
 }
 
@@ -63,6 +65,16 @@ const PropertyDetailPage: React.FC = () => {
   const [isAddRoomModalOpen, setIsAddRoomModalOpen] = useState(false);
   const [isAssignTenantModalOpen, setIsAssignTenantModalOpen] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState("");
+ const [showModal, setShowModal] = useState(false)
+const [selectedTenant, setSelectedTenant] = useState<{
+  roomNumber: string
+  name: string
+  email: string
+  phone?: string
+} | null>(null)
+// const openTenantModal = (tenantInfo: { name: string; email: string; phone?: string }) => {
+//   setSelectedTenant(tenantInfo)
+// }
 
   useEffect(() => {
     if (id) {
@@ -76,7 +88,7 @@ const PropertyDetailPage: React.FC = () => {
     try {
       const response = await getProperty(id!);
       setProperty(response.data);
-      toast.success('Property data loaded');
+      console.log("Fetched property:", response.data);
     } catch (err: any) {
       const errorMsg = err.response?.data?.error || "Failed to fetch property details";
       setError(errorMsg);
@@ -240,7 +252,7 @@ const PropertyDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+    <div className="container mx-auto p-2 space-y-2 animate-fade-in">
       <Toaster position="top-right" richColors />
       
       {/* Header */}
@@ -291,8 +303,9 @@ const PropertyDetailPage: React.FC = () => {
                 onClick={() => setIsAdvertiseModalOpen(true)}
                 variant="outline"
                 className="bg-black text-white dark:bg-white dark:text-black"
+                className="bg-warning text-warning-foreground bg-yellow-400"
               >
-                <Megaphone className="h-4 w-4 mr-2" />
+                <Megaphone className="h-4 w-4 mr-2 " />
                 Advertise
               </Button>
             </div>
@@ -337,7 +350,7 @@ const PropertyDetailPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 onClick={fetchProperty}
-                className="bg-primary-600 text-white"
+                className=" text-black"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh
@@ -353,80 +366,93 @@ const PropertyDetailPage: React.FC = () => {
           </div>
         </CardHeader>
         
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Room</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Tenant</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {property.rooms.map((room) => (
-                <TableRow key={room._id}>
-                  <TableCell className="font-medium">
-                    {room.room_number}
-                  </TableCell>
-                  <TableCell>
-                    {getStatusBadge(room.status)}
-                  </TableCell>
-                  <TableCell>
-                    {room.status === "occupied" && room.tenantInfo ? (
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <div>{room.tenantInfo.name}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {room.tenantInfo.email}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground">No tenant</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right space-x-2">
-                    {room.status === "occupied" ? (
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleRemoveTenant(room._id)}
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Remove
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openAssignTenantModal(room._id)}
-                      >
-                        <User className="h-4 w-4 mr-2" />
-                        Assign
-                      </Button>
-                    )}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteRoom(room._id)}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          
-          {property.rooms.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No rooms found for this property</p>
-            </div>
-          )}
-        </CardContent>
+<CardContent>
+  <div className="overflow-x-auto">
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Room</TableHead>
+          <TableHead>Tenant</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {property.rooms.map((room) => (
+          <TableRow key={room._id}>
+            <TableCell className="font-medium">
+              <div>{room.room_number}</div>
+              <div className="mt-1">{getStatusBadge(room.status)}</div>
+            </TableCell>
+
+<TableCell>
+  {room.status === "occupied" && room.tenantInfo ? (
+    <Button
+       className=" text-green-600 hover:text-green-800"
+      variant="ghost"
+      size="sm"
+    onClick={() => {
+  setSelectedTenant({
+    roomNumber: room.room_number ?? "N/A",
+    name: room?.tenantInfo?.name ?? "N/A",
+    email: room?.tenantInfo?.email ?? "N/A",
+    phone: room?.tenantInfo?.phone ?? "N/A",
+  })
+  setShowModal(true)
+}}
+
+    >
+      View
+    </Button>
+  ) : (
+    <span className="text-muted-foreground">No tenant</span>
+  )}
+</TableCell>
+
+
+
+            <TableCell className="text-right space-x-2">
+              {room.status === "occupied" ? (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleRemoveTenant(room._id)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Remove
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openAssignTenantModal(room._id)}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Assign
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleDeleteRoom(room._id)}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </div>
+
+  {property.rooms.length === 0 && (
+    <div className="text-center py-8">
+      <p className="text-muted-foreground">No rooms found for this property</p>
+    </div>
+  )}
+</CardContent>
+
+
       </Card>
 
       {/* Modals */}
@@ -456,7 +482,14 @@ const PropertyDetailPage: React.FC = () => {
           }}
           onSuccess={() => toast.success("Property listed successfully!")}
         />
+        
       )}
+
+      <TenantInfoModal
+  open={showModal}
+  onClose={() => setShowModal(false)}
+  tenantInfo={selectedTenant}
+/>
     </div>
   );
 };

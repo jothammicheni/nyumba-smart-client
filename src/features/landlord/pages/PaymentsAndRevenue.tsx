@@ -586,49 +586,33 @@ const PaymentsAndRevenue: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Property</TableHead>
-                    <TableHead className="sm:table-cell">Room</TableHead>
-                    <TableHead className="md:table-cell">Method</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="lg:table-cell">Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredPayments.map((payment) => (
-                    <TableRow key={payment._id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{payment.property.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {payment.property.city}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell">
-                        {payment.room.room_number} ({payment.room.type})
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell capitalize">
-                        {payment.method.replace('_', ' ')}
-                      </TableCell>
-                      <TableCell className="font-semibold text-revenue">
-                        {formatCurrency(payment.amount)}
-                      </TableCell>
-                      <TableCell>
-                        {getStatusBadge(payment.status)}
-                      </TableCell>
-                      <TableCell className="hidden lg:table-cell">
-                        {new Date(payment.timestamp).toLocaleDateString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+ <div className="overflow-x-auto">
+  <table className="min-w-full table-auto border-collapse">
+    <thead className="bg-gray-100 text-sm text-gray-600">
+      <tr>
+        <th className="text-left px-4 py-3">Property & Room</th>
+        <th className="text-left px-4 py-3">Amount</th>
+      </tr>
+    </thead>
+    <tbody className="text-sm text-gray-700">
+      {filteredPayments.map(payment => (
+        <tr key={payment._id} className="border-b even:bg-gray-50">
+          <td className="px-4 py-3">
+            <p className="font-medium">{payment.property.name}</p>
+            <p className="text-sm text-gray-500">
+              Room {payment.room.room_number}
+            </p>
+          </td>
+          <td className="px-4 py-3 font-semibold text-revenue">
+            {formatCurrency(payment.amount)}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+
           )}
 
           {filteredPayments.length === 0 && (

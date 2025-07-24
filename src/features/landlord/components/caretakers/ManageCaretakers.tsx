@@ -34,8 +34,9 @@ const ManageCaretakers: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/users/caretakers', { 
-          headers: getAuthHeaders(),
+        const res = await axios.get('https://nyumba-smart-server.onrender.com/api/users/caretakers',{ 
+          headers:getAuthHeaders(),
+
         });
         const data = Array.isArray(res.data) ? res.data : res.data.data;
         setUsers(data.filter((u: UserData) => u.role === 'caretaker' || u.role === 'agent'));
@@ -50,7 +51,8 @@ const ManageCaretakers: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:5000/api/users/${id}`, {
+
+       await axios.delete(`https://nyumba-smart-server.onrender.com/api/users/${id}`, {
         headers: getAuthHeaders()
       });
       setUsers(prev => prev.filter(user => user._id !== id));
