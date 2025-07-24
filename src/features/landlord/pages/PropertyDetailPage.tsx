@@ -303,7 +303,6 @@ const [selectedTenant, setSelectedTenant] = useState<{
                 onClick={() => setIsAdvertiseModalOpen(true)}
                 variant="outline"
                 className="bg-black text-white dark:bg-white dark:text-black"
-                className="bg-warning text-warning-foreground bg-yellow-400"
               >
                 <Megaphone className="h-4 w-4 mr-2 " />
                 Advertise
