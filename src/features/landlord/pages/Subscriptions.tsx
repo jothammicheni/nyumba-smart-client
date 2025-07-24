@@ -112,7 +112,7 @@ const Subscriptions = () => {
         return 0;
       }
 
-      const end = new Date(endDate);
+      // const end = new Date(endDate);
       const end = new Date(
         activeSub?.is_free_trial_active
           ? activeSub.free_trial_end_date ?? new Date()

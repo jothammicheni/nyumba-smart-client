@@ -35,7 +35,6 @@ const PropertiesPage: React.FC = () => {
     try {
       const response = await getProperties()
       setProperties(response.data)
-      toast.success('Properties updated successfully')
     } catch (err: any) {
       const errorMsg = err.response?.data?.error || "Failed to fetch properties"
       setError(errorMsg)
