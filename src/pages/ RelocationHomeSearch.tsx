@@ -1,19 +1,26 @@
-
-
 import type React from "react"
-import { useState, useEffect, type FormEvent } from "react"
-import { HomeIcon, MoveRightIcon, MapPinIcon, SearchIcon, Building2Icon, UsersIcon } from "lucide-react"
+import { useState, type FormEvent } from "react"
+import {
+  HomeIcon,
+  MoveRightIcon,
+  MapPinIcon,
+  SearchIcon,
+  Building2Icon,
+  UsersIcon,
+  CalendarIcon,
+  PhoneIcon,
+  MailIcon,
+  RefreshCw,
+  CheckCircle,
+  AlertCircle
+} from "lucide-react"
 import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
 import { Textarea } from "../components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { Label } from "../components/ui/label"
-
-
-
-type NotificationType = "success" | "error"
-
+import { Toaster, toast } from "sonner"
 
 // Helper validation functions
 const validateEmail = (email: string): string => {
@@ -24,7 +31,6 @@ const validateEmail = (email: string): string => {
 
 const validateKenyanPhoneNumber = (phone: string): string => {
   if (!phone) return "Phone number is required."
-  // Regex for Kenyan numbers: starts with +2547 or 07 followed by 8 digits
   if (!/^(\+?254|0)7\d{8}$/.test(phone))
     return "Phone must be a valid Kenyan number (e.g., +2547XXXXXXXX or 07XXXXXXXX)."
   return ""
@@ -32,6 +38,9 @@ const validateKenyanPhoneNumber = (phone: string): string => {
 
 const RelocationHomeSearch: React.FC = () => {
   const [activeForm, setActiveForm] = useState<"homeSearch" | "relocation">("homeSearch")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [loading, setLoading] = useState(false)
+
   const [homeSearch, setHomeSearch] = useState({
     location: "",
     email: "",
@@ -45,6 +54,7 @@ const RelocationHomeSearch: React.FC = () => {
     preferredMoveInDate: "",
     additionalNotes: "",
   })
+
   const [relocation, setRelocation] = useState({
     name: "",
     email: "",
@@ -59,19 +69,8 @@ const RelocationHomeSearch: React.FC = () => {
   // State for validation errors
   const [homeSearchErrors, setHomeSearchErrors] = useState<Record<string, string>>({})
   const [relocationErrors, setRelocationErrors] = useState<Record<string, string>>({})
-
-  // Notification state
-  const [notification, setNotification] = useState<{ type: NotificationType; message: string } | null>(null)
   const [isSubmittingHomeSearch, setIsSubmittingHomeSearch] = useState(false)
   const [isSubmittingRelocation, setIsSubmittingRelocation] = useState(false)
-
-  useEffect(() => {
-    if (notification) {
-      // Changed timeout from 4000 to 60000 milliseconds (1 minute)
-      const timer = setTimeout(() => setNotification(null), 60000)
-      return () => clearTimeout(timer)
-    }
-  }, [notification])
 
   const handleHomeSearchChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string,
@@ -81,15 +80,13 @@ const RelocationHomeSearch: React.FC = () => {
     let value: string
 
     if (typeof e === "string" && name) {
-      // For Select component
       fieldName = name
       value = e
     } else if (typeof e === "object" && "target" in e) {
-      // For Input/Textarea
       fieldName = e.target.name
       value = e.target.value
     } else {
-      return // Should not happen
+      return
     }
 
     setHomeSearch((prev) => ({ ...prev, [fieldName]: value }))
@@ -116,15 +113,13 @@ const RelocationHomeSearch: React.FC = () => {
     let value: string
 
     if (typeof e === "string" && name) {
-      // For Select component
       fieldName = name
       value = e
     } else if (typeof e === "object" && "target" in e) {
-      // For Input/Textarea
       fieldName = e.target.name
       value = e.target.value
     } else {
-      return // Should not happen
+      return
     }
 
     setRelocation((prev) => ({ ...prev, [fieldName]: value }))
@@ -171,20 +166,15 @@ const RelocationHomeSearch: React.FC = () => {
     return Object.values(errors).every((error) => !error)
   }
 
-  const successMessage = (type: "relocation" | "homeSearch") =>
-    `We received your request on ${type === "relocation" ? "relocation" : "home search"}. Expect a call from us within 24 Hrs. For details call +254(0)113730593`
-  const errorMessage = "We can’t submit your request at the moment. Try again later."
-
   const submitHomeSearch = async (e: FormEvent) => {
     e.preventDefault()
     if (!validateHomeSearchForm()) {
-      setNotification({ type: "error", message: "Please correct the errors in the form." })
+      toast.error("Please correct the errors in the form.")
       return
     }
 
     setIsSubmittingHomeSearch(true)
     try {
-      // Prepare data, converting empty strings for numbers to undefined
       const dataToSend = {
         type: "homeSearch",
         data: {
@@ -198,12 +188,13 @@ const RelocationHomeSearch: React.FC = () => {
 
       const response = await fetch("http://localhost:5000/api/home-search-relocation-requests", {
         method: "POST",
-        headers: { "Content-Type": "application/json" }, // Crucial header
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSend),
       })
 
       if (!response.ok) throw new Error("Submission failed")
-      setNotification({ type: "success", message: successMessage("homeSearch") })
+
+      toast.success("Request submitted successfully! We'll contact you within 24 hours.")
       setHomeSearch({
         location: "",
         email: "",
@@ -217,10 +208,10 @@ const RelocationHomeSearch: React.FC = () => {
         preferredMoveInDate: "",
         additionalNotes: "",
       })
-      setHomeSearchErrors({}) // Clear errors on successful submission
+      setHomeSearchErrors({})
     } catch (err) {
       console.error(err)
-      setNotification({ type: "error", message: errorMessage })
+      toast.error("Unable to submit request. Please try again later.")
     } finally {
       setIsSubmittingHomeSearch(false)
     }
@@ -229,29 +220,26 @@ const RelocationHomeSearch: React.FC = () => {
   const submitRelocation = async (e: FormEvent) => {
     e.preventDefault()
     if (!validateRelocationForm()) {
-      setNotification({ type: "error", message: "Please correct the errors in the form." })
+      toast.error("Please correct the errors in the form.")
       return
     }
 
     setIsSubmittingRelocation(true)
     try {
-      // Prepare data, converting empty strings for numbers to undefined
       const dataToSend = {
         type: "relocation",
-        data: {
-          ...relocation,
-          // No number fields in relocation form that need this specific conversion
-        },
+        data: relocation,
       }
 
       const response = await fetch("http://localhost:5000/api/home-search-relocation-requests", {
         method: "POST",
-        headers: { "Content-Type": "application/json" }, // Crucial header
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSend),
       })
 
       if (!response.ok) throw new Error("Submission failed")
-      setNotification({ type: "success", message: successMessage("relocation") })
+
+      toast.success("Request submitted successfully! We'll contact you within 24 hours.")
       setRelocation({
         name: "",
         email: "",
@@ -262,208 +250,259 @@ const RelocationHomeSearch: React.FC = () => {
         movingType: "",
         additionalNotes: "",
       })
-      setRelocationErrors({}) // Clear errors on successful submission
+      setRelocationErrors({})
     } catch (err) {
       console.error(err)
-      setNotification({ type: "error", message: errorMessage })
+      toast.error("Unable to submit request. Please try again later.")
     } finally {
       setIsSubmittingRelocation(false)
     }
   }
 
+  if (loading) {
+    return (
+      <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+        <div className="flex flex-col space-y-4">
+          <div className="h-8 bg-muted/10 rounded animate-pulse" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-32 bg-muted/10 rounded animate-pulse" />
+            ))}
+          </div>
+          <div className="h-64 bg-muted/10 rounded animate-pulse" />
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <main className="relative max-w-7xl mx-auto px-6 py-12 font-sans overflow-hidden">
+    <div className="mx-auto p-20 space-y-8 animate-fade-in bg-gradient-to-br from-slate-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+      <Toaster position="top-right" richColors />
+
       {/* Animated Background Shapes */}
       <div aria-hidden="true" className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-10 left-10 w-24 h-24 bg-primary-300 rounded-full opacity-30 animate-float1"></div>
-        <div className="absolute bottom-20 right-20 w-32 h-32 bg-primary-400 rounded-full opacity-25 animate-float2"></div>
-        <div className="absolute top-1/2 left-1/2 w-20 h-20 bg-primary-200 rounded-full opacity-20 animate-float3"></div>
+        <div className="absolute top-10 left-10 w-24 h-24 bg-primary/20 rounded-full opacity-30 animate-float1"></div>
+        <div className="absolute bottom-20 right-20 w-32 h-32 bg-primary/30 rounded-full opacity-25 animate-float2"></div>
+        <div className="absolute top-1/2 left-1/2 w-20 h-20 bg-primary/15 rounded-full opacity-20 animate-float3"></div>
       </div>
 
-      <h1 className="text-3xl font-bold text-center text-primary-600 mb-12 flex justify-center items-center gap-3">
-        <MoveRightIcon className="text-primary-600" size={32} />
-        {"Relocate & Find Home in Kenya"}
-      </h1>
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="flex items-center justify-center gap-3">
+          <div className="w-12 h-12 bg-primary-600/20 rounded-full flex items-center justify-center">
+            <MoveRightIcon className="text-primary-600" size={24} />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+            Relocate & Find Home in Kenya
+          </h1>
+        </div>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Professional relocation and home search services across Kenya
+        </p>
+      </div>
 
-      <div className="flex flex-col lg:flex-row gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Info Section */}
-        <section className="lg:w-1/2 space-y-8 text-gray-700">
-          <p className="text-lg leading-relaxed">
-            <strong className="font-semibold">TenaHub Solutions</strong> takes the hassle out of relocating and finding
-            a home in Kenya. Whether you need a place to stay for a night, a week, or on a monthly basis, we find and
-            prepare the perfect home so you just arrive and sleep.
-          </p>
-          <p className="text-lg leading-relaxed">
-            Our comprehensive service handles everything—from property search, negotiation, and booking, to logistics
-            and settling-in support. With us, relocating becomes effortless and comfortable.
-          </p>
-          <ul className="space-y-4 list-disc list-inside text-gray-600">
-            <li className="flex items-start gap-3">
-              <UsersIcon className="text-primary-600 mt-1" size={20} />
-              {"Serving clients relocating to all major Kenyan cities."}
-            </li>
-            <li className="flex items-start gap-3">
-              <Building2Icon className="text-primary-600 mt-1" size={20} />
-              {"Access verified houses, apartments, and offices ready for move-in."}
-            </li>
-            <li className="flex items-start gap-3">
-              <MapPinIcon className="text-primary-600 mt-1" size={20} />
-              {"Personalized recommendations by city and neighborhood."}
-            </li>
-            <li className="flex items-start gap-3">
-              <MoveRightIcon className="text-primary-600 mt-1" size={20} />
-              {"End-to-end moving and settling-in support — from start to finish."}
-            </li>
-          </ul>
+        <div className="space-y-6">
+          <Card className="hover:scale-105 duration-300 ease-in-out bg-white shadow-md dark:bg-gray-900/70 border dark:border-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-primary-600/20 dark:bg-primary-600/20 rounded-full flex items-center justify-center">
+                  <Building2Icon className="w-6 h-6 text-primary-600 dark:text-primary-600" />
+                </div>
+                About TenaHub Solutions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                We take the hassle out of relocating and finding a home in Kenya. Whether you need
+                a place to stay for a night, a week, or on a monthly basis, we find and prepare
+                the perfect home so you just arrive and sleep.
+              </p>
+              <p className="text-muted-foreground">
+                Our comprehensive service handles everything—from property search, negotiation,
+                and booking, to logistics and settling-in support.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:scale-105 duration-300 ease-in-out bg-white shadow-md dark:bg-gray-900/70 border dark:border-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-primary-600/20 dark:bg-primary-600/20 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-primary-600 dark:text-primary-600" />
+                </div>
+                Our Services
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { icon: UsersIcon, text: "Serving all major Kenyan cities" },
+                  { icon: Building2Icon, text: "Verified properties ready for move-in" },
+                  { icon: MapPinIcon, text: "Personalized recommendations" },
+                  { icon: MoveRightIcon, text: "End-to-end moving support" }
+                ].map((service, index) => (
+                  <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
+                    <service.icon className="text-primary mt-1 flex-shrink-0" size={16} />
+                    <span className="text-sm text-muted-foreground">{service.text}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Form Switch Buttons */}
-          <div className="flex gap-6 pt-8">
+          <div className="flex gap-4">
             <Button
               onClick={() => {
                 setActiveForm("homeSearch")
                 setHomeSearchErrors({})
-                setNotification(null) // Clear notification when switching forms
               }}
-              className={`flex items-center gap-2 px-5 py-3 rounded-md font-semibold text-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ${activeForm === "homeSearch" ? "bg-primary-600 text-white shadow-lg" : "bg-gray-100 text-gray-800 hover:bg-primary-200"}`}
-              aria-pressed={activeForm === "homeSearch"}
+              className={`flex-1 h-auto p-4 ${activeForm === "homeSearch" ? "" : "variant-outline"}`}
+              variant={activeForm === "homeSearch" ? "default" : "outline"}
             >
-              <HomeIcon size={20} />
-              {"Book a Home"}
+              <div className="flex flex-col items-center gap-2 hover">
+                <HomeIcon size={20} />
+                <span className="font-semibold">Book a Home</span>
+                <span className="text-xs opacity-80">Find your perfect stay</span>
+              </div>
             </Button>
             <Button
               onClick={() => {
                 setActiveForm("relocation")
                 setRelocationErrors({})
-                setNotification(null) // Clear notification when switching forms
               }}
-              className={`flex items-center gap-2 px-5 py-3 rounded-md font-semibold text-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ${activeForm === "relocation" ? "bg-primary-600 text-white shadow-lg" : "bg-gray-100 text-gray-800 hover:bg-primary-200"}`}
-              aria-pressed={activeForm === "relocation"}
+              className={`flex-1 h-auto p-4 ${activeForm === "relocation" ? "" : "variant-outline"}`}
+              variant={activeForm === "relocation" ? "default" : "outline"}
             >
-              <MoveRightIcon size={20} />
-              {"Relocation Support"}
+              <div className="flex flex-col items-center gap-2">
+                <MoveRightIcon size={20} />
+                <span className="font-semibold">Relocation Support</span>
+                <span className="text-xs opacity-80">Complete moving assistance</span>
+              </div>
             </Button>
           </div>
-        </section>
+        </div>
 
         {/* Form Section */}
-        <section className="lg:w-1/2 relative">
+        <div className="space-y-6">
           {activeForm === "homeSearch" ? (
-            <Card className="shadow-xl">
+            <Card className="bg-white shadow-md dark:bg-gray-900/70 border dark:border-gray-800">
               <CardHeader>
-                <CardTitle className="text-primary-600 flex items-center gap-3">
-                  <SearchIcon size={24} /> {"Book a Home Form"}
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-primary-600/20 rounded-full flex items-center justify-center">
+                    <SearchIcon className="w-5 h-5 text-primary-600" />
+                  </div>
+                  Book Your Home Here
                 </CardTitle>
-                <CardDescription className="text-gray-600">
-                  Tell us your preferences and booking details. We will find, negotiate, and arrange everything so your
-                  home is ready for your arrival.
+                <CardDescription>
+                  Tell us your preferences and we'll arrange everything for your arrival.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={submitHomeSearch} className="space-y-6" aria-label="Home booking form" noValidate>
-                  <div>
-                    <Label htmlFor="location">
-                      Preferred Location <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="location"
-                      name="location"
-                      type="text"
-                      placeholder="e.g Nairobi, Mombasa"
-                      value={homeSearch.location}
-                      onChange={handleHomeSearchChange}
-                      required
-                      aria-required="true"
-                      aria-invalid={!!homeSearchErrors.location}
-                      aria-describedby="location-error"
-                    />
-                    {homeSearchErrors.location && (
-                      <p id="location-error" className="text-red-500 text-sm mt-1">
-                        {homeSearchErrors.location}
-                      </p>
-                    )}
-                  </div>
+                <form onSubmit={submitHomeSearch} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="md:col-span-2 space-y-2">
+                      <Label htmlFor="location" className="flex items-center gap-2">
+                        <MapPinIcon size={16} />
+                        Preferred Location <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="location"
+                        name="location"
+                        placeholder="e.g Nairobi, Mombasa"
+                        value={homeSearch.location}
+                        onChange={handleHomeSearchChange}
+                        className={homeSearchErrors.location ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
+                      />
+                      {homeSearchErrors.location && (
+                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={14} />
+                          {homeSearchErrors.location}
+                        </p>
+                      )}
+                    </div>
 
-                  <div>
-                    <Label htmlFor="email">
-                      Email Address <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={homeSearch.email}
-                      onChange={handleHomeSearchChange}
-                      required
-                      aria-required="true"
-                      aria-invalid={!!homeSearchErrors.email}
-                      aria-describedby="email-error"
-                    />
-                    {homeSearchErrors.email && (
-                      <p id="email-error" className="text-red-500 text-sm mt-1">
-                        {homeSearchErrors.email}
-                      </p>
-                    )}
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="flex items-center gap-2">
+                        <MailIcon size={16} />
+                        Email Address <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={homeSearch.email}
+                        onChange={handleHomeSearchChange}
+                        className={homeSearchErrors.email ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
+                      />
+                      {homeSearchErrors.email && (
+                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={14} />
+                          {homeSearchErrors.email}
+                        </p>
+                      )}
+                    </div>
 
-                  <div>
-                    <Label htmlFor="phone">
-                      Phone Number <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      placeholder="+2547XXXXXXXX"
-                      value={homeSearch.phone}
-                      onChange={handleHomeSearchChange}
-                      required
-                      aria-required="true"
-                      aria-invalid={!!homeSearchErrors.phone}
-                      aria-describedby="phone-error"
-                    />
-                    {homeSearchErrors.phone && (
-                      <p id="phone-error" className="text-red-500 text-sm mt-1">
-                        {homeSearchErrors.phone}
-                      </p>
-                    )}
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="flex items-center gap-2">
+                        <PhoneIcon size={16} />
+                        Phone Number <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        placeholder="+2547XXXXXXXX"
+                        value={homeSearch.phone}
+                        onChange={handleHomeSearchChange}
+                        className={homeSearchErrors.phone ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
+                      />
+                      {homeSearchErrors.phone && (
+                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={14} />
+                          {homeSearchErrors.phone}
+                        </p>
+                      )}
+                    </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="minPrice">Min Price (KES)</Label>
                       <Input
                         id="minPrice"
                         name="minPrice"
                         type="number"
                         min="0"
-                        placeholder="Minimum budget"
+                        placeholder="5,000"
                         value={homeSearch.minPrice}
+                        className="dark:bg-gray-950/50 border dark:border-800"
                         onChange={handleHomeSearchChange}
                       />
                     </div>
-                    <div>
+
+                    <div className="space-y-2">
                       <Label htmlFor="maxPrice">Max Price (KES)</Label>
                       <Input
                         id="maxPrice"
                         name="maxPrice"
                         type="number"
                         min="0"
-                        placeholder="Maximum budget"
+                        placeholder="50,000"
                         value={homeSearch.maxPrice}
+                        className="dark:bg-gray-950/50 border dark:border-800"
                         onChange={handleHomeSearchChange}
                       />
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="propertyType">Property Type</Label>
                       <Select
                         value={homeSearch.propertyType}
                         onValueChange={(value) => handleHomeSearchChange(value, "propertyType")}
                       >
-                        <SelectTrigger id="propertyType" name="propertyType">
+                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800">
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -475,13 +514,14 @@ const RelocationHomeSearch: React.FC = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
+
+                    <div className="space-y-2">
                       <Label htmlFor="bedrooms">Bedrooms</Label>
                       <Select
                         value={homeSearch.bedrooms}
                         onValueChange={(value) => handleHomeSearchChange(value, "bedrooms")}
                       >
-                        <SelectTrigger id="bedrooms" name="bedrooms">
+                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800">
                           <SelectValue placeholder="Select number" />
                         </SelectTrigger>
                         <SelectContent>
@@ -493,16 +533,14 @@ const RelocationHomeSearch: React.FC = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <Label htmlFor="stayDurationType">Stay Duration Type</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="stayDurationType">Duration Type</Label>
                       <Select
                         value={homeSearch.stayDurationType}
                         onValueChange={(value) => handleHomeSearchChange(value, "stayDurationType")}
                       >
-                        <SelectTrigger id="stayDurationType" name="stayDurationType">
+                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -512,21 +550,25 @@ const RelocationHomeSearch: React.FC = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
-                      <Label htmlFor="stayDurationValue">Stay Duration Value</Label>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="stayDurationValue">Duration Value</Label>
                       <Input
                         id="stayDurationValue"
                         name="stayDurationValue"
                         type="number"
                         min="1"
-                        placeholder="Number"
+                        placeholder="1"
                         value={homeSearch.stayDurationValue}
+                        className="dark:bg-gray-950/50 border dark:border-800"
                         onChange={handleHomeSearchChange}
                       />
                     </div>
-                    <div>
-                      <Label htmlFor="preferredMoveInDate">
-                        Preferred Move-in Date <span className="text-red-500">*</span>
+
+                    <div className="md:col-span-2 space-y-2">
+                      <Label htmlFor="preferredMoveInDate" className="flex items-center gap-2">
+                        <CalendarIcon size={16} />
+                        Preferred Move-in Date <span className="text-destructive">*</span>
                       </Label>
                       <Input
                         id="preferredMoveInDate"
@@ -534,252 +576,249 @@ const RelocationHomeSearch: React.FC = () => {
                         type="date"
                         value={homeSearch.preferredMoveInDate}
                         onChange={handleHomeSearchChange}
-                        required
-                        aria-required="true"
-                        aria-invalid={!!homeSearchErrors.preferredMoveInDate}
-                        aria-describedby="move-in-date-error"
+                        className={homeSearchErrors.preferredMoveInDate ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {homeSearchErrors.preferredMoveInDate && (
-                        <p id="move-in-date-error" className="text-red-500 text-sm mt-1">
+                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={14} />
                           {homeSearchErrors.preferredMoveInDate}
                         </p>
                       )}
                     </div>
-                  </div>
 
-                  <div>
-                    <Label htmlFor="additionalNotes">Additional Notes</Label>
-                    <Textarea
-                      id="additionalNotes"
-                      name="additionalNotes"
-                      rows={4}
-                      placeholder="Any other preferences or requests"
-                      value={homeSearch.additionalNotes}
-                      onChange={handleHomeSearchChange}
-                    />
-                  </div>
-
-                  {/* Notification box for Home Search form */}
-                  {activeForm === "homeSearch" && notification && (
-                    <div
-                      role="alert"
-                      aria-live="assertive"
-                      className={`p-4 rounded-md text-white ${notification.type === "success" ? "bg-green-600" : "bg-red-600"} shadow-md`}
-                    >
-                      {notification.message.split("\n").map((line, i) => (
-                        <p key={i}>{line}</p>
-                      ))}
+                    <div className="md:col-span-2 space-y-2">
+                      <Label htmlFor="additionalNotes">Additional Notes</Label>
+                      <Textarea
+                        id="additionalNotes"
+                        name="additionalNotes"
+                        rows={3}
+                        placeholder="Any specific preferences or requirements..."
+                        value={homeSearch.additionalNotes}
+                        className="dark:bg-gray-950/50 border dark:border-800"
+                        onChange={handleHomeSearchChange}
+                      />
                     </div>
-                  )}
+                  </div>
 
-                  <Button type="submit" className="w-full" disabled={isSubmittingHomeSearch}>
-                    {isSubmittingHomeSearch ? "Submitting..." : "Submit Booking Request"}
+                  <Button
+                    type="submit"
+                    className="w-full h-12"
+                    disabled={isSubmittingHomeSearch}
+                  >
+                    {isSubmittingHomeSearch ? (
+                      <div className="flex items-center gap-2">
+                        <RefreshCw className="animate-spin" size={16} />
+                        Submitting Request...
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <SearchIcon size={16} />
+                        Submit Home Search Request
+                      </div>
+                    )}
                   </Button>
                 </form>
               </CardContent>
             </Card>
           ) : (
-            <Card className="shadow-xl">
+            <Card className="bg-white shadow-md dark:bg-gray-900 border dark:border-gray-800">
               <CardHeader>
-                <CardTitle className="text-primary-600 flex items-center gap-3">
-                  <MoveRightIcon size={24} /> {"Relocation Support Form"}
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-primary-600/20 rounded-full flex items-center justify-center">
+                    <MoveRightIcon className="w-5 h-5 text-primary-600" />
+                  </div>
+                  Contact For Relocation Support
                 </CardTitle>
-                <CardDescription className="text-gray-600">
-                  Provide your details for relocation support. We will assist you with your move from start to finish.
+                <CardDescription>
+                  Get complete assistance with your move from start to finish.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={submitRelocation} className="space-y-6" aria-label="Relocation support form" noValidate>
-                  <div>
-                    <Label htmlFor="name">
-                      Full Name <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Your full name"
-                      value={relocation.name}
-                      onChange={handleRelocationChange}
-                      required
-                      aria-required="true"
-                      aria-invalid={!!relocationErrors.name}
-                      aria-describedby="name-error"
-                    />
-                    {relocationErrors.name && (
-                      <p id="name-error" className="text-red-500 text-sm mt-1">
-                        {relocationErrors.name}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="emailRelocation">
-                      Email Address <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="emailRelocation"
-                      name="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={relocation.email}
-                      onChange={handleRelocationChange}
-                      required
-                      aria-required="true"
-                      aria-invalid={!!relocationErrors.email}
-                      aria-describedby="email-relocation-error"
-                    />
-                    {relocationErrors.email && (
-                      <p id="email-relocation-error" className="text-red-500 text-sm mt-1">
-                        {relocationErrors.email}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="phoneRelocation">
-                      Phone Number <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="phoneRelocation"
-                      name="phone"
-                      type="tel"
-                      placeholder="+2547XXXXXXXX"
-                      value={relocation.phone}
-                      onChange={handleRelocationChange}
-                      required
-                      aria-required="true"
-                      aria-invalid={!!relocationErrors.phone}
-                      aria-describedby="phone-relocation-error"
-                    />
-                    {relocationErrors.phone && (
-                      <p id="phone-relocation-error" className="text-red-500 text-sm mt-1">
-                        {relocationErrors.phone}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="currentLocation">
-                      Current Location <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="currentLocation"
-                      name="currentLocation"
-                      type="text"
-                      placeholder="Your current city or town"
-                      value={relocation.currentLocation}
-                      onChange={handleRelocationChange}
-                      required
-                      aria-required="true"
-                      aria-invalid={!!relocationErrors.currentLocation}
-                      aria-describedby="current-location-error"
-                    />
-                    {relocationErrors.currentLocation && (
-                      <p id="current-location-error" className="text-red-500 text-sm mt-1">
-                        {relocationErrors.currentLocation}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="destination">
-                      Destination Location <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="destination"
-                      name="destination"
-                      type="text"
-                      placeholder="Where do you want to relocate?"
-                      value={relocation.destination}
-                      onChange={handleRelocationChange}
-                      required
-                      aria-required="true"
-                      aria-invalid={!!relocationErrors.destination}
-                      aria-describedby="destination-error"
-                    />
-                    {relocationErrors.destination && (
-                      <p id="destination-error" className="text-red-500 text-sm mt-1">
-                        {relocationErrors.destination}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="movingDate">
-                      Moving Date <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="movingDate"
-                      name="movingDate"
-                      type="date"
-                      value={relocation.movingDate}
-                      onChange={handleRelocationChange}
-                      required
-                      aria-required="true"
-                      aria-invalid={!!relocationErrors.movingDate}
-                      aria-describedby="moving-date-error"
-                    />
-                    {relocationErrors.movingDate && (
-                      <p id="moving-date-error" className="text-red-500 text-sm mt-1">
-                        {relocationErrors.movingDate}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="movingType">Moving Type</Label>
-                    <Select
-                      value={relocation.movingType}
-                      onValueChange={(value) => handleRelocationChange(value, "movingType")}
-                    >
-                      <SelectTrigger id="movingType" name="movingType">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="personal">Personal</SelectItem>
-                        <SelectItem value="office">Office</SelectItem>
-                        <SelectItem value="commercial">Commercial</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="additionalNotesRelocation">Additional Notes</Label>
-                    <Textarea
-                      id="additionalNotesRelocation"
-                      name="additionalNotes"
-                      rows={4}
-                      placeholder="Any other relocation details or requests"
-                      value={relocation.additionalNotes}
-                      onChange={handleRelocationChange}
-                    />
-                  </div>
-
-                  {/* Notification box for Relocation form */}
-                  {activeForm === "relocation" && notification && (
-                    <div
-                      role="alert"
-                      aria-live="assertive"
-                      className={`p-4 rounded-md text-white ${notification.type === "success" ? "bg-green-600" : "bg-red-600"} shadow-md`}
-                    >
-                      {notification.message.split("\n").map((line, i) => (
-                        <p key={i}>{line}</p>
-                      ))}
+                <form onSubmit={submitRelocation} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2 space-y-2">
+                      <Label htmlFor="name">
+                        Full Name <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="name"
+                        name="name"
+                        placeholder="Your full name"
+                        value={relocation.name}
+                        onChange={handleRelocationChange}
+                        className={relocationErrors.name ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
+                      />
+                      {relocationErrors.name && (
+                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={14} />
+                          {relocationErrors.name}
+                        </p>
+                      )}
                     </div>
-                  )}
 
-                  <Button type="submit" className="w-full" disabled={isSubmittingRelocation}>
-                    {isSubmittingRelocation ? "Submitting..." : "Submit Relocation Request"}
+                    <div className="space-y-2">
+                      <Label htmlFor="emailRelocation" className="flex items-center gap-2">
+                        <MailIcon size={16} />
+                        Email Address <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="emailRelocation"
+                        name="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={relocation.email}
+                        onChange={handleRelocationChange}
+                        className={relocationErrors.email ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
+                      />
+                      {relocationErrors.email && (
+                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={14} />
+                          {relocationErrors.email}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="phoneRelocation" className="flex items-center gap-2">
+                        <PhoneIcon size={16} />
+                        Phone Number <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="phoneRelocation"
+                        name="phone"
+                        type="tel"
+                        placeholder="+2547XXXXXXXX"
+                        value={relocation.phone}
+                        onChange={handleRelocationChange}
+                        className={relocationErrors.phone ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
+                      />
+                      {relocationErrors.phone && (
+                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={14} />
+                          {relocationErrors.phone}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="currentLocation" className="flex items-center gap-2">
+                        <MapPinIcon size={16} />
+                        Current Location <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="currentLocation"
+                        name="currentLocation"
+                        placeholder="Your current city"
+                        value={relocation.currentLocation}
+                        onChange={handleRelocationChange}
+                        className={relocationErrors.currentLocation ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
+                      />
+                      {relocationErrors.currentLocation && (
+                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={14} />
+                          {relocationErrors.currentLocation}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="destination" className="flex items-center gap-2">
+                        <MapPinIcon size={16} />
+                        Destination <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="destination"
+                        name="destination"
+                        placeholder="Where are you moving?"
+                        value={relocation.destination}
+                        onChange={handleRelocationChange}
+                        className={relocationErrors.destination ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
+                      />
+                      {relocationErrors.destination && (
+                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={14} />
+                          {relocationErrors.destination}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="movingDate" className="flex items-center gap-2">
+                        <CalendarIcon size={16} />
+                        Moving Date <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="movingDate"
+                        name="movingDate"
+                        type="date"
+                        value={relocation.movingDate}
+                        onChange={handleRelocationChange}
+                        className={relocationErrors.movingDate ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
+                      />
+                      {relocationErrors.movingDate && (
+                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={14} />
+                          {relocationErrors.movingDate}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="movingType" className="flex items-center gap-2">Moving Type</Label>
+                      <Select
+                        value={relocation.movingType}
+                        onValueChange={(value) => handleRelocationChange(value, "movingType")}
+                      >
+                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800">
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="personal">Personal</SelectItem>
+                          <SelectItem value="office">Office</SelectItem>
+                          <SelectItem value="commercial">Commercial</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="md:col-span-2 space-y-2">
+                      <Label htmlFor="additionalNotesRelocation">Additional Notes</Label>
+                      <Textarea
+                        id="additionalNotesRelocation"
+                        name="additionalNotes"
+                        rows={3}
+                        placeholder="Any specific relocation requirements..."
+                        value={relocation.additionalNotes}
+                        className="dark:bg-gray-950/50 border dark:border-800"
+                        onChange={handleRelocationChange}
+                      />
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full h-12"
+                    disabled={isSubmittingRelocation}
+                  >
+                    {isSubmittingRelocation ? (
+                      <div className="flex items-center gap-2">
+                        <RefreshCw className="animate-spin" size={16} />
+                        Submitting Request...
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <MoveRightIcon size={16} />
+                        Submit Relocation Request
+                      </div>
+                    )}
                   </Button>
                 </form>
               </CardContent>
             </Card>
           )}
-        </section>
+        </div>
       </div>
-    </main>
+    </div>
   )
 }
 

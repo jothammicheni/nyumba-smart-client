@@ -43,11 +43,21 @@ interface Tier {
 }
 
 interface Subscription {
+  _id: string;
+  landlord_id: string;
   tier: string;
+  start_date: string;
+  end_date: string;
   is_active: boolean;
+  amount: number;
+  duration: string;
+  free_trial: boolean;
+  free_trial_duration: number;
+  free_trial_end_date: string;
   is_free_trial_active: boolean;
-  free_trial_end_date?: string;
-  end_date?: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 const Subscriptions = () => {
@@ -85,11 +95,16 @@ const Subscriptions = () => {
 
     const getTargetTime = () => {
       const now = new Date();
-      const end = new Date(
-        activeSub.free_trial
-          ? activeSub.free_trial_end_date
-          : activeSub.end_date
-      );
+      const endDate = activeSub.free_trial 
+        ? activeSub.free_trial_end_date 
+        : activeSub.end_date;
+
+      if (!endDate) {
+        console.error('Missing end date');
+        return 0;
+      }
+
+      const end = new Date(endDate);
       return Math.max(0, end.getTime() - now.getTime());
     };
 
@@ -108,12 +123,12 @@ const Subscriptions = () => {
       const days = Math.floor(totalSec / 86400);
       setCountdown(formatCountdown(remaining));
 
-      if (activeSub.is_free_trial_active && days <= 3) {
+      if (activeSub.free_trial && days <= 3) {
         setAlertMessage(
           `Free trial ends in ${days} day(s). Consider upgrading.`
         );
         setShowAlert(true);
-      } else if (!activeSub.is_active && !activeSub.is_free_trial_active) {
+      } else if (!activeSub.is_active && !activeSub.free_trial) {
         setAlertMessage(`Pay for your subscription to unlock all features.`);
         setShowAlert(true);
       } else {

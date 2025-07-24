@@ -9,6 +9,7 @@ import Pagination from "./components/Pagination.js"
 import type { Property, Filters } from "../types/properties.js"
 import { trackImpression, trackClick } from "../services/listingService.js"; // Adjust the import path as necessary
 import PropertyListingSEO from "../SEO/PropertyListingSEO.js"
+import { Loader } from "../components/Loader.js"
 
 const PropertiesPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -67,26 +68,26 @@ const PropertiesPage = () => {
 
   const filteredProperties = Array.isArray(properties)
     ? properties.filter((property: Property) => {
-        const propertyName = property.property?.name || ""
-        const city = property.property?.city || ""
-        const area = property.property?.area?.toString() || ""
-        const propertyType = property.property?.type || ""
-        const propertyPrice = property.property?.price || 0
-        const propertyBedrooms = property.property?.bedrooms || 0
+      const propertyName = property.property?.name || ""
+      const city = property.property?.city || ""
+      const area = property.property?.area?.toString() || ""
+      const propertyType = property.property?.type || ""
+      const propertyPrice = property.property?.price || 0
+      const propertyBedrooms = property.property?.bedrooms || 0
 
-        const matchesSearch =
-          propertyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          area.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesSearch =
+        propertyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        area.toLowerCase().includes(searchTerm.toLowerCase())
 
-        const matchesType = filters.type === "all" || propertyType === filters.type
-        const matchesMinPrice = !filters.minPrice || propertyPrice >= Number(filters.minPrice)
-        const matchesMaxPrice = !filters.maxPrice || propertyPrice <= Number(filters.maxPrice)
-        const matchesBedrooms = filters.bedrooms === "any" || propertyBedrooms >= Number(filters.bedrooms)
-        const matchesFeatured = !filters.featured || property.featured
+      const matchesType = filters.type === "all" || propertyType === filters.type
+      const matchesMinPrice = !filters.minPrice || propertyPrice >= Number(filters.minPrice)
+      const matchesMaxPrice = !filters.maxPrice || propertyPrice <= Number(filters.maxPrice)
+      const matchesBedrooms = filters.bedrooms === "any" || propertyBedrooms >= Number(filters.bedrooms)
+      const matchesFeatured = !filters.featured || property.featured
 
-        return matchesSearch && matchesType && matchesMinPrice && matchesMaxPrice && matchesBedrooms && matchesFeatured
-      })
+      return matchesSearch && matchesType && matchesMinPrice && matchesMaxPrice && matchesBedrooms && matchesFeatured
+    })
     : []
 
   const indexOfLast = currentPage * propertiesPerPage
@@ -147,10 +148,10 @@ const PropertiesPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950/60 pt-20 pb-12">
-                <PropertyListingSEO/>
+        <PropertyListingSEO />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-16">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+            <Loader />
             <p className="mt-4 text-gray-600 dark:text-gray-400">Loading properties...</p>
           </div>
         </div>
@@ -161,7 +162,7 @@ const PropertiesPage = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950/60 pt-20 pb-12">
-        <PropertyListingSEO/>
+        <PropertyListingSEO />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-16">
             <Home className="mx-auto h-16 w-16 text-gray-400" />
@@ -181,7 +182,7 @@ const PropertiesPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950/60 pt-20 pb-12">
-      <PropertyListingSEO/>
+      <PropertyListingSEO />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-12">

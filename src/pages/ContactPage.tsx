@@ -47,7 +47,7 @@ const ContactPage: React.FC = () => {
   }
 
   return (
-    <div className="pt-16 pb-12 bg-gradient-to-br from-gray-950 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+    <div className="pt-16 pb-12 bg-gradient-to-br from-slate-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
       <ContactPageSEO/>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
@@ -63,7 +63,7 @@ const ContactPage: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Contact Information</h2>
 
             {/* Address Card */}
-            <div className="bg-white dark:bg-gray-900/70 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-800">
+            <div className="bg-white dark:bg-gray-900/70 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-800 hover:scale-105 duration-300">
               <div className="flex items-start">
                 <div className="bg-primary-100 dark:bg-primary-900/20 p-3 rounded-lg mr-4">
                   <MapPin className="h-6 w-6 text-primary-600 dark:text-primary-600" />
@@ -76,7 +76,7 @@ const ContactPage: React.FC = () => {
             </div>
 
             {/* Phone Card */}
-            <div className="bg-white dark:bg-gray-900/70 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-800">
+            <div className="bg-white dark:bg-gray-900/70 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-800 hover:scale-105 duration-300">
               <div className="flex items-start">
                 <div className="bg-primary-100 dark:bg-primary-900/20 p-3 rounded-lg mr-4">
                   <Phone className="h-6 w-6 text-primary-600 dark:text-primary-600" />
@@ -89,7 +89,7 @@ const ContactPage: React.FC = () => {
             </div>
 
             {/* Email Card */}
-            <div className="bg-white dark:bg-gray-900/70 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-800">
+            <div className="bg-white dark:bg-gray-900/70 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-800 hover:scale-105 duration-300">
               <div className="flex items-start">
                 <div className="bg-primary-100 dark:bg-primary-900/20 p-3 rounded-lg mr-4">
                   <Mail className="h-6 w-6 text-primary-600 dark:text-primary-600" />
@@ -102,7 +102,7 @@ const ContactPage: React.FC = () => {
             </div>
 
             {/* Business Hours Card */}
-            <div className="bg-white dark:bg-gray-900/70 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-800">
+            <div className="bg-white dark:bg-gray-900/70 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-800 hover:scale-105 duration-300">
               <div className="flex items-start">
                 <div className="bg-primary-100 dark:bg-primary-900/20 p-3 rounded-lg mr-4">
                   <Clock className="h-6 w-6 text-primary-600 dark:text-primary-600" />

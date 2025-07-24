@@ -32,7 +32,7 @@ const AboutPage: React.FC = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
       <AboutPageSEO/>
       {/* Hero Section */}
       <div className="relative pt-20 pb-16 overflow-hidden">
@@ -80,7 +80,7 @@ const AboutPage: React.FC = () => {
                 />
                 <div className="absolute bottom-4 left-4 right-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">2023</div>
+                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">2024</div>
                     <div className="text-gray-600 dark:text-gray-400 text-sm">Founded</div>
                   </div>
                 </div>
@@ -92,7 +92,7 @@ const AboutPage: React.FC = () => {
         {/* Vision & Mission */}
         <div className="grid md:grid-cols-2 gap-8 mb-20">
           <div className="group">
-            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 h-full">
+            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 h-full hover:scale-105 duration-300 ease-in-out">
               <div className="flex items-center mb-6">
                 <div className="w-12 h-12 bg-primary-600/30 dark:bg-primary-600/30 rounded-xl flex items-center justify-center mr-4">
                   <Eye className="w-6 h-6 text-primary-600 dark:text-primary-600" />
@@ -107,7 +107,7 @@ const AboutPage: React.FC = () => {
           </div>
 
           <div className="group">
-            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 h-full">
+            <div className="bg-[#FBFBFB] dark:bg-gray-900/70 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 h-full hover:scale-105 duration-300 ease-in-out">
               <div className="flex items-center mb-6">
                 <div className="w-12 h-12 bg-primary-600/30 dark:bg-primary-600/30 rounded-xl flex items-center justify-center mr-4">
                   <Target className="w-6 h-6 text-primary-600 dark:text-primary-600" />
@@ -162,7 +162,7 @@ const AboutPage: React.FC = () => {
               <p className="text-xl mb-5 text-blue-100">
                 Join thousands of property owners who trust TenaHub
               </p>
-              <button className="bg-primary-600/20 pulse-animation text-primary-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors duration-300 hover:scale-105 transform">
+              <button className="bg-primary-600/20 pulse-animation text-primary-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors duration-300 hover:scale-105 ease-in-out">
                 Get Started Today
               </button>
             </div>
@@ -172,4 +172,5 @@ const AboutPage: React.FC = () => {
     </div>
   )
 }
+
 export default AboutPage

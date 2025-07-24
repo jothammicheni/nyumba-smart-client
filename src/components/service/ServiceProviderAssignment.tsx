@@ -191,9 +191,9 @@ export default function ServiceProviderAssignment({ maintenanceRequest, onAssign
               {maintenanceRequest.priority && (
                 <div className='flex items-center justify-between'>
                   <strong className='text-muted-foreground'>Priority:</strong>
-                  <Badge className='ml-2' variant={maintenanceRequest.priority === 'urgent' ? 'destructive' : 'secondary'}>
+                  <span className='ml-2'>
                     {maintenanceRequest.priority}
-                  </Badge>
+                  </span>
                 </div>
               )}
             </CardContent>
@@ -333,9 +333,9 @@ export default function ServiceProviderAssignment({ maintenanceRequest, onAssign
                             </div>
                           )}
                           <div className='text-xs text-muted-foreground'>{provider.completedJobs || 0} jobs completed</div>
-                          <Badge variant={provider.isActive ? 'default' : 'secondary'} className='mt-1'>
+                          <span className='mt-1'>
                             {provider.isActive ? 'Available' : 'Busy'}
-                          </Badge>
+                          </span>
                         </div>
                       </div>
                     </div>
