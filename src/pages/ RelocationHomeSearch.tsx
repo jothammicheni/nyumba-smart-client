@@ -276,76 +276,76 @@ const RelocationHomeSearch: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto p-20 space-y-8 animate-fade-in bg-gradient-to-br from-slate-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+    <div className="mx-auto px-4 sm:px-6 lg:px-20 py-8 sm:py-12 lg:py-20 space-y-6 sm:space-y-8 animate-fade-in bg-gradient-to-br from-slate-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
       <Toaster position="top-right" richColors />
 
       {/* Animated Background Shapes */}
       <div aria-hidden="true" className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-10 left-10 w-24 h-24 bg-primary/20 rounded-full opacity-30 animate-float1"></div>
-        <div className="absolute bottom-20 right-20 w-32 h-32 bg-primary/30 rounded-full opacity-25 animate-float2"></div>
-        <div className="absolute top-1/2 left-1/2 w-20 h-20 bg-primary/15 rounded-full opacity-20 animate-float3"></div>
+        <div className="absolute top-10 left-10 w-16 h-16 sm:w-24 sm:h-24 bg-primary/20 rounded-full opacity-30 animate-float1"></div>
+        <div className="absolute bottom-20 right-20 w-20 h-20 sm:w-32 sm:h-32 bg-primary/30 rounded-full opacity-25 animate-float2"></div>
+        <div className="absolute top-1/2 left-1/2 w-12 h-12 sm:w-20 sm:h-20 bg-primary/15 rounded-full opacity-20 animate-float3"></div>
       </div>
 
       {/* Header */}
-      <div className="text-center space-y-4">
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-12 h-12 bg-primary-600/20 rounded-full flex items-center justify-center">
-            <MoveRightIcon className="text-primary-600" size={24} />
+      <div className="text-center space-y-3 sm:space-y-4">
+        <div className="flex items-center justify-center gap-2 sm:gap-3">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-600/20 rounded-full flex items-center justify-center">
+            <MoveRightIcon className="text-primary-600" size={20} />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
             Relocate & Find Home in Kenya
           </h1>
         </div>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2 sm:px-0">
           Professional relocation and home search services across Kenya
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Info Section */}
-        <div className="space-y-6">
-          <Card className="hover:scale-105 duration-300 ease-in-out bg-white shadow-md dark:bg-gray-900/70 border dark:border-gray-800">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-primary-600/20 dark:bg-primary-600/20 rounded-full flex items-center justify-center">
-                  <Building2Icon className="w-6 h-6 text-primary-600 dark:text-primary-600" />
+        <div className="space-y-4 sm:space-y-6">
+          <Card className="hover:scale-[1.02] duration-300 ease-in-out bg-white shadow-md dark:bg-gray-900/70 border dark:border-gray-800">
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-600/20 dark:bg-primary-600/20 rounded-full flex items-center justify-center">
+                  <Building2Icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-600" />
                 </div>
                 About TenaHub Solutions
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-muted-foreground">
+            <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
+              <p className="text-sm sm:text-base text-muted-foreground">
                 We take the hassle out of relocating and finding a home in Kenya. Whether you need
                 a place to stay for a night, a week, or on a monthly basis, we find and prepare
                 the perfect home so you just arrive and sleep.
               </p>
-              <p className="text-muted-foreground">
+              <p className="text-sm sm:text-base text-muted-foreground">
                 Our comprehensive service handles everything—from property search, negotiation,
                 and booking, to logistics and settling-in support.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:scale-105 duration-300 ease-in-out bg-white shadow-md dark:bg-gray-900/70 border dark:border-gray-800">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-primary-600/20 dark:bg-primary-600/20 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-primary-600 dark:text-primary-600" />
+          <Card className="hover:scale-[1.02] duration-300 ease-in-out bg-white shadow-md dark:bg-gray-900/70 border dark:border-gray-800">
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-600/20 dark:bg-primary-600/20 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-600" />
                 </div>
                 Our Services
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CardContent className="p-4 sm:p-6 pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {[
                   { icon: UsersIcon, text: "Serving all major Kenyan cities" },
                   { icon: Building2Icon, text: "Verified properties ready for move-in" },
                   { icon: MapPinIcon, text: "Personalized recommendations" },
                   { icon: MoveRightIcon, text: "End-to-end moving support" }
                 ].map((service, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
-                    <service.icon className="text-primary mt-1 flex-shrink-0" size={16} />
-                    <span className="text-sm text-muted-foreground">{service.text}</span>
+                  <div key={index} className="flex items-start gap-2 p-2 sm:p-3 border rounded-lg text-sm sm:text-base">
+                    <service.icon className="text-primary mt-1 flex-shrink-0" size={14} />
+                    <span className="text-muted-foreground">{service.text}</span>
                   </div>
                 ))}
               </div>
@@ -353,18 +353,18 @@ const RelocationHomeSearch: React.FC = () => {
           </Card>
 
           {/* Form Switch Buttons */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Button
               onClick={() => {
                 setActiveForm("homeSearch")
                 setHomeSearchErrors({})
               }}
-              className={`flex-1 h-auto p-4 ${activeForm === "homeSearch" ? "" : "variant-outline"}`}
+              className={`h-auto py-3 ${activeForm === "homeSearch" ? "" : "variant-outline"}`}
               variant={activeForm === "homeSearch" ? "default" : "outline"}
             >
-              <div className="flex flex-col items-center gap-2 hover">
-                <HomeIcon size={20} />
-                <span className="font-semibold">Book a Home</span>
+              <div className="flex flex-col items-center gap-1 sm:gap-2">
+                <HomeIcon size={18} />
+                <span className="font-semibold text-sm sm:text-base">Book a Home</span>
                 <span className="text-xs opacity-80">Find your perfect stay</span>
               </div>
             </Button>
@@ -373,12 +373,12 @@ const RelocationHomeSearch: React.FC = () => {
                 setActiveForm("relocation")
                 setRelocationErrors({})
               }}
-              className={`flex-1 h-auto p-4 ${activeForm === "relocation" ? "" : "variant-outline"}`}
+              className={`h-auto py-3 ${activeForm === "relocation" ? "" : "variant-outline"}`}
               variant={activeForm === "relocation" ? "default" : "outline"}
             >
-              <div className="flex flex-col items-center gap-2">
-                <MoveRightIcon size={20} />
-                <span className="font-semibold">Relocation Support</span>
+              <div className="flex flex-col items-center gap-1 sm:gap-2">
+                <MoveRightIcon size={18} />
+                <span className="font-semibold text-sm sm:text-base">Relocation Support</span>
                 <span className="text-xs opacity-80">Complete moving assistance</span>
               </div>
             </Button>
@@ -386,26 +386,26 @@ const RelocationHomeSearch: React.FC = () => {
         </div>
 
         {/* Form Section */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {activeForm === "homeSearch" ? (
             <Card className="bg-white shadow-md dark:bg-gray-900/70 border dark:border-gray-800">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary-600/20 rounded-full flex items-center justify-center">
-                    <SearchIcon className="w-5 h-5 text-primary-600" />
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary-600/20 rounded-full flex items-center justify-center">
+                    <SearchIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
                   </div>
                   Book Your Home Here
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm sm:text-base">
                   Tell us your preferences and we'll arrange everything for your arrival.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={submitHomeSearch} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <CardContent className="p-4 sm:p-6 pt-0">
+                <form onSubmit={submitHomeSearch} className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
                     <div className="md:col-span-2 space-y-2">
-                      <Label htmlFor="location" className="flex items-center gap-2">
-                        <MapPinIcon size={16} />
+                      <Label htmlFor="location" className="flex items-center gap-2 text-sm sm:text-base">
+                        <MapPinIcon size={14} />
                         Preferred Location <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -417,16 +417,16 @@ const RelocationHomeSearch: React.FC = () => {
                         className={homeSearchErrors.location ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {homeSearchErrors.location && (
-                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
+                        <p className="text-destructive text-xs sm:text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={12} />
                           {homeSearchErrors.location}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="flex items-center gap-2">
-                        <MailIcon size={16} />
+                      <Label htmlFor="email" className="flex items-center gap-2 text-sm sm:text-base">
+                        <MailIcon size={14} />
                         Email Address <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -439,16 +439,16 @@ const RelocationHomeSearch: React.FC = () => {
                         className={homeSearchErrors.email ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {homeSearchErrors.email && (
-                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
+                        <p className="text-destructive text-xs sm:text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={12} />
                           {homeSearchErrors.email}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="phone" className="flex items-center gap-2">
-                        <PhoneIcon size={16} />
+                      <Label htmlFor="phone" className="flex items-center gap-2 text-sm sm:text-base">
+                        <PhoneIcon size={14} />
                         Phone Number <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -461,15 +461,15 @@ const RelocationHomeSearch: React.FC = () => {
                         className={homeSearchErrors.phone ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {homeSearchErrors.phone && (
-                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
+                        <p className="text-destructive text-xs sm:text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={12} />
                           {homeSearchErrors.phone}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="minPrice">Min Price (KES)</Label>
+                      <Label htmlFor="minPrice" className="text-sm sm:text-base">Min Price (KES)</Label>
                       <Input
                         id="minPrice"
                         name="minPrice"
@@ -483,7 +483,7 @@ const RelocationHomeSearch: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="maxPrice">Max Price (KES)</Label>
+                      <Label htmlFor="maxPrice" className="text-sm sm:text-base">Max Price (KES)</Label>
                       <Input
                         id="maxPrice"
                         name="maxPrice"
@@ -497,12 +497,12 @@ const RelocationHomeSearch: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="propertyType">Property Type</Label>
+                      <Label htmlFor="propertyType" className="text-sm sm:text-base">Property Type</Label>
                       <Select
                         value={homeSearch.propertyType}
                         onValueChange={(value) => handleHomeSearchChange(value, "propertyType")}
                       >
-                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800">
+                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800 text-sm sm:text-base">
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -516,12 +516,12 @@ const RelocationHomeSearch: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="bedrooms">Bedrooms</Label>
+                      <Label htmlFor="bedrooms" className="text-sm sm:text-base">Bedrooms</Label>
                       <Select
                         value={homeSearch.bedrooms}
                         onValueChange={(value) => handleHomeSearchChange(value, "bedrooms")}
                       >
-                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800">
+                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800 text-sm sm:text-base">
                           <SelectValue placeholder="Select number" />
                         </SelectTrigger>
                         <SelectContent>
@@ -535,12 +535,12 @@ const RelocationHomeSearch: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="stayDurationType">Duration Type</Label>
+                      <Label htmlFor="stayDurationType" className="text-sm sm:text-base">Duration Type</Label>
                       <Select
                         value={homeSearch.stayDurationType}
                         onValueChange={(value) => handleHomeSearchChange(value, "stayDurationType")}
                       >
-                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800">
+                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800 text-sm sm:text-base">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -552,7 +552,7 @@ const RelocationHomeSearch: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="stayDurationValue">Duration Value</Label>
+                      <Label htmlFor="stayDurationValue" className="text-sm sm:text-base">Duration Value</Label>
                       <Input
                         id="stayDurationValue"
                         name="stayDurationValue"
@@ -566,8 +566,8 @@ const RelocationHomeSearch: React.FC = () => {
                     </div>
 
                     <div className="md:col-span-2 space-y-2">
-                      <Label htmlFor="preferredMoveInDate" className="flex items-center gap-2">
-                        <CalendarIcon size={16} />
+                      <Label htmlFor="preferredMoveInDate" className="flex items-center gap-2 text-sm sm:text-base">
+                        <CalendarIcon size={14} />
                         Preferred Move-in Date <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -579,15 +579,15 @@ const RelocationHomeSearch: React.FC = () => {
                         className={homeSearchErrors.preferredMoveInDate ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {homeSearchErrors.preferredMoveInDate && (
-                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
+                        <p className="text-destructive text-xs sm:text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={12} />
                           {homeSearchErrors.preferredMoveInDate}
                         </p>
                       )}
                     </div>
 
                     <div className="md:col-span-2 space-y-2">
-                      <Label htmlFor="additionalNotes">Additional Notes</Label>
+                      <Label htmlFor="additionalNotes" className="text-sm sm:text-base">Additional Notes</Label>
                       <Textarea
                         id="additionalNotes"
                         name="additionalNotes"
@@ -602,16 +602,16 @@ const RelocationHomeSearch: React.FC = () => {
 
                   <Button
                     type="submit"
-                    className="w-full h-12"
+                    className="w-full h-11 sm:h-12"
                     disabled={isSubmittingHomeSearch}
                   >
                     {isSubmittingHomeSearch ? (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 text-sm sm:text-base">
                         <RefreshCw className="animate-spin" size={16} />
                         Submitting Request...
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 text-sm sm:text-base">
                         <SearchIcon size={16} />
                         Submit Home Search Request
                       </div>
@@ -622,22 +622,22 @@ const RelocationHomeSearch: React.FC = () => {
             </Card>
           ) : (
             <Card className="bg-white shadow-md dark:bg-gray-900 border dark:border-gray-800">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary-600/20 rounded-full flex items-center justify-center">
-                    <MoveRightIcon className="w-5 h-5 text-primary-600" />
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary-600/20 rounded-full flex items-center justify-center">
+                    <MoveRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
                   </div>
                   Contact For Relocation Support
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm sm:text-base">
                   Get complete assistance with your move from start to finish.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={submitRelocation} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="p-4 sm:p-6 pt-0">
+                <form onSubmit={submitRelocation} className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     <div className="md:col-span-2 space-y-2">
-                      <Label htmlFor="name">
+                      <Label htmlFor="name" className="text-sm sm:text-base">
                         Full Name <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -649,16 +649,16 @@ const RelocationHomeSearch: React.FC = () => {
                         className={relocationErrors.name ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {relocationErrors.name && (
-                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
+                        <p className="text-destructive text-xs sm:text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={12} />
                           {relocationErrors.name}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="emailRelocation" className="flex items-center gap-2">
-                        <MailIcon size={16} />
+                      <Label htmlFor="emailRelocation" className="flex items-center gap-2 text-sm sm:text-base">
+                        <MailIcon size={14} />
                         Email Address <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -671,16 +671,16 @@ const RelocationHomeSearch: React.FC = () => {
                         className={relocationErrors.email ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {relocationErrors.email && (
-                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
+                        <p className="text-destructive text-xs sm:text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={12} />
                           {relocationErrors.email}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="phoneRelocation" className="flex items-center gap-2">
-                        <PhoneIcon size={16} />
+                      <Label htmlFor="phoneRelocation" className="flex items-center gap-2 text-sm sm:text-base">
+                        <PhoneIcon size={14} />
                         Phone Number <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -693,16 +693,16 @@ const RelocationHomeSearch: React.FC = () => {
                         className={relocationErrors.phone ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {relocationErrors.phone && (
-                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
+                        <p className="text-destructive text-xs sm:text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={12} />
                           {relocationErrors.phone}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="currentLocation" className="flex items-center gap-2">
-                        <MapPinIcon size={16} />
+                      <Label htmlFor="currentLocation" className="flex items-center gap-2 text-sm sm:text-base">
+                        <MapPinIcon size={14} />
                         Current Location <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -714,16 +714,16 @@ const RelocationHomeSearch: React.FC = () => {
                         className={relocationErrors.currentLocation ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {relocationErrors.currentLocation && (
-                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
+                        <p className="text-destructive text-xs sm:text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={12} />
                           {relocationErrors.currentLocation}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="destination" className="flex items-center gap-2">
-                        <MapPinIcon size={16} />
+                      <Label htmlFor="destination" className="flex items-center gap-2 text-sm sm:text-base">
+                        <MapPinIcon size={14} />
                         Destination <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -735,16 +735,16 @@ const RelocationHomeSearch: React.FC = () => {
                         className={relocationErrors.destination ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {relocationErrors.destination && (
-                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
+                        <p className="text-destructive text-xs sm:text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={12} />
                           {relocationErrors.destination}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="movingDate" className="flex items-center gap-2">
-                        <CalendarIcon size={16} />
+                      <Label htmlFor="movingDate" className="flex items-center gap-2 text-sm sm:text-base">
+                        <CalendarIcon size={14} />
                         Moving Date <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -756,20 +756,20 @@ const RelocationHomeSearch: React.FC = () => {
                         className={relocationErrors.movingDate ? "border-destructive" : "dark:bg-gray-950/50 border dark:border-800"}
                       />
                       {relocationErrors.movingDate && (
-                        <p className="text-destructive text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
+                        <p className="text-destructive text-xs sm:text-sm mt-1 flex items-center gap-1">
+                          <AlertCircle size={12} />
                           {relocationErrors.movingDate}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="movingType" className="flex items-center gap-2">Moving Type</Label>
+                      <Label htmlFor="movingType" className="flex items-center gap-2 text-sm sm:text-base">Moving Type</Label>
                       <Select
                         value={relocation.movingType}
                         onValueChange={(value) => handleRelocationChange(value, "movingType")}
                       >
-                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800">
+                        <SelectTrigger className="dark:bg-gray-950/50 border dark:border-800 text-sm sm:text-base">
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -782,7 +782,7 @@ const RelocationHomeSearch: React.FC = () => {
                     </div>
 
                     <div className="md:col-span-2 space-y-2">
-                      <Label htmlFor="additionalNotesRelocation">Additional Notes</Label>
+                      <Label htmlFor="additionalNotesRelocation" className="text-sm sm:text-base">Additional Notes</Label>
                       <Textarea
                         id="additionalNotesRelocation"
                         name="additionalNotes"
@@ -797,16 +797,16 @@ const RelocationHomeSearch: React.FC = () => {
 
                   <Button
                     type="submit"
-                    className="w-full h-12"
+                    className="w-full h-11 sm:h-12"
                     disabled={isSubmittingRelocation}
                   >
                     {isSubmittingRelocation ? (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 text-sm sm:text-base">
                         <RefreshCw className="animate-spin" size={16} />
                         Submitting Request...
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 text-sm sm:text-base">
                         <MoveRightIcon size={16} />
                         Submit Relocation Request
                       </div>

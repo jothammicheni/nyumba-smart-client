@@ -2,7 +2,6 @@
 "use client"
 
 import { useState } from "react"
-import { X } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../../components/ui/dialog"
@@ -81,18 +80,18 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <Toaster position="top-right" richColors />
-      <DialogContent className="sm:max-w-[425px] bg-gray-950">
+      <DialogContent className="sm:max-w-[425px] dark:bg-gray-950">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
-            <span>Add New Property</span>
-            <Button
+            <span>Add New Propertymm</span>
+            {/* <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
               className="h-8 w-8"
             >
               <X className="h-4 w-4" />
-            </Button>
+            </Button> */}
           </DialogTitle>
         </DialogHeader>
 
@@ -105,7 +104,7 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter property name"
-              className={errors.name ? "border-destructive" : "bg-gray-900 focus:outline-none focus:ring focus:ring-primary-600"}
+              className={errors.name ? "border-destructive" : "dark:bg-gray-900 focus:outline-none focus:ring focus:ring-primary-600"}
             />
             {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
           </div>
@@ -118,7 +117,7 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
               value={formData.city}
               onChange={handleChange}
               placeholder="Enter city"
-              className={errors.city ? "border-destructive" : "bg-gray-900 focus:outline-none focus:ring focus:ring-primary-600"}
+              className={errors.city ? "border-destructive" : "dark:bg-gray-900 focus:outline-none focus:ring focus:ring-primary-600"}
             />
             {errors.city && <p className="text-sm text-destructive">{errors.city}</p>}
           </div>
@@ -131,7 +130,7 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
               value={formData.area}
               onChange={handleChange}
               placeholder="Enter area"
-              className={errors.area ? "border-destructive" : "bg-gray-900 focus:outline-none focus:ring focus:ring-primary-600"}
+              className={errors.area ? "border-destructive" : "dark:bg-gray-900 focus:outline-none focus:ring focus:ring-primary-600"}
             />
             {errors.area && <p className="text-sm text-destructive">{errors.area}</p>}
           </div>
