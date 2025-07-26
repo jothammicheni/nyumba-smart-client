@@ -81,7 +81,7 @@ const LandlordDashboard: React.FC = () => {
             className="sm:flex-none bg-primary-600 text-white hover:bg-primary-700"
           >
             <Download className="h-4 w-4 mr-2 flex-shrink-0" />
-            <span className="truncate">Export</span>
+            <span className="truncate">Download Report</span>
           </Button>
         </div>
       </div>
