@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -13,6 +14,8 @@ import {
   User,
   AlertTriangle,
   RefreshCw,
+  ArrowRight,
+  Link,
   // Loader2,
 } from "lucide-react";
 import {
@@ -106,9 +109,12 @@ const [selectedTenant, setSelectedTenant] = useState<{
       toast.success("Room added successfully!");
       return true;
     } catch (err: any) {
-      const errorMsg = err.response?.data?.error || "Failed to add room";
-      setError(errorMsg);
-      toast.error(errorMsg);
+       const errorMsg =
+              err?.response?.data?.message ||
+              err?.response?.data?.error ||
+              "Failed to add property"
+            setError(errorMsg)
+            toast.error(errorMsg)
       return false;
     }
   };
@@ -216,20 +222,40 @@ const [selectedTenant, setSelectedTenant] = useState<{
 
   if (error) {
     return (
-      <div className="container mx-auto p-4 space-y-6 animate-fade-in">
-        <Button 
-          variant="outline" 
-          onClick={() => navigate("/landlord/dashboard/properties")}
-          className="bg-primary-600 text-white"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Properties
-        </Button>
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
-          {error}
+  <div className="container mx-auto p-4 space-y-6 animate-fade-in min-h-screen">
+
+    {/* Back Button */}
+    <Button
+      variant="outline"
+      onClick={() => navigate("/landlord/dashboard/properties")}
+      className="bg-primary-600 text-white"
+    >
+      <ArrowLeft className="h-4 w-4 mr-2" />
+      Back to Properties
+    </Button>
+
+    {/* Error Message with Upgrade Button */}
+    {error && (
+      <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
+        <div className="flex flex-wrap justify-between items-center gap-4">
+          <span>⚠️ {error}</span>
+          <Button
+            size="lg"
+            className="bg-blue-600 text-white"
+            onClick={() => navigate("/landlord/dashboard/subscriptions")}
+          >
+            Upgrade/Pay
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
         </div>
       </div>
-    );
+    )}
+
+    {/* ...your other content here... */}
+
+  </div>
+);
+
   }
 
   if (!property) {

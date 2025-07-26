@@ -190,9 +190,9 @@ const Subscriptions = () => {
     {
       name: "Silver",
       icon: <Star className="w-5 h-5" />,
-      priceMonthly: 1200,
+      priceMonthly: 2000,
       priceYearly: 6000,
-      properties: 4,
+      properties: 2,
       rooms: 30,
       vacancyListings: 2,
       topOffers: 1,
@@ -276,7 +276,7 @@ const Subscriptions = () => {
 
     try {
       const phone = "254113730593"; // Ideally get from user profile or input
-      const amount = 1; // selectedTier?.priceMonthly || 0;
+      const amount =selectedTier?.priceMonthly || 0;
 
       const initRes = await initiateMpesaPayment(phone, amount, "subscription");
 
