@@ -7,8 +7,8 @@ const API_URL = "https://nyumba-smart-server.onrender.com/api"
 // Get all properties
 export const getProperties = async () => {
   const response = await axios.get(`${API_URL}/properties`, {
-    headers: getAuthHeaders(),
-  })
+    headers: getAuthHeaders(), 
+  }) 
   return response.data
 }
 
