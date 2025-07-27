@@ -18,7 +18,7 @@ const PropertyDetailSEO: React.FC<PropertyDetailSEOProps> = ({
   <Helmet>
     <title>{title} - TenaHub Property Details</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content="Nairobi property, real estate details, property for sale, home details" />
+    <meta name="keywords" content="Nairobi property, real estate details, property for Rent, home details" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href={url} />
 

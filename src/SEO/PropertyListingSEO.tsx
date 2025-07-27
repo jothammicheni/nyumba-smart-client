@@ -14,7 +14,7 @@ const PropertyListingSEO = () => (
       content="Nairobi properties, real estate listings, homes for sale, apartments for rent, property investment Kenya"
     />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://TenaHub.com/properties" />
+    <link rel="canonical" href="https://tenahub.co.ke/properties" />
 
     {/* Open Graph */}
     <meta property="og:title" content="Properties for Sale & Rent - TenaHub Nairobi" />
@@ -22,9 +22,9 @@ const PropertyListingSEO = () => (
       property="og:description"
       content="Explore the latest properties for sale and rent in Nairobi with TenaHub. Find your perfect home or investment."
     />
-    <meta property="og:url" content="https://TenaHub.com/properties" />
+    <meta property="og:url" content="https://tenahub.co.ke/properties" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://TenaHub.com/og-image-properties.jpg" />
+    <meta property="og:image" content="https://tenahub.co.ke/og-image.jpg" />
 
     {/* Twitter */}
     <meta name="twitter:card" content="summary_large_image" />
@@ -33,7 +33,7 @@ const PropertyListingSEO = () => (
       name="twitter:description"
       content="Explore the latest properties for sale and rent in Nairobi with TenaHub. Find your perfect home or investment."
     />
-    <meta name="twitter:image" content="https://TenaHub.com/og-image-properties.jpg" />
+    <meta name="twitter:image" content="https://tenahub.co.ke/og-image.jpg" />
   </Helmet>
 )
 
