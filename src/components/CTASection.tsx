@@ -1,411 +1,167 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-"use client"
-
 import type React from "react"
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
+import { useInView } from "framer-motion"
 import { Link } from "react-router-dom"
-import {
-  Building,
-  CreditCard,
-  Users,
-  Shield,
-  Wifi,
-  Wrench,
-  Zap,
-  ArrowRight,
-  Star,
-  CircleCheckBig,
-  Headset,
-} from "lucide-react"
-import { motion, useInView, useAnimation, easeInOut } from "framer-motion"
+import { Building, CreditCard, Users, Shield, ArrowRight, Wifi, Wrench, Zap, CircleDot } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card"
+import { Button } from "./ui/button"
+import { Badge } from "./ui/badge"
 
 const CTASection: React.FC = () => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
-  const controls = useAnimation()
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
 
-  useEffect(() => {
-    if (isInView) {
-      controls.start("visible")
-    }
-  }, [isInView, controls])
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1,
-      },
-    },
+  // Unsplash image URLs
+  const unsplashImages = {
+    propertyMgmt: "https://images.unsplash.com/flagged/photo-1564767609342-620cb19b2357?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aG91c2UlMjBmb3IlMjBzYWxlfGVufDB8fDB8fHww",
+    digitalPayments: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+    tenantServices: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+    referralServices: "https://images.unsplash.com/photo-1634757439914-23b8acb9d411?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG91c2UlMjBmb3IlMjBzYWxlfGVufDB8fDB8fHww",
   }
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: easeInOut,
-      },
-    },
-  }
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.5,
-        ease: easeInOut,
-      },
-    },
-    hover: {
-      y: -10,
-      scale: 1.05,
-      transition: {
-        duration: 0.3,
-        ease: easeInOut,
-      },
-    },
-  }
-
-  const iconVariants = {
-    hover: {
-      scale: 1.2,
-      rotate: 360,
-      transition: {
-        duration: 0.6,
-        ease: easeInOut,
-      },
-    },
-  }
-
-  const features = [
+  const services = [
     {
       icon: Building,
-      title: "Smart Room Management",
-      description:
-        "AI-powered room tracking with real-time vacancy updates and intelligent tenant matching algorithms.",
-      color: "from-blue-500/10 to-blue-600/20",
-      hoverColor: "from-blue-500/20 to-blue-600/30",
-      iconColor: "text-blue-600",
-      titleHoverColor: "group-hover:text-blue-700 dark:group-hover:text-blue-300",
+      title: "Property Management",
+      description: "End-to-end solutions for landlords and property managers",
+      longDescription: "Our comprehensive property management tools help you automate routine tasks, track vacancies, and manage leases efficiently.",
+      image: unsplashImages.propertyMgmt,
+      features: ["Automated rent collection", "Maintenance tracking", "Financial reporting"]
     },
     {
       icon: CreditCard,
-      title: "Instant M-Pesa Payments",
-      description:
-        "Seamless M-Pesa integration with instant notifications, automated receipts, and comprehensive transaction analytics.",
-      color: "from-green-500/10 to-green-600/20",
-      hoverColor: "from-green-500/20 to-green-600/30",
-      iconColor: "text-green-600",
-      titleHoverColor: "group-hover:text-green-700 dark:group-hover:text-green-300",
+      title: "Digital Secure Mobile Payments",
+      description: "Secure, instant payment processing via M-Pesa",
+      longDescription: "Streamline your rent collection with our seamless M-Pesa integration with automated receipts and real-time notifications.",
+      image: unsplashImages.digitalPayments,
+      features: ["Automated receipts", "Payment reminders", "Transaction history"]
     },
     {
       icon: Users,
-      title: "Advanced Tenant Portal",
-      description:
-        "Empower tenants with modern self-service capabilities, in-app messaging, and streamlined maintenance workflows.",
-      color: "from-purple-500/10 to-purple-600/20",
-      hoverColor: "from-purple-500/20 to-purple-600/30",
-      iconColor: "text-purple-600",
-      titleHoverColor: "group-hover:text-purple-700 dark:group-hover:text-purple-300",
+      title: "Advanced Tenant Management",
+      description: "Modern portal for tenant convenience",
+      longDescription: "Enhance tenant experience with our self-service portal available 24/7 from any device.",
+      image: unsplashImages.tenantServices,
+      features: ["Maintenance requests", "Document storage", "Direct messaging"]
     },
     {
-      icon: Shield,
+      icon: Users,
       title: "Profitable Referral System",
-      description:
-        "Build a sustainable income stream with our comprehensive referral program and partnership opportunities.",
-      color: "from-orange-500/10 to-orange-600/20",
-      hoverColor: "from-orange-500/20 to-orange-600/30",
-      iconColor: "text-orange-600",
-      titleHoverColor: "group-hover:text-orange-700 dark:group-hover:text-orange-300",
-    },
+      description: "Extensive network of trusted service providers",
+      longDescription: "Build a sustainable income stream with our comprehensive referral program and partnership opportunities.",
+      image: unsplashImages.referralServices,
+      features: ["Maintenance requests", "Document storage", "Direct messaging"]
+    }
   ]
 
   const serviceProviders = [
-    {
-      icon: Wifi,
-      title: "WiFi & Internet Solutions",
-      description:
-        "High-speed internet providers with competitive rates, reliable service, and dedicated property management support.",
-    },
-    {
-      icon: Wrench,
-      title: "Expert Plumbing Services",
-      description:
-        "Licensed plumbers available for emergency repairs, installations, and routine maintenance with transparent pricing.",
-    },
-    {
-      icon: Zap,
-      title: "Certified Electrical Work",
-      description:
-        "Professional electricians for safe installations, repairs, and upgrades with full compliance and warranty coverage.",
-    },
+    { icon: Wifi, title: "Internet Providers", badge: "High-speed" },
+    { icon: Wrench, title: "Plumbers", badge: "Licensed" },
+    { icon: Zap, title: "Electricians", badge: "Certified" },
+    { icon: Shield, title: "Security", badge: "Trusted" }
   ]
 
-
   return (
-    <section
-      ref={ref}
-      className="relative py-16 overflow-hidden bg-gradient-to-br from-white via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60"
-    >
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Floating Orbs */}
-        <motion.div
-          className="absolute top-20 left-10 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "linear",
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-10 w-80 h-80 bg-purple-400/10 rounded-full blur-3xl"
-          animate={{
-            x: [0, -80, 0],
-            y: [0, 60, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "linear",
-          }}
-        />
-
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div
-            className="h-full w-full"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
-              `,
-              backgroundSize: "60px 60px",
-            }}
-          />
-        </div>
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={ref} className="py-20 bg-gradient-to-br from-white via-white to-gray-100 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <motion.div className="text-center mb-20" variants={containerVariants} initial="hidden" animate={controls}>
-          <motion.h2
-            className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl"
-            variants={itemVariants}
-          >
-            Simplify Your Property Management
-          </motion.h2>
-          <motion.p className="mt-4 max-w-2xl text-xl text-gray-600 dark:text-gray-300 mx-auto" variants={itemVariants}>
-            TenHub provides everything you need to manage your properties efficiently.
-          </motion.p>
-        </motion.div>
+        <Card className={`text-center mb-16 border-0 shadow-none bg-transparent transition-opacity duration-500 ${isInView ? 'opacity-100' : 'opacity-0'}`}>
+          <CardHeader>
+            <CardTitle className="text-3xl md:text-4xl font-bold">
+              Our Comprehensive Property Solutions
+            </CardTitle>
+            <CardDescription className="text-xl max-w-3xl mx-auto">
+              Everything you need to manage properties efficiently and connect with trusted service providers
+            </CardDescription>
+          </CardHeader>
+        </Card>
 
-        {/* Features Grid */}
-        <motion.div
-          className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 mb-24"
-          variants={containerVariants}
-          initial="hidden"
-          animate={controls}
-        >
-          {features.map((feature, index) => {
-            const IconComponent = feature.icon
-            return (
-              <motion.div
-                key={index}
-                className="group relative bg-[#FBFBFB] dark:bg-gray-950/50 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl p-8 border border-white/50 dark:border-gray-800/60 overflow-hidden cursor-pointer"
-                variants={cardVariants}
-                whileHover="hover"
-                onHoverStart={() => setHoveredCard(index)}
-                onHoverEnd={() => setHoveredCard(null)}
-              >
-                {/* Animated Background Gradient */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100"
-                  initial={{ scale: 0, rotate: 45 }}
-                  whileHover={{ scale: 1.5, rotate: 0 }}
-                  transition={{ duration: 0.5 }}
+        {/* Services with Alternating Layout */}
+        <div className="space-y-12 mb-20">
+          {services.map((service, index) => (
+            <Card
+              key={index}
+              className={`grid grid-cols-1 lg:grid-cols-2 gap-8 p-0 overflow-hidden dark:bg-gray-950/40 transition-opacity duration-500 ${isInView ? 'opacity-100' : 'opacity-0'}`}
+              style={{ transitionDelay: `${index * 100}ms` }}
+            >
+              <div className={`${index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'} h-full`}>
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-full h-full object-cover hover:scale-105 duration-300 ease-in-out"
+                  loading="lazy"
                 />
-
-                <div className="relative">
-                  <div className="flex justify-center mb-6">
-                    <motion.div
-                      className={`p-4 bg-gradient-to-br ${feature.color} group-hover:${feature.hoverColor} rounded-2xl transition-all duration-500`}
-                      variants={iconVariants}
-                      whileHover="hover"
-                    >
-                      <IconComponent
-                        className={`h-8 w-8 ${feature.iconColor} group-hover:text-opacity-80 transition-colors duration-300`}
-                      />
-                    </motion.div>
+              </div>
+              <div className={`${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'} p-8`}>
+                <div className="flex items-center mb-6">
+                  <div className="p-3 rounded-lg bg-primary-600 dark:bg-gray-900 text-white dark:text-primary-600 mr-4">
+                    <service.icon className="h-6 w-6" />
                   </div>
-
-                  <motion.h3
-                    className={`text-xl font-bold text-gray-900 dark:text-white text-center mb-3 transition-colors duration-300 ${feature.titleHoverColor}`}
-                    initial={{ opacity: 0.8 }}
-                    whileHover={{ opacity: 1 }}
-                  >
-                    {feature.title}
-                  </motion.h3>
-
-                  <motion.p
-                    className="text-gray-600 dark:text-gray-300 text-center leading-relaxed"
-                    initial={{ opacity: 0.7 }}
-                    whileHover={{ opacity: 1 }}
-                  >
-                    {feature.description}
-                  </motion.p>
+                  <h3 className="text-2xl font-bold">{service.title}</h3>
                 </div>
-
-                {/* Hover Indicator */}
-                <motion.div
-                  className="absolute top-4 right-4 opacity-0 group-hover:opacity-100"
-                  initial={{ scale: 0, rotate: -90 }}
-                  whileHover={{ scale: 1, rotate: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <ArrowRight className="h-5 w-5 text-gray-400" />
-                </motion.div>
-              </motion.div>
-            )
-          })}
-        </motion.div>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  {service.longDescription}
+                </p>
+                <ul className="space-y-3 mb-8">
+                  {service.features.map((feature, i) => (
+                    <li key={i} className="flex items-center">
+                      <CircleDot className="h-4 w-4 text-gray-900 mt-0.5 mr-2 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button variant="link" className="text-white bg-primary-600 dark:bg-white dark:text-gray-950 hover:shadow-md" asChild>
+                  <Link to={`/services#${service.title.toLowerCase().replace(' ', '-')}`}>
+                    Learn more <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
 
         {/* Service Providers Section */}
-        <motion.div
-          className="relative bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-900/40 dark:to-gray-950/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 dark:border-gray-800 p-12 mb-20 overflow-hidden"
-          variants={itemVariants}
-          initial="hidden"
-          animate={controls}
-        >
-          {/* Animated Background Pattern */}
-          <div className="relative text-center mb-12">
-            <motion.h3
-              className="text-2xl font-bold text-gray-900 dark:text-white mb-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              Connect with Our Vetted Service Providers
-            </motion.h3>
-            <motion.p
-              className="max-w-2xl text-lg text-gray-600 dark:text-gray-300 mx-auto mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              Access trusted service providers directly through our platform
-            </motion.p>
-          </div>
+        <Card className={`mb-16 transition-opacity duration-500 bg-transparent dark:border-gray-800/20 ${isInView ? 'opacity-100' : 'opacity-0'}`}>
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Connect With Trusted Service Providers</CardTitle>
+            <CardDescription>We've vetted hundreds of professionals for your properties</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+              {serviceProviders.map((provider, index) => (
+                <Card key={index} className="hover:shadow-md transition-shadow dark:bg-gray-950/50 dark:border-gray-800 hover:scale-105 transition-all duration-300">
+                  <CardContent className="p-6 flex flex-col items-center text-center">
+                    <div className="p-3 rounded-full bg-primary-100 dark:bg-gray-900 text-primary-600 dark:text-primary-600 mb-3">
+                      <provider.icon className="h-6 w-6" />
+                    </div>
+                    <h4 className="font-bold">{provider.title}</h4>
+                    <Badge variant="secondary" className="mt-2">{provider.badge}</Badge>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {serviceProviders.map((provider, index) => {
-              const IconComponent = provider.icon
-              return (
-                <motion.div
-                  key={index}
-                  className="group bg-white dark:bg-gray-950/50 shadow-xl backdrop-blur-sm rounded-2xl p-8 border border-blue-100/50 dark:border-gray-800/50 cursor-pointer"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                  whileHover={{
-                    scale: 1.05,
-                    y: -5,
-                    transition: { duration: 0.3 },
-                  }}
-                >
-                  <div className="flex justify-center mb-6">
-                    <motion.div
-                      className="p-4 bg-primary-600/30 dark:bg-primary-600/30 rounded-2xl transition-all duration-300"
-                      whileHover={{
-                        scale: 1.1,
-                        rotate: 360,
-                        transition: { duration: 0.6 },
-                      }}
-                    >
-                      <IconComponent className="h-8 w-8 text-primary-600 transition-colors duration-300" />
-                    </motion.div>
-                  </div>
-
-                  <motion.h4
-                    className="text-xl font-bold text-gray-950 dark:text-white text-center mb-3 transition-colors duration-300"
-                    initial={{ opacity: 0.8 }}
-                    whileHover={{ opacity: 1 }}
-                  >
-                    {provider.title}
-                  </motion.h4>
-
-                  <motion.p
-                    className="text-gray-900 dark:text-gray-300 text-center leading-relaxed"
-                    initial={{ opacity: 0.7 }}
-                    whileHover={{ opacity: 1 }}
-                  >
-                    {provider.description}
-                  </motion.p>
-                </motion.div>
-              )
-            })}
-          </div>
-        </motion.div>
-
-        {/* Enhanced CTA Button */}
-        <motion.div className="text-center" variants={itemVariants} initial="hidden" animate={controls}>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link
-              to="/register"
-              className="group relative inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl overflow-hidden"
-            >
-              {/* Animated Background Shine */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: "100%" }}
-                transition={{ duration: 0.6 }}
-              />
-
-              {/* Pulsing Background */}
-              <motion.div
-                className="absolute inset-0 bg-white/10 rounded-xl"
-                animate={{
-                  scale: [1, 1.05, 1],
-                  opacity: [0.5, 0.8, 0.5],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                }}
-              />
-
-              <span className="relative z-10">Start Your Property Management Journey</span>
-
-              <motion.div
-                className="relative z-10 ml-3"
-                animate={{ x: [0, 5, 0] }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                }}
-              >
-                <ArrowRight className="h-5 w-5" />
-              </motion.div>
-            </Link>
-          </motion.div>
-        </motion.div>
+        {/* CTA Section */}
+        <div className={`text-center transition-opacity duration-500 ${isInView ? 'opacity-100' : 'opacity-0'}`}>
+          <Card className="border-0 shadow-none bg-transparent">
+            <CardHeader>
+              <CardTitle className="text-2xl">Ready to Streamline Your Property Management?</CardTitle>
+              <CardDescription className="text-xl">
+                Join thousands of property owners using our platform
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button size="lg" asChild className="bg:gray-900 hover:gray-950">
+                <Link to="/register">Get Started Now</Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/service-providers">Browse Providers</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </section>
   )

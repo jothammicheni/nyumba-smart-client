@@ -160,7 +160,7 @@ const Hero: React.FC = () => {
               </motion.h1>
             </motion.div>
 
-            <motion.p className="text-lg md:text-xl text-gray-200 mb-10" variants={itemVariants}>
+            <motion.p className="text-lg md:text-xl text-gray-200 mb-10 capitalize" variants={itemVariants}>
               TenaHub helps landlords manage properties, track rent payments, and keep tenants happy with our
               all-in-one platform.
             </motion.p>
