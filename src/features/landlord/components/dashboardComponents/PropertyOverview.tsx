@@ -164,7 +164,7 @@ function PropertyOverview() {
         <Card className="dark:bg-gray-950/50 shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary-600/30 dark:bg-primary-600/30 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-gray-100 dark:bg-primary-600/30 rounded-full flex items-center justify-center flex-shrink-0">
                 <Home className="w-5 h-5 text-primary-600 dark:text-primary-600" />
               </div>
               <span className="truncate">Total Units</span>
@@ -197,7 +197,7 @@ function PropertyOverview() {
         <Card className="dark:bg-gray-950/50 shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary-600/30 dark:bg-primary-600/30 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-gray-100 dark:bg-primary-600/30 rounded-full flex items-center justify-center flex-shrink-0">
                 <TrendingUp className="w-5 h-5 text-primary-600 dark:text-primary-600" />
               </div>
               <span className="truncate">Occupancy Rate</span>

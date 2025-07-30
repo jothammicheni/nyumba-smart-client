@@ -250,7 +250,7 @@ const AdvertiseRooms = () => {
                 placeholder="Search listings..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring focus:ring-primary-500 focus:border-primary-500"
+                className="block w-full pl-10 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-950/50 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
             
