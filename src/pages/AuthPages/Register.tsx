@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-console.log(">>> Loaded: registers the component file (top-level)");
+
+console.log(">>> Loaded: registers the component file (top-level)")
 
 import type React from "react"
 import { useState, useEffect } from "react"
@@ -39,12 +40,14 @@ interface ValidationErrors {
 }
 
 const Register = () => {
-
   const { register, isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isReferralFromStorage, setIsReferralFromStorage] = useState(false);
+  const [isReferralFromStorage, setIsReferralFromStorage] = useState(false)
+  const [showComingSoonNotification, setShowComingSoonNotification] = useState(false)
+  const [comingSoonRole, setComingSoonRole] = useState<string>("")
+
   const [formData, setFormData] = useState<FormData>({
     referredBy: "",
     firstName: "",
@@ -53,11 +56,12 @@ const Register = () => {
     phone: "",
     password: "",
     confirmPassword: "",
-    role: "tenant",
+    role: "landlord", // Changed default to landlord
     city: "",
     serviceType: "",
     agreeTerms: false,
   })
+
   const [errors, setErrors] = useState<ValidationErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
@@ -65,6 +69,7 @@ const Register = () => {
   useEffect(() => {
     console.log("Register component mounted")
   }, [])
+
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -82,58 +87,71 @@ const Register = () => {
   useEffect(() => {
     try {
       if (formData.role === "landlord") {
-        const code = localStorage.getItem("referralCode");
-        console.log("Referral code found from localstorage:", code);
-
+        const code = localStorage.getItem("referralCode")
+        console.log("Referral code found from localstorage:", code)
         if (code) {
-          setFormData(prev => ({
+          setFormData((prev) => ({
             ...prev,
-            referredBy: code
-          }));
-          setIsReferralFromStorage(true);
-          localStorage.removeItem("referralCode");
+            referredBy: code,
+          }))
+          setIsReferralFromStorage(true)
+          localStorage.removeItem("referralCode")
         }
       }
     } catch (err) {
-      console.error("Failed to read from localStorage:", err);
+      console.error("Failed to read from localStorage:", err)
     }
-  }, [formData.role]);
+  }, [formData.role])
 
+  // Auto-hide coming soon notification after 3 seconds
+  useEffect(() => {
+    if (showComingSoonNotification) {
+      const timer = setTimeout(() => {
+        setShowComingSoonNotification(false)
+        setComingSoonRole("")
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [showComingSoonNotification])
 
   //handle role sellection
   const handleRoleSelection = (newRole: UserRole) => {
+    // Check if role is disabled
+    if (newRole === "tenant" || newRole === "service-provider") {
+      setComingSoonRole(newRole === "tenant" ? "Tenant" : "Service Provider")
+      setShowComingSoonNotification(true)
+      return
+    }
+
     if (newRole === "landlord") {
       const referral = localStorage.getItem("referralCode")
-
       if (referral) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           role: newRole,
-          referredBy: referral
+          referredBy: referral,
         }))
         setIsReferralFromStorage(true)
         localStorage.removeItem("referralCode")
         console.log("Referral code set from localStorage:", referral)
       } else {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           role: newRole,
-          referredBy: ""
+          referredBy: "",
         }))
         setIsReferralFromStorage(false)
         console.log("No referral code found in localStorage.")
       }
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         role: newRole,
-        referredBy: ""
+        referredBy: "",
       }))
       setIsReferralFromStorage(false)
     }
   }
-
-
 
   // Password strength indicators
   const hasMinLength = formData.password.length >= 8
@@ -178,6 +196,7 @@ const Register = () => {
 
   const validateForm = (): boolean => {
     const newErrors: ValidationErrors = {}
+
     // Validate first name
     if (!formData.firstName.trim()) {
       newErrors.firstName = "First name is required"
@@ -198,14 +217,12 @@ const Register = () => {
     // Validate phone
     // Validate phone
     const rawPhone = formData.phone.replace(/\s+/g, "").trim()
-
     if (!rawPhone) {
       newErrors.phone = "Phone number is required"
-    } else if (
-      !/^(\+?254|0)(7|1)\d{8}$/.test(rawPhone)
-    ) {
+    } else if (!/^(\+?254|0)(7|1)\d{8}$/.test(rawPhone)) {
       newErrors.phone = "Phone must start with 07, 01, or 254 and be 10–12 digits"
     }
+
     // Validate city
     if (!formData.city.trim()) {
       newErrors.city = "City is required"
@@ -234,6 +251,7 @@ const Register = () => {
     if (!formData.agreeTerms) {
       newErrors.agreeTerms = "You must agree to the terms and conditions"
     }
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -306,6 +324,28 @@ const Register = () => {
               </p>
             </div>
 
+            {/* Coming Soon Notification */}
+            {showComingSoonNotification && (
+              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-blue-600 dark:text-blue-400">
+                      <strong>{comingSoonRole}</strong> registration is coming soon! Stay tuned for updates.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {errors.general && (
               <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
                 <p className="text-sm text-red-600 dark:text-red-400">{errors.general}</p>
@@ -316,26 +356,32 @@ const Register = () => {
               {/* User Role Selection */}
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Register As:</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Register As:
+                  </label>
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                     {[
-                      { value: "landlord", label: "Landlord" },
-                      { value: "tenant", label: "Tenant" },
-                      { value: "agent", label: "Agent" },
-                      { value: "service-provider", label: "Service Provider" },
+                      { value: "landlord", label: "Landlord", enabled: true },
+                      { value: "tenant", label: "Tenant", enabled: false },
+                      { value: "agent", label: "Agent", enabled: true },
+                      { value: "service-provider", label: "Service Provider", enabled: false },
                     ].map((role) => (
                       <div
                         key={role.value}
                         className={`
-                             border rounded-lg p-3 text-center cursor-pointer transition-all
-                             ${formData.role === role.value
-                            ? "border-primary-600/20 flex items-center justify-center bg-primary-50 dark:bg-primary-600/20 text-primary-600 dark:text-white"
-                            : "border-gray-200 dark:border-gray-800 hover:border-primary-200 flex items-center justify-center dark:bg-gray-950/50 dark:hover:border-primary-600/30"
+                          border rounded-lg p-3 text-center cursor-pointer transition-all
+                          ${
+                            !role.enabled
+                              ? "border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-60"
+                              : formData.role === role.value
+                                ? "border-primary-600/20 flex items-center justify-center bg-primary-50 dark:bg-primary-600/20 text-primary-600 dark:text-white"
+                                : "border-gray-200 dark:border-gray-800 hover:border-primary-200 flex items-center justify-center dark:bg-gray-950/50 dark:hover:border-primary-600/30"
                           }
-                           `}
+                        `}
                         onClick={() => handleRoleSelection(role.value as UserRole)}
                       >
                         {role.label}
+                        {!role.enabled && <div className="text-xs mt-1 text-gray-400">Coming Soon</div>}
                       </div>
                     ))}
                   </div>
@@ -357,13 +403,15 @@ const Register = () => {
                     value={formData.serviceType}
                     onChange={handleChange}
                     className={`
-                         block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
-                         ${errors.serviceType ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
-                         bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
-                       `}
+                      block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
+                      ${errors.serviceType ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
+                      bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
+                    `}
                   >
                     <option value="">Select service type</option>
-                    <option value="wifi" className="p-1">WiFi Provider</option>
+                    <option value="wifi" className="p-1">
+                      WiFi Provider
+                    </option>
                     <option value="plumbing">Plumbing Services</option>
                     <option value="electrical">Electrical Services</option>
                     <option value="cleaning">Cleaning Services</option>
@@ -392,19 +440,19 @@ const Register = () => {
                     readOnly={isReferralFromStorage}
                     placeholder="Enter agent referral code"
                     className={`
-           block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
-           ${errors.referredBy ? "border-red-500" : "border-gray-300 dark:border-gray-600"}
-           ${isReferralFromStorage
-                        ? "bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
-                        : "bg-white dark:bg-gray-950/40 dark:border-gray-800"
+                      block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
+                      ${errors.referredBy ? "border-red-500" : "border-gray-300 dark:border-gray-600"}
+                      ${
+                        isReferralFromStorage
+                          ? "bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
+                          : "bg-white dark:bg-gray-950/40 dark:border-gray-800"
                       }
-           text-gray-900 dark:text-gray-100
-         `}
+                      text-gray-900 dark:text-gray-100
+                    `}
                   />
                   {errors.referredBy && <p className="mt-1 text-sm text-red-500">{errors.referredBy}</p>}
                 </div>
               )}
-
 
               {/* Personal Information */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -422,10 +470,10 @@ const Register = () => {
                     value={formData.firstName}
                     onChange={handleChange}
                     className={`
-                         block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
-                         ${errors.firstName ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
-                         bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
-                       `}
+                      block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
+                      ${errors.firstName ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
+                      bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
+                    `}
                   />
                   {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>}
                 </div>
@@ -441,10 +489,10 @@ const Register = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     className={`
-                         block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
-                         ${errors.lastName ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
-                         bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
-                       `}
+                      block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
+                      ${errors.lastName ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
+                      bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
+                    `}
                   />
                   {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
                 </div>
@@ -464,10 +512,10 @@ const Register = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className={`
-                         block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
-                         ${errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
-                          bg-white dark:dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
-                       `}
+                      block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
+                      ${errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
+                      bg-white dark:dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
+                    `}
                   />
                   {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
                 </div>
@@ -483,10 +531,10 @@ const Register = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     className={`
-                         block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
-                         ${errors.phone ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
-                         bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
-                       `}
+                      block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
+                      ${errors.phone ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
+                      bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
+                    `}
                     placeholder="+254 7XX XXX XXX"
                   />
                   {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
@@ -505,10 +553,10 @@ const Register = () => {
                   value={formData.city}
                   onChange={handleChange}
                   className={`
-                       block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
-                       ${errors.city ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
-                       bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
-                     `}
+                    block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
+                    ${errors.city ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
+                    bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
+                  `}
                 />
                 {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
               </div>
@@ -526,10 +574,10 @@ const Register = () => {
                     value={formData.password}
                     onChange={handleChange}
                     className={`
-                         block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
-                         ${errors.password ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
-                         bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
-                       `}
+                      block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
+                      ${errors.password ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
+                      bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
+                    `}
                   />
                   <button
                     type="button"
@@ -551,12 +599,13 @@ const Register = () => {
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-xs text-gray-500 dark:text-gray-400">Password strength:</span>
                       <span
-                        className={`text-xs font-medium ${passwordStrength <= 2
-                          ? "text-red-500"
-                          : passwordStrength <= 4
-                            ? "text-yellow-500"
-                            : "text-green-500"
-                          }`}
+                        className={`text-xs font-medium ${
+                          passwordStrength <= 2
+                            ? "text-red-500"
+                            : passwordStrength <= 4
+                              ? "text-yellow-500"
+                              : "text-green-500"
+                        }`}
                       >
                         {getPasswordStrengthText()}
                       </span>
@@ -567,7 +616,6 @@ const Register = () => {
                         style={{ width: `${(passwordStrength / 5) * 100}%` }}
                       ></div>
                     </div>
-
                     <div className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2">
                       <div className="flex items-center">
                         {hasMinLength ? (
@@ -630,10 +678,10 @@ const Register = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     className={`
-                         block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
-                         ${errors.confirmPassword ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
-                         bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
-                       `}
+                      block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
+                      ${errors.confirmPassword ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
+                      bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
+                    `}
                   />
                   <button
                     type="button"
@@ -683,10 +731,10 @@ const Register = () => {
                   type="submit"
                   disabled={isSubmitting}
                   className={`
-                       w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
-                       ${isSubmitting ? "bg-primary-400 cursor-not-allowed" : "bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"}
-                       transition-colors duration-200
-                     `}
+                    w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
+                    ${isSubmitting ? "bg-primary-400 cursor-not-allowed" : "bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"}
+                    transition-colors duration-200
+                  `}
                 >
                   {isSubmitting ? (
                     <>
@@ -712,7 +760,6 @@ const Register = () => {
       </div>
     </div>
   )
-
 }
 
 export default Register

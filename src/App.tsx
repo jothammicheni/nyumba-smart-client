@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-import { useEffect } from "react"
+import { useEffect } from "react" 
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import { ThemeProvider } from "./components/ThemeProvider.js"
 import { AuthProvider, useAuth } from "./context/AuthContext.js"
 import Layout from "./components/Layout.js"
 
-// Pages
+// Pagess
 import HomePage from "./pages/HomePage.js"
 import AboutPage from "./pages/AboutPage.js"
 import ContactPage from "./pages/ContactPage.js"
@@ -16,7 +16,7 @@ import NotFound from "./pages/NotFound.js"
 
 // Auth Pages
 
-// Tenant Dashboard and Nested Pages
+// Tenant Dashboard and Nested Pagess
 import TenantDashboardLayout from "./features/tenant/components/TenantDashboardLayout.js"
 import TenantDashboard from "./features/tenant/pages/DashboardPage.js"
 import TenantPropertiesPage from "./features/tenant/pages/PropertiesPage.js"

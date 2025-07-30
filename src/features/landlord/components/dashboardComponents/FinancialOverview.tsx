@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react"
+"use client"
+
+import { useEffect, useState } from "react"
 import axios from "axios"
 import { AlertTriangle, CreditCard, DollarSign, Percent, RefreshCw, Loader2 } from "lucide-react"
 import { getAuthHeaders } from "../../../../services/authService.js"
@@ -58,11 +60,11 @@ const FinancialOverview = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+      <div className="p-4 space-y-6 animate-fade-in">
         <div className="flex flex-col space-y-4">
           <div className="h-8 bg-muted/10 rounded animate-pulse" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map(i => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
               <div key={i} className="h-32 bg-muted/10 rounded animate-pulse" />
             ))}
           </div>
@@ -72,71 +74,59 @@ const FinancialOverview = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+    <div className="p-4 space-y-6 animate-fade-in">
       <Toaster position="top-right" richColors />
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Financial Overview</h1>
-          <p className="text-muted-foreground">
-            Key financial metrics and performance indicators
-          </p>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+        <div className="space-y-1 min-w-0 flex-1">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Financial Overview</h1>
+          <p className="text-muted-foreground text-sm">Key financial metrics and performance indicators</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex-shrink-0">
           <Button
             variant="outline"
             onClick={fetchStats}
             className="w-full sm:w-auto bg-primary-600 text-white"
             disabled={loading}
           >
-            {loading ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <RefreshCw className="h-4 w-4 mr-2" />
-            )}
+            {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
             Refresh
           </Button>
         </div>
       </div>
 
-      {error && (
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
-          ⚠️ {error}
-        </div>
-      )}
+      {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded text-sm">⚠️ {error}</div>}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Revenue */}
         <Card className="hover-scale dark:bg-gray-950/50 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Expected Rent</CardTitle>
-            <DollarSign className="h-5 w-5 text-yellow-600" />
+            <CardTitle className="text-sm font-medium truncate">Total Expected Rent</CardTitle>
+            <DollarSign className="h-5 w-5 text-yellow-600 flex-shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(financialStats.totalRevenue)}</div>
-            <p className="text-xs text-muted-foreground">
-              From all properties
-            </p>
+            <div className="text-xl sm:text-2xl font-bold truncate">{formatCurrency(financialStats.totalRevenue)}</div>
+            <p className="text-xs text-muted-foreground">From all properties</p>
           </CardContent>
         </Card>
 
         {/* Paid Rent */}
         <Card className="hover-scale dark:bg-gray-950/50 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Paid Rent</CardTitle>
-            <CreditCard className="h-5 w-5 text-green-600" />
+            <CardTitle className="text-sm font-medium truncate">Paid Rent</CardTitle>
+            <CreditCard className="h-5 w-5 text-green-600 flex-shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-xl sm:text-2xl font-bold text-success truncate">
               {formatCurrency(financialStats.paidRent)}
             </div>
             <p className="text-xs text-muted-foreground">
               {financialStats.totalRevenue > 0
                 ? `${Math.round((financialStats.paidRent / financialStats.totalRevenue) * 100)}% collected`
-                : 'No revenue'}
+                : "No revenue"}
             </p>
           </CardContent>
         </Card>
@@ -144,17 +134,17 @@ const FinancialOverview = () => {
         {/* Pending Rent */}
         <Card className="hover-scale dark:bg-gray-950/50 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Rent</CardTitle>
-            <AlertTriangle className="h-5 w-5 text-yellow-600" />
+            <CardTitle className="text-sm font-medium truncate">Pending Rent</CardTitle>
+            <AlertTriangle className="h-5 w-5 text-primary-600 flex-shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-xl sm:text-2xl font-bold text-warning truncate">
               {formatCurrency(financialStats.pendingRent)}
             </div>
             <p className="text-xs text-muted-foreground">
               {financialStats.totalRevenue > 0
                 ? `${Math.round((financialStats.pendingRent / financialStats.totalRevenue) * 100)}% outstanding`
-                : 'No revenue'}
+                : "No revenue"}
             </p>
           </CardContent>
         </Card>
@@ -162,8 +152,8 @@ const FinancialOverview = () => {
         {/* Occupancy Rate */}
         <Card className="hover-scale dark:bg-gray-950/50 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Occupancy Rate</CardTitle>
-            <Percent className="h-5 w-5 text-blue-600" />
+            <CardTitle className="text-sm font-medium truncate">Occupancy Rate</CardTitle>
+            <Percent className="h-5 w-5 text-blue-600 flex-shrink-0" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{propertyStats.occupancyRate}%</div>
@@ -175,48 +165,51 @@ const FinancialOverview = () => {
       </div>
 
       {/* Additional Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Rent Collection Progress */}
         <Card className="dark:bg-gray-950/50 shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5" />
-              Rent Collection
+              <CreditCard className="h-5 w-5 flex-shrink-0" />
+              <span className="truncate">Rent Collection</span>
             </CardTitle>
             <CardDescription>Progress towards total expected rent</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center gap-2">
                 <span className="text-sm font-medium">Paid Rent</span>
-                <span className="text-base font-medium text-green-600">
+                <span className="text-base font-medium text-green-600 truncate">
                   {formatCurrency(financialStats.paidRent)}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  className="bg-green-600 h-2.5 rounded-full"
+                  className="bg-green-600 h-2 rounded-full transition-all duration-300"
                   style={{
-                    width: `${financialStats.totalRevenue > 0
-                      ? Math.min((financialStats.paidRent / financialStats.totalRevenue) * 100, 100)
-                      : 0}%`
+                    width: `${
+                      financialStats.totalRevenue > 0
+                        ? (financialStats.paidRent / financialStats.totalRevenue) * 100
+                        : 0
+                    }%`,
                   }}
                 />
               </div>
-              
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center gap-2">
                 <span className="text-sm font-medium">Pending Rent</span>
-                <span className="text-base font-medium text-yellow-600">
+                <span className="text-base font-medium text-yellow-600 truncate">
                   {formatCurrency(financialStats.pendingRent)}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  className="bg-yellow-500 h-2.5 rounded-full"
+                  className="bg-yellow-600 h-2 rounded-full transition-all duration-300"
                   style={{
-                    width: `${financialStats.totalRevenue > 0
-                      ? Math.min((financialStats.pendingRent / financialStats.totalRevenue) * 100, 100)
-                      : 0}%`
+                    width: `${
+                      financialStats.totalRevenue > 0
+                        ? (financialStats.pendingRent / financialStats.totalRevenue) * 100
+                        : 0
+                    }%`,
                   }}
                 />
               </div>
@@ -228,8 +221,8 @@ const FinancialOverview = () => {
         <Card className="dark:bg-gray-950/50 shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Percent className="h-5 w-5" />
-              Property Occupancy
+              <Percent className="h-5 w-5 flex-shrink-0" />
+              <span className="truncate">Property Occupancy</span>
             </CardTitle>
             <CardDescription>Current occupancy status</CardDescription>
           </CardHeader>

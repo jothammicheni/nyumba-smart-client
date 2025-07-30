@@ -9,6 +9,7 @@ import AddPropertyModal from "../components/AddPropertyModal.js"
 import { Button } from "../../../components/ui/button"
 import { Card } from "../../../components/ui/card"
 import { Toaster, toast } from "sonner"
+import { Link } from "react-router-dom"
 
 interface Property {
   _id: string
@@ -35,7 +36,6 @@ const PropertiesPage: React.FC = () => {
     try {
       const response = await getProperties()
       setProperties(response.data)
-      toast.success('Properties updated successfully')
     } catch (err: any) {
       const errorMsg = err.response?.data?.error || "Failed to fetch properties"
       setError(errorMsg)
@@ -119,14 +119,15 @@ const PropertiesPage: React.FC = () => {
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
           <div className="flex justify-between items-center">
             <span>⚠️ {error}</span>
+            <Link to="/landlord/dashboard/subscriptions">  
             <Button
-              onClick={() => window.location.href = '/subscriptions'}
               size="lg"
               className="ml-2"
             >
               Upgrade
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
+            </Link>
           </div>
         </div>
       )}
