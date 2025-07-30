@@ -106,7 +106,7 @@ const PropertiesPage: React.FC = () => {
 
           <Button
             onClick={() => setIsAddModalOpen(true)}
-            className="w-full sm:w-auto bg-white hover:bg-primary-700 hover:text-white text-black"
+            className="w-full sm:w-auto bg-gray-950 text-white dark:text-black dark:bg-white"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Property
@@ -151,7 +151,7 @@ const PropertiesPage: React.FC = () => {
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
           {properties.map((property) => (
             <PropertyCard key={property._id} property={property} />
           ))}

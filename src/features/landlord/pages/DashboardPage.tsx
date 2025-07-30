@@ -48,40 +48,46 @@ const LandlordDashboard: React.FC = () => {
       <Toaster position="top-right" richColors />
 
       {/* Header Section */}
-      <div className="flex flex-col gap-4 mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between mb-3 sm:items-center">
         <div className="space-y-1">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
             Landlord Dashboard
           </h1>
-          <p className="text-sm text-muted-foreground">Overview of your properties and financial performance</p>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Overview of your properties and financial performance
+          </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex flex-col xs:flex-row gap-3 flex-1">
+        <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
+          <div className="flex gap-3">
             <Button
               variant="outline"
               onClick={() => setIsModalOpen(true)}
-              className="flex-1 sm:flex-none hover:bg-primary-700 hover:text-white"
+              size="lg"
+              className="flex-1 sm:flex-none hover:bg-gray-950 hover:text-white"
             >
-              <UserPlus className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span className="truncate">Add Caretaker</span>
+              <UserPlus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+              <span className="text-xs sm:text-sm">Add Caretaker</span>
             </Button>
 
             <Link to="properties" className="flex-1 sm:flex-none">
-              <Button className="w-full hover:bg-primary-700 hover:text-white">
-                <Plus className="h-4 w-4 mr-2 flex-shrink-0" />
-                <span className="truncate">Add Property</span>
+              <Button
+                size="lg"
+                className="w-full hover:bg-gray-950 duration-300 transition-all hover:text-white"
+              >
+                <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Add Property</span>
               </Button>
             </Link>
           </div>
-
           <Button
             variant="outline"
             onClick={handleExport}
-            className="sm:flex-none bg-primary-600 text-white hover:bg-primary-700"
+            size="lg"
+            className="w-full sm:flex-none bg-primary-600 text-white hover:text-white hover:bg-primary-700"
           >
-            <Download className="h-4 w-4 mr-2 flex-shrink-0" />
-            <span className="truncate">Download Report</span>
+            <Download className="h-3.5 w-3.5 sm:h-10 sm:w-4 mr-1.5 sm:mr-2" />
+            <span className="text-xs sm:text-sm">Export</span>
           </Button>
         </div>
       </div>

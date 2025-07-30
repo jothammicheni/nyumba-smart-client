@@ -147,7 +147,7 @@ export default function LandlordDashboardLayout() {
   }
 
   const NavItems = ({ onClick }: { onClick?: () => void }) => (
-    <nav className="px-2 py-4 space-y-2">
+    <nav className="px-2 py-4 space-y-4">
       {visibleNavItems.map((item) => {
         const IconComponent = item.icon
 
@@ -176,7 +176,7 @@ export default function LandlordDashboardLayout() {
   )
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 overflow-hidden">
+    <div className="flex h-screen bg-gradient-to-br from-gray-100 via-white to-gray-100 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 overflow-hidden">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
@@ -211,7 +211,7 @@ export default function LandlordDashboardLayout() {
 
       {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex flex-col flex-1 min-h-0 border-r border-gray-200 dark:border-primary-600/20 bg-gradient-to-br from-primary-gray-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+        <div className="flex flex-col flex-1 min-h-0 border-r border-gray-200 dark:border-primary-600/20 bg-gradient-to-br from-primary-gray-100 via-white to-gray-100 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
           <div className="flex items-center h-16 px-4 border-b border-gray-200 dark:border-primary-600/20 flex-shrink-0">
             <span className="text-xl font-bold text-primary-600 dark:text-primary-500">TenaHub</span>
           </div>
@@ -241,7 +241,7 @@ export default function LandlordDashboardLayout() {
       {/* Main content area */}
       <div className="flex flex-col flex-1 lg:pl-64 min-w-0">
         {/* Mobile header */}
-        <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-gradient-to-br from-primary-gray-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 shadow">
+        <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-gradient-to-br from-primary-gray-100 via-white to-gray-100 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 shadow">
           <button
             type="button"
             className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 lg:hidden flex-shrink-0"
