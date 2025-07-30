@@ -130,7 +130,7 @@ const FinancialOverview = () => {
             <CreditCard className="h-5 w-5 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">
+            <div className="text-2xl font-bold text-green-600">
               {formatCurrency(financialStats.paidRent)}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -145,10 +145,10 @@ const FinancialOverview = () => {
         <Card className="hover-scale dark:bg-gray-950/50 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending Rent</CardTitle>
-            <AlertTriangle className="h-5 w-5 text-primary-600" />
+            <AlertTriangle className="h-5 w-5 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-warning">
+            <div className="text-2xl font-bold text-yellow-600">
               {formatCurrency(financialStats.pendingRent)}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -193,28 +193,29 @@ const FinancialOverview = () => {
                   {formatCurrency(financialStats.paidRent)}
                 </span>
               </div>
-              <div className="w-full bg-green-600 rounded-full h-2">
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div
-                  className="bg-green-600 h-2 rounded-full"
+                  className="bg-green-600 h-2.5 rounded-full"
                   style={{
                     width: `${financialStats.totalRevenue > 0
-                      ? (financialStats.paidRent / financialStats.totalRevenue) * 100
+                      ? Math.min((financialStats.paidRent / financialStats.totalRevenue) * 100, 100)
                       : 0}%`
                   }}
                 />
               </div>
+              
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">Pending Rent</span>
                 <span className="text-base font-medium text-yellow-600">
                   {formatCurrency(financialStats.pendingRent)}
                 </span>
               </div>
-              <div className="w-full bg-yellow-600 rounded-full h-2">
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div
-                  className="bg-yellow-600 h-2 rounded-full"
+                  className="bg-yellow-500 h-2.5 rounded-full"
                   style={{
                     width: `${financialStats.totalRevenue > 0
-                      ? (financialStats.pendingRent / financialStats.totalRevenue) * 100
+                      ? Math.min((financialStats.pendingRent / financialStats.totalRevenue) * 100, 100)
                       : 0}%`
                   }}
                 />
