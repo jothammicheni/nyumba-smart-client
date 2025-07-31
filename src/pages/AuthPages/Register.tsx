@@ -438,7 +438,7 @@ const Register = () => {
                     value={formData.referredBy}
                     onChange={handleChange}
                     readOnly={isReferralFromStorage}
-                    placeholder="Enter agent referral code"
+                    placeholder="Enter referral code(OPTIONAL)"
                     className={`
                       block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
                       ${errors.referredBy ? "border-red-500" : "border-gray-300 dark:border-gray-600"}

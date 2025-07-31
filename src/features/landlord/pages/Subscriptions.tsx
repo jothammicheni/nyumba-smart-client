@@ -106,12 +106,27 @@ const Subscriptions = () => {
 
     const getTargetTime = () => {
       const now = new Date()
-      const end = new Date(
-        activeSub?.is_free_trial_active
-          ? (activeSub.free_trial_end_date ?? new Date())
-          : (activeSub.end_date ?? new Date()),
-      )
-      return Math.max(0, end.getTime() - now.getTime())
+
+      // For Mwananchi, don't show countdown
+      if (activeSub.tier === "Mwananchi") {
+        return 0
+      }
+
+      // For paid tiers, show countdown based on trial or subscription status
+      let targetDate: Date
+
+      if (activeSub.is_free_trial_active && activeSub.free_trial_end_date) {
+        // Show trial countdown
+        targetDate = new Date(activeSub.free_trial_end_date)
+      } else if (activeSub.is_active && activeSub.end_date) {
+        // Show subscription countdown
+        targetDate = new Date(activeSub.end_date)
+      } else {
+        // No active trial or subscription
+        return 0
+      }
+
+      return Math.max(0, targetDate.getTime() - now.getTime())
     }
 
     const formatCountdown = (ms: number) => {
@@ -125,6 +140,19 @@ const Subscriptions = () => {
 
     const updateCountdown = () => {
       const remaining = getTargetTime()
+
+      if (remaining === 0) {
+        setCountdown("")
+        // Handle expired states
+        if (activeSub.tier !== "Mwananchi" && !activeSub.is_active && !activeSub.is_free_trial_active) {
+          setAlertMessage(`Your subscription has expired. Renew to unlock all features.`)
+          setShowAlert(true)
+        } else {
+          setShowAlert(false)
+        }
+        return
+      }
+
       const totalSec = Math.floor(remaining / 1000)
       const days = Math.floor(totalSec / 86400)
       setCountdown(formatCountdown(remaining))
@@ -133,11 +161,7 @@ const Subscriptions = () => {
       if (activeSub.is_free_trial_active && days <= 3) {
         setAlertMessage(`Free trial ends in ${days} day(s). Upgrade to continue using premium features.`)
         setShowAlert(true)
-      } else if (!activeSub.is_active && !activeSub.is_free_trial_active && activeSub.tier !== "Mwananchi") {
-        setAlertMessage(`Your subscription has expired. Renew to unlock all features.`)
-        setShowAlert(true)
       } else {
-        setAlertMessage("")
         setShowAlert(false)
       }
     }
@@ -225,7 +249,7 @@ const Subscriptions = () => {
     const isFreeTier = tier.priceMonthly === 0
     const hasActiveTrial = activeSub.is_free_trial_active
     const hasActiveSubscription = activeSub.is_active
-    const isExpired = !hasActiveTrial && !hasActiveSubscription
+    const isExpired = !hasActiveTrial && !hasActiveSubscription && activeSub.tier !== "Mwananchi"
 
     if (isCurrent) {
       if (activeSub.tier === "Mwananchi") {
@@ -281,14 +305,14 @@ const Subscriptions = () => {
       // Determine if this is a free switch or new trial
       const hasActiveTrial = activeSub?.is_free_trial_active
       const hasActiveSubscription = activeSub?.is_active
-      const isFreeSwitching = hasActiveTrial || hasActiveSubscription
+      const isFreeSwitching = (hasActiveTrial || hasActiveSubscription) && activeSub?.tier !== "Mwananchi"
 
       const data = {
         tier: selectedTier.name,
         duration: selectedDuration,
         amount: selectedDuration === "yearly" ? selectedTier.priceYearly : selectedTier.priceMonthly,
-        free_trial: selectedTier.priceMonthly > 0 && !isFreeSwitching, // Only start new trial if not switching
-        free_trial_duration: selectedTier.priceMonthly > 0 && !isFreeSwitching ? 45 : 0,
+        free_trial: selectedTier.priceMonthly > 0, // Always allow trial for paid tiers
+        free_trial_duration: selectedTier.priceMonthly > 0 ? 35 : 0,
         is_switching: isFreeSwitching, // Flag to indicate this is a plan switch
       }
 
@@ -469,7 +493,7 @@ const Subscriptions = () => {
                 </div>
               )}
 
-              {/* Trial Days Counter */}
+              {/* Trial Days Counter - Only show for paid tiers with active countdown */}
               {countdown && tier.current && activeSub?.tier !== "Mwananchi" && (
                 <div className="absolute top-4 left-4">
                   <Badge
@@ -563,7 +587,7 @@ const Subscriptions = () => {
                 </Button>
 
                 {tier.trial && tier.priceMonthly > 0 && !tier.current && (
-                  <p className="text-center text-xs text-primary-600 mt-2">45-day free trial included</p>
+                  <p className="text-center text-xs text-primary-600 mt-2">35-day free trial included</p>
                 )}
               </CardContent>
             </Card>
@@ -603,7 +627,7 @@ const Subscriptions = () => {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Explore all premium features risk-free for 45 days (paid plans only)
+              Explore all premium features risk-free for 35 days (paid plans only)
             </p>
           </CardContent>
         </Card>
@@ -686,7 +710,7 @@ const Subscriptions = () => {
                   </div>
 
                   <div className="bg-blue-50 p-3 rounded-lg">
-                    {activeSub?.is_free_trial_active || activeSub?.is_active ? (
+                    {activeSub?.is_free_trial_active || (activeSub?.is_active && activeSub?.tier !== "Mwananchi") ? (
                       <>
                         <p className="text-sm text-blue-800">🔄 Switch plans instantly!</p>
                         <p className="text-xs text-blue-600 mt-1">
@@ -696,7 +720,7 @@ const Subscriptions = () => {
                     ) : (
                       <>
                         <p className="text-sm text-blue-800">
-                          🎉 Start with a 45-day free trial! No payment required now.
+                          🎉 Start with a 35-day free trial! No payment required now.
                         </p>
                         <p className="text-xs text-blue-600 mt-1">
                           After trial: {formatCurrency(getCurrentPrice())}/
@@ -745,7 +769,7 @@ const Subscriptions = () => {
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : selectedTier?.priceMonthly === 0 ? (
                     "Activate Plan"
-                  ) : activeSub?.is_free_trial_active || activeSub?.is_active ? (
+                  ) : activeSub?.is_free_trial_active || (activeSub?.is_active && activeSub?.tier !== "Mwananchi") ? (
                     "Switch to This Plan"
                   ) : (
                     "Start Free Trial"
