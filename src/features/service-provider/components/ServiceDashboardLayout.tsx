@@ -58,6 +58,12 @@ export const ServicetDashboardLayout: React.FC = () => {
                                 <Home className="w-5 h-5 mr-3" /> Dashboard
                             </Link>
                             <Link
+                                to="manage/gigs"
+                                onClick={handleNavClick}
+                                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/service-provider/dashboard")}`}>
+                                <Home className="w-5 h-5 mr-3" /> Manage Gigs
+                            </Link>
+                            <Link
                                 to='tasks'
                                 onClick={handleNavClick}
                                 className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/service-provider/dashboard/tasks")}`}>
@@ -103,6 +109,12 @@ export const ServicetDashboardLayout: React.FC = () => {
                                 onClick={handleNavClick}
                                 className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/service-provider/dashboard")}`}>
                                 <Home className="w-5 h-5 mr-3" /> Dashboard
+                            </Link>
+                            <Link
+                                to="manage/gigs"
+                                onClick={handleNavClick}
+                                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/service-provider/dashboard")}`}>
+                                <Home className="w-5 h-5 mr-3" /> Manage Gigs
                             </Link>
                             <Link
                                 to='tasks'
