@@ -148,6 +148,7 @@
     "motion-utils": "^12.23.6",
     "ms": "^2.1.3",
     "object-assign": "^4.1.1",
+    "pagination": "^0.4.6",
     "performance-now": "^2.1.0",
     "prop-types": "^15.8.1",
     "property-information": "^7.1.0",
