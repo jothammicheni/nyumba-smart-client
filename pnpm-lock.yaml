@@ -423,6 +423,9 @@ importers:
       object-assign:
         specifier: ^4.1.1
         version: 4.1.1
+      pagination:
+        specifier: ^0.4.6
+        version: 0.4.6
       performance-now:
         specifier: ^2.1.0
         version: 2.1.0
@@ -2881,6 +2884,9 @@ packages:
 
   package-json-from-dist@1.0.1:
     resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
+
+  pagination@0.4.6:
+    resolution: {integrity: sha512-TnZ3l17uuC5H9Wlc9FMYuEi65JlUCSn1ZAbnLnvUGkR7RgaFknUNGQTEumhjq1Jy1ePkXSiYUFFbHH70LGb9dA==}
 
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
@@ -6083,6 +6089,8 @@ snapshots:
   p-try@2.2.0: {}
 
   package-json-from-dist@1.0.1: {}
+
+  pagination@0.4.6: {}
 
   parent-module@1.0.1:
     dependencies:
