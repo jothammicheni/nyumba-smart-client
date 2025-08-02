@@ -157,7 +157,7 @@ const CTASection: React.FC = () => {
                 <Link to="/register">Get Started Now</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link to="/service-providers">Browse Providers</Link>
+                <Link to="/service/marketplace">Browse Providers</Link>
               </Button>
             </CardContent>
           </Card>

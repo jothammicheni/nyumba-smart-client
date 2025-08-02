@@ -1,29 +1,33 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-console.log(">>> Loaded: registers the component file (top-level)")
 
 import type React from "react"
 import { useState, useEffect } from "react"
 import { Eye, EyeOff, CheckCircle, XCircle, Loader2 } from "lucide-react"
 import { useAuth } from "../../context/AuthContext.js"
 import { useNavigate } from "react-router-dom"
+import { detectUserLocation, UserLocationResult } from "../../services/userLocationService.js"
 
 type UserRole = "landlord" | "tenant" | "agent" | "service-provider"
 
 interface FormData {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  password: string
-  confirmPassword: string
-  role: UserRole
-  city: string
-  serviceType?: string
-  referredBy?: string
-  agreeTerms: boolean
+  referredBy: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
+  city: string;
+  serviceType: string;
+  agreeTerms: boolean;
+  latitude: string;
+  longitude: string;
 }
+
 
 interface ValidationErrors {
   firstName?: string
@@ -47,20 +51,24 @@ const Register = () => {
   const [isReferralFromStorage, setIsReferralFromStorage] = useState(false)
   const [showComingSoonNotification, setShowComingSoonNotification] = useState(false)
   const [comingSoonRole, setComingSoonRole] = useState<string>("")
+const [loadingCity, setLoadingCity] = useState(true);
 
-  const [formData, setFormData] = useState<FormData>({
-    referredBy: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
-    role: "landlord", // Changed default to landlord
-    city: "",
-    serviceType: "",
-    agreeTerms: false,
-  })
+const [formData, setFormData] = useState<FormData>({
+  referredBy: "",
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  password: "",
+  confirmPassword: "",
+  role: "landlord",
+  city: "",
+  serviceType: "",
+  agreeTerms: false,
+  latitude: "",    // Add this
+  longitude: "",   // Add this
+});
+
 
   const [errors, setErrors] = useState<ValidationErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -117,7 +125,9 @@ const Register = () => {
   //handle role sellection
   const handleRoleSelection = (newRole: UserRole) => {
     // Check if role is disabled
-    if (newRole === "tenant" || newRole === "service-provider") {
+    // if (newRole === "tenant" || newRole === "service-provider") {
+        if (newRole === "tenant") {
+
       setComingSoonRole(newRole === "tenant" ? "Tenant" : "Service Provider")
       setShowComingSoonNotification(true)
       return
@@ -152,6 +162,30 @@ const Register = () => {
       setIsReferralFromStorage(false)
     }
   }
+
+  // getlocation and city
+
+useEffect(() => {
+  const fetchLocation = async () => {
+    setLoadingCity(true);
+    const location = await detectUserLocation();
+
+    if (location) {
+      setFormData((prev) => ({
+        ...prev,
+        city: location.nearestPlace,
+        latitude: location.latitude.toString(),
+        longitude: location.longitude.toString(),
+      }));
+    }
+    setLoadingCity(false);
+  };
+
+  fetchLocation();
+}, []);
+
+
+
 
   // Password strength indicators
   const hasMinLength = formData.password.length >= 8
@@ -264,35 +298,39 @@ const Register = () => {
       setErrors({})
       console.log(4556)
 
-      try {
-        const userData = {
-          referredBy: formData.referredBy,
-          name: `${formData.firstName} ${formData.lastName}`,
-          email: formData.email,
-          password: formData.password,
-          role: formData.role,
-          phone: formData.phone,
-          city: formData.city,
-          service_category: formData.serviceType,
-        }
+     try {
+  const userData = {
+    referredBy: formData.referredBy,
+    name: `${formData.firstName} ${formData.lastName}`,
+    email: formData.email,
+    password: formData.password,
+    role: formData.role,
+    phone: formData.phone,
+    city: formData.city,
+    service_category: formData.serviceType,
+    latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+    longitude: formData.longitude ? parseFloat(formData.longitude) : null,
+  };
 
-        console.log("Registration response:", userData)
-        const response = await register(userData)
+  console.log("Registration payload:", userData);
 
-        if (response.success) {
-          setRegistrationSuccess(true)
-        } else {
-          setErrors({
-            general: response.message || "Registration failed. Please try again.",
-          })
-        }
-      } catch (error: any) {
-        setErrors({
-          general: error.message || "An unexpected error occurred. Please try again.",
-        })
-      } finally {
-        setIsSubmitting(false)
-      }
+  const response = await register(userData);
+
+  if (response.success) {
+    setRegistrationSuccess(true);
+  } else {
+    setErrors({
+      general: response.message || "Registration failed. Please try again.",
+    });
+  }
+} catch (error: any) {
+  setErrors({
+    general: error.message || "An unexpected error occurred. Please try again.",
+  });
+} finally {
+  setIsSubmitting(false);
+}
+
     }
   }
 
@@ -364,7 +402,7 @@ const Register = () => {
                       { value: "landlord", label: "Landlord", enabled: true },
                       { value: "tenant", label: "Tenant", enabled: false },
                       { value: "agent", label: "Agent", enabled: true },
-                      { value: "service-provider", label: "Service Provider", enabled: false },
+                      { value: "service-provider", label: "Service Provider", enabled: true },
                     ].map((role) => (
                       <div
                         key={role.value}
@@ -497,6 +535,20 @@ const Register = () => {
                   {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
                 </div>
               </div>
+<input
+  type="text"
+  name="latitude"
+  value={formData.latitude}
+  readOnly
+  className="hidden" // or style however you want
+/>
+<input
+  type="text"
+  name="longitude"
+  value={formData.longitude}
+  readOnly
+  className="hidden"
+/>
 
               {/* Contact Information */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -542,24 +594,59 @@ const Register = () => {
               </div>
 
               {/* City */}
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  City
-                </label>
-                <input
-                  id="city"
-                  name="city"
-                  type="text"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className={`
-                    block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
-                    ${errors.city ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
-                    bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
-                  `}
-                />
-                {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
-              </div>
+           <div>
+  <label
+    htmlFor="city"
+    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+  >
+    City
+  </label>
+
+  <div className="relative">
+    <input
+      id="city"
+      name="city"
+      type="text"
+      value={formData.city}
+      onChange={handleChange}
+      readOnly // prevent user from changing if auto-detected
+      className={`
+        block w-full px-3 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-600 dark:focus:border-primary-600 sm:text-sm
+        ${errors.city ? "border-red-500" : "border-gray-300 dark:border-gray-800"}
+        bg-white dark:bg-gray-950/40 text-gray-900 dark:text-gray-100
+        ${loadingCity ? "pr-10" : ""}
+      `}
+    />
+    {loadingCity && (
+      <div className="absolute inset-y-0 right-3 flex items-center">
+        <svg
+          className="animate-spin h-4 w-4 text-gray-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v8H4z"
+          ></path>
+        </svg>
+      </div>
+    )}
+  </div>
+
+  {errors.city && (
+    <p className="mt-1 text-sm text-red-500">{errors.city}</p>
+  )}
+</div>
 
               {/* Password */}
               <div>

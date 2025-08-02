@@ -93,6 +93,14 @@ const Footer: React.FC = () => {
                   Property Listing
                 </Link>
               </li>
+               <li>
+                <Link 
+                  to="/service/marketplace" 
+                  className="group text-gray-300 hover:text-white transition-all duration-300 flex items-center">
+                  <span className="w-0 group-hover:w-3 h-0.5 bg-primary-500 rounded-full transition-all duration-300 mr-0 group-hover:mr-3"></span>
+                  service MarketPlace
+                </Link>
+              </li>
               <li>
                 <Link 
                   to="/about" 
@@ -210,8 +218,7 @@ const Footer: React.FC = () => {
                     </div>
                     <div className="min-w-0">
                       <h4 className="text-white font-medium mb-1">Email</h4>
-                      <a href="mailto:info@TenaHub.com"><p className="text-gray-300 text-sm truncate">info@TenaHub.com</p></a>
-                      <a href="mailto:queries@TenaHub.com"><p className="text-gray-300 text-sm truncate">queries@TenaHub.com</p></a>
+                      <a href="mailto:info@tenahub.co.ke"><p className="text-gray-300 text-sm truncate">info@tenahub.co.ke</p></a>
                     </div>
                   </div>
                 </div>

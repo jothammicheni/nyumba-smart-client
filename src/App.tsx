@@ -76,6 +76,12 @@ import "react-toastify/dist/ReactToastify.css"
 import RelocationHomeSearch from './pages/ RelocationHomeSearch';
 import Blogs from "./pages/Blogs.js"
 import { HelmetProvider } from "react-helmet-async"
+import ServiceProvidersMarketplace from "./pages/ServiceProvidersMarketplace.js"
+import ManageGigsPage from "./features/service-provider/pages/ManageGigs.js"
+import CreateGigPage from "./features/service-provider/components/createGig.js"
+import ViewGigPage from "./features/service-provider/components/viewGig.js"
+import GigAnalyticsPage from "./features/service-provider/components/gigAnalytics.js"
+import EditGigPage from "./features/service-provider/components/editGig.js"
 // -------- CaretakerRedirect Component --------
 // const CaretakerRedirect = () => {
 //   const { user } = useAuth()
@@ -253,6 +259,7 @@ const AppContent = () => {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/blogs" element={<Blogs/>} />
+        <Route path="/service/marketplace" element={<ServiceProvidersMarketplace/>} />
 
         <Route path="/properties" element={<PropertiesPage />} />
         <Route path="/relocate-search-home" element={<RelocationHomeSearch/>} />
@@ -398,7 +405,13 @@ const AppContent = () => {
         }
       >
         <Route index element={<ProviderDashboard />} />
+        <Route path="manage/gigs" element={<ManageGigsPage/>} />
+         <Route path="manage/gigs/create-gig" element={<CreateGigPage/>} />
+         <Route path="manage/gigs/view/:id" element={<ViewGigPage/>} />
+          <Route path="manage/gigs/edit/:id" element={<EditGigPage/>} />
+          <Route path="manage/analytics/analytics/:id" element={<GigAnalyticsPage/>} />
         <Route path="tasks" element={<TasksPage />} />
+
         <Route path="settings" element={<ProviderSettings />} />
       </Route>
 

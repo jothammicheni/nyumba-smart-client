@@ -20,6 +20,8 @@ const Navbar: React.FC = () => {
   const mainLinks = [
     { to: "/properties", label: "Property Listing" },
     { to: "/relocate-search-home", label: "Relocate" },
+        { to: "/service/marketplace", label: "Service Providers" },
+
   ]
 
   const secondaryLinks = [
