@@ -10,12 +10,12 @@ const TermsSEO = () => (
       content="Read the terms and conditions for using TenaHub's real estate platform."
     />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://TenaHub.com/terms" />
+    <link rel="canonical" href="https://www.tenaHub.co.ke/terms" />
 
     {/* Open Graph */}
     <meta property="og:title" content="Terms and Conditions - TenaHub" />
     <meta property="og:description" content="Read the terms and conditions for using TenaHub's real estate platform." />
-    <meta property="og:url" content="https://TenaHub.com/terms" />
+    <meta property="og:url" content="https://www.tenaHub.co.ke/terms" />
     <meta property="og:type" content="website" />
 
     {/* Twitter */}

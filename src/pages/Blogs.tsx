@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Helmet } from "react-helmet";
 import { Blog, blogs } from "../data/blogData/blogs";
+import BlogSeo from "../SEO/BlogSeo";
 
 const additionalContent = `
 ---
@@ -52,7 +53,7 @@ const Blogs: React.FC = () => {
         <meta name="twitter:description" content={seoDescription} />
         {seoImage && <meta name="twitter:image" content={seoImage} />}
       </Helmet>
-
+       <BlogSeo/>
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {!selectedBlog ? (
           <>

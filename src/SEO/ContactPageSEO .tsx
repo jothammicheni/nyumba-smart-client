@@ -22,9 +22,9 @@ const ContactPageSEO = () => (
       property="og:description"
       content="Get in touch with TenaHub — your trusted real estate platform in Nairobi. Contact us via phone, email or visit our office."
     />
-    <meta property="og:url" content="https://tenahub.co.ke/contact" />
+    <meta property="og:url" content="https://www.tenaHub.co.ke/contact" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://tenahub.co.ke/og-image.jpg" />
+    <meta property="og:image" content="https://www.tenaHub.co.ke/og-image.jpg" />
 
     {/* Twitter */}
     <meta name="twitter:card" content="summary_large_image" />
@@ -33,7 +33,7 @@ const ContactPageSEO = () => (
       name="twitter:description"
       content="Get in touch with TenaHub — your trusted real estate platform in Nairobi. Contact us via phone, email or visit our office."
     />
-    <meta name="twitter:image" content="https://tenahub.co.ke/og-image.jpg" />
+    <meta name="twitter:image" content="https://www.tenaHub.co.ke/og-image.jpg" />
   </Helmet>
 )
 
