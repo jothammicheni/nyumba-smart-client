@@ -21,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { Label } from "../components/ui/label"
 import { Toaster, toast } from "sonner"
+import RelocateSEO from "../SEO/RelocateSEO"
 
 // Helper validation functions
 const validateEmail = (email: string): string => {
@@ -277,6 +278,7 @@ const RelocationHomeSearch: React.FC = () => {
 
   return (
     <div className="mx-auto px-4 sm:px-6 lg:px-20 py-8 sm:py-12 lg:py-20 space-y-6 sm:space-y-8 animate-fade-in bg-gradient-to-br from-slate-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+      <RelocateSEO/>
       <Toaster position="top-right" richColors />
 
       {/* Animated Background Shapes */}

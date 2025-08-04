@@ -4,6 +4,7 @@ import { Button } from '../components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import serviceGigService, { ServiceGig } from '../services/serviceGigService';
 import { detectUserLocation } from '../services/userLocationService';
+import ServiceProvidersSeo from '../SEO/ServiceProvidersSeo';
 
 interface ProviderWithDistance extends ServiceGig {
   distance?: number;
@@ -67,6 +68,7 @@ const ServiceProvidersMarketplace = () => {
 
   return (
     <div className="p-4 mt-20 max-w-screen-xl mx-auto">
+      <ServiceProvidersSeo/>
       <div className="flex justify-between items-center mb-6">
         <input
           type="text"

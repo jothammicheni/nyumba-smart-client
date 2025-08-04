@@ -10,7 +10,7 @@ const CookiesSEO = () => (
       content="Understand how TenaHub uses cookies to enhance your browsing experience."
     />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://tenahub.co.ke/cookies" />
+    <link rel="canonical" href="https://www.tenaHub.co.ke/cookies" />
 
     {/* Open Graph */}
     <meta property="og:title" content="Cookies Policy - TenaHub" />
@@ -18,9 +18,9 @@ const CookiesSEO = () => (
       property="og:description"
       content="Understand how TenaHub uses cookies to enhance your browsing experience."
     />
-    <meta property="og:url" content="https://tenahub.co.ke/cookies" />
+    <meta property="og:url" content="https://www.tenaHub.co.ke/cookies" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://tenahub.co.ke/og-image.jpg" />
+    <meta property="og:image" content="https://www.tenaHub.co.ke/og-image.jpg" />
 
     {/* Twitter */}
     <meta name="twitter:card" content="summary_large_image" />
@@ -29,7 +29,7 @@ const CookiesSEO = () => (
       name="twitter:description"
       content="Understand how TenaHub uses cookies to enhance your browsing experience."
     />
-    <meta name="twitter:image" content="https://tenahub.co.ke/og-image.jpg" />
+    <meta name="twitter:image" content="https://www.tenaHub.co.ke/og-image.jpg" />
   </Helmet>
 )
 
