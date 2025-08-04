@@ -43,7 +43,7 @@ interface ApiResponse {
 // API functions
 const fetchUsers = async (): Promise<User[]> => {
   try {
-    const response = await fetch("http://localhost:5000/api/users", {
+    const response = await fetch("https://nyumba-smart-server.onrender.com/api/users", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
