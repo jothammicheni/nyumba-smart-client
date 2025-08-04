@@ -37,7 +37,7 @@ interface ApiResponse {
 // API call to fetch real data
 const fetchSystemStats = async (): Promise<SystemStats> => {
   try {
-    const response = await fetch("http://localhost:5000/api/admin/system-stats", {
+    const response = await fetch("https://nyumba-smart-server.onrender.com/api/admin/system-stats", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
