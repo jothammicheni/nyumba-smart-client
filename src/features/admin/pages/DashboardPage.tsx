@@ -1,812 +1,465 @@
 "use client"
-
 import type React from "react"
-import { useState } from "react"
-import {
-  Home,
-  Users,
-  Building,
-  CreditCard,
-  Bell,
-  Search,
-  Menu,
-  X,
-  LogOut,
-  DollarSign,
-  Wrench,
-  UserCog,
-  Shield,
-  BarChart,
-  Activity,
-  Settings2,
-  FileText,
-  HelpCircle,
-} from "lucide-react"
-import { useTheme } from "../../../components/ThemeProvider.js"
-import { useAuth } from "../../../context/AuthContext.js"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Users, Building, Home, Wrench, UserCog, BarChart3, RefreshCw } from "lucide-react"
 
-// Dummy data for the admin panel
-const systemStats = {
-  totalUsers: 156,
-  totalLandlords: 24,
-  totalTenants: 112,
-  totalAgents: 15,
-  totalServiceProviders: 5,
-  totalProperties: 48,
-  totalUnits: 187,
-  occupiedUnits: 163,
-  vacantUnits: 24,
-  maintenanceRequests: 17,
+// Types for the API response
+interface SystemStats {
+  totals: {
+    totalUsers: number
+    totalLandlords: number
+    totalTenants: number
+    totalAgents: number
+    totalServiceProviders: number
+    totalCaretakers: number
+    totalProperties: number
+    totalUnits: number
+    occupiedUnits: number
+    vacantUnits: number
+    maintenanceRequests: number
+  }
+  newUsers: {
+    today: Record<string, number>
+    last7Days: Record<string, number>
+    last14Days: Record<string, number>
+    last1Month: Record<string, number>
+    last2Months: Record<string, number>
+    last6Months: Record<string, number>
+  }
+  activeUsersToday: number
 }
 
-const financialStats = {
-  totalRevenue: 3750000,
-  platformFees: 375000,
-  pendingPayments: 450000,
-  totalTransactions: 324,
-  averagePropertyValue: 4500000,
+interface ApiResponse {
+  success: boolean
+  data: SystemStats
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const userGrowth = [
-  { month: "Jan", users: 85 },
-  { month: "Feb", users: 94 },
-  { month: "Mar", users: 105 },
-  { month: "Apr", users: 112 },
-  { month: "May", users: 126 },
-  { month: "Jun", users: 137 },
-  { month: "Jul", users: 145 },
-  { month: "Aug", users: 156 },
-]
+// API call to fetch real data
+const fetchSystemStats = async (): Promise<SystemStats> => {
+  try {
+    const response = await fetch("http://localhost:5000/api/admin/system-stats", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        // Add authorization header if needed
+        // 'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    })
 
-const recentActivities = [
-  {
-    id: 1,
-    type: "user_registration",
-    user: "John Doe",
-    role: "Landlord",
-    date: "2023-05-18",
-    time: "14:32:45",
-  },
-  {
-    id: 2,
-    type: "property_added",
-    user: "Sarah Smith",
-    propertyName: "Sunset Apartments",
-    units: 12,
-    date: "2023-05-17",
-    time: "10:15:22",
-  },
-  {
-    id: 3,
-    type: "payment",
-    tenant: "Michael Johnson",
-    landlord: "Robert Wilson",
-    amount: 35000,
-    date: "2023-05-16",
-    time: "09:45:11",
-  },
-  {
-    id: 4,
-    type: "maintenance",
-    tenant: "Emily Brown",
-    issue: "Water leakage",
-    property: "Green Heights, Unit 4B",
-    date: "2023-05-15",
-    time: "16:22:37",
-  },
-  {
-    id: 5,
-    type: "service_provider_added",
-    name: "Quick Fix Plumbing",
-    service: "Plumbing",
-    date: "2023-05-14",
-    time: "11:05:19",
-  },
-]
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
 
-const pendingApprovals = [
-  {
-    id: 1,
-    type: "landlord_verification",
-    name: "Alice Johnson",
-    email: "alice@example.com",
-    documents: 3,
-    date: "2023-05-19",
-  },
-  {
-    id: 2,
-    type: "property_verification",
-    name: "Sunrise Apartments",
-    owner: "David Wilson",
-    documents: 5,
-    date: "2023-05-18",
-  },
-  {
-    id: 3,
-    type: "service_provider_verification",
-    name: "Elite Electricians",
-    service: "Electrical",
-    documents: 4,
-    date: "2023-05-17",
-  },
-  {
-    id: 4,
-    type: "agent_verification",
-    name: "Mark Thompson",
-    email: "mark@example.com",
-    documents: 3,
-    date: "2023-05-16",
-  },
-]
+    const result: ApiResponse = await response.json()
+
+    if (!result.success) {
+      throw new Error("API returned unsuccessful response")
+    }
+
+    return result.data
+  } catch (error) {
+    console.error("Error fetching system stats:", error)
+    throw error
+  }
+}
 
 const AdminDashboard: React.FC = () => {
-  const { theme, toggleTheme } = useTheme()
-  const { logout } = useAuth()
-  const navigate = useNavigate()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [stats, setStats] = useState<SystemStats | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedTimeRange, setSelectedTimeRange] = useState<keyof SystemStats["newUsers"]>("last7Days")
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      minimumFractionDigits: 0,
-    }).format(amount)
+  const loadStats = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await fetchSystemStats()
+      setStats(data)
+      setLastUpdated(new Date())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load system statistics")
+      console.error("Error loading stats:", err)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleLogout = async () => {
-    await logout()
-    navigate("/login")
+  useEffect(() => {
+    loadStats()
+  }, [])
+
+  // Auto-refresh every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(
+      () => {
+        loadStats()
+      },
+      5 * 60 * 1000,
+    ) // 5 minutes
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleRefresh = () => {
+    loadStats()
+  }
+
+  if (loading && !stats) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error && !stats) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
+          <button
+            onClick={handleRefresh}
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!stats) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <p className="text-gray-600 dark:text-gray-400">No data available</p>
+      </div>
+    )
+  }
+
+  const { totals, newUsers, activeUsersToday } = stats
+  const occupancyRate = totals.totalUnits > 0 ? Math.round((totals.occupiedUnits / totals.totalUnits) * 100) : 0
+
+  const timeRangeLabels = {
+    today: "Today",
+    last7Days: "Last 7 Days",
+    last14Days: "Last 14 Days",
+    last1Month: "Last Month",
+    last2Months: "Last 2 Months",
+    last6Months: "Last 6 Months",
+  }
+
+  const StatCard = ({
+    title,
+    value,
+    icon: Icon,
+    color = "blue",
+    subtitle,
+  }: {
+    title: string
+    value: number | string
+    icon: React.ComponentType<{ className?: string }>
+    color?: string
+    subtitle?: string
+  }) => {
+    const colorClasses = {
+      blue: "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400",
+      green: "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400",
+      purple: "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400",
+      orange: "bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400",
+      red: "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400",
+      gray: "bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400",
+    }
+
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{title}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{value.toLocaleString()}</p>
+            {subtitle && <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{subtitle}</p>}
+          </div>
+          <div className={`p-3 rounded-full ${colorClasses[color as keyof typeof colorClasses] || colorClasses.blue}`}>
+            <Icon className="h-6 w-6" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Mobile sidebar */}
-      <div className={`fixed inset-0 z-40 lg:hidden ${sidebarOpen ? "block" : "hidden"}`}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)}></div>
-        <div className="fixed inset-y-0 left-0 flex flex-col w-64 max-w-xs bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center">
-              <span className="text-xl font-bold text-primary-600 dark:text-primary-500">TenaHub</span>
-              <span className="ml-2 px-2 py-0.5 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs font-medium rounded">
-                ADMIN
-              </span>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">System Dashboard</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Overview of your TenaHub platform performance</p>
+        </div>
+        <div className="flex items-center space-x-4">
+          {lastUpdated && (
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Last updated: {lastUpdated.toLocaleTimeString()}
             </div>
-            <button
-              className="text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            <nav className="px-2 py-4 space-y-1">
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-md"
-              >
-                <BarChart className="w-5 h-5 mr-3" />
-                Dashboard
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Users className="w-5 h-5 mr-3" />
-                User Management
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Building className="w-5 h-5 mr-3" />
-                Properties
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <CreditCard className="w-5 h-5 mr-3" />
-                Payments
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Wrench className="w-5 h-5 mr-3" />
-                Service Providers
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Shield className="w-5 h-5 mr-3" />
-                Verifications
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Activity className="w-5 h-5 mr-3" />
-                Activity Logs
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <FileText className="w-5 h-5 mr-3" />
-                Reports
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Settings2 className="w-5 h-5 mr-3" />
-                System Settings
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <HelpCircle className="w-5 h-5 mr-3" />
-                Help & Support
-              </a>
-            </nav>
-          </div>
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-            <button
-              onClick={handleLogout}
-              className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500"
-            >
-              <LogOut className="w-5 h-5 mr-3" />
-              Sign out
-            </button>
-          </div>
+          )}
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="flex items-center px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+            Refresh
+          </button>
         </div>
       </div>
 
-      {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex flex-col flex-1 min-h-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-          <div className="flex items-center h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-            <span className="text-xl font-bold text-primary-600 dark:text-primary-500">TenaHub</span>
-            <span className="ml-2 px-2 py-0.5 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs font-medium rounded">
-              ADMIN
+      {/* Error banner if there's an error but we have cached data */}
+      {error && stats && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md p-4">
+          <p className="text-yellow-800 dark:text-yellow-200 text-sm">Warning: {error}. Showing cached data.</p>
+        </div>
+      )}
+
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          title="Total Users"
+          value={totals.totalUsers}
+          icon={Users}
+          color="blue"
+          subtitle={`${activeUsersToday} active today`}
+        />
+        <StatCard
+          title="Total Properties"
+          value={totals.totalProperties}
+          icon={Building}
+          color="green"
+          subtitle={`${totals.totalUnits} total units`}
+        />
+        <StatCard
+          title="Occupancy Rate"
+          value={`${occupancyRate}%`}
+          icon={Home}
+          color="purple"
+          subtitle={`${totals.occupiedUnits}/${totals.totalUnits} occupied`}
+        />
+        <StatCard
+          title="Maintenance Requests"
+          value={totals.maintenanceRequests}
+          icon={Wrench}
+          color={totals.maintenanceRequests > 0 ? "orange" : "gray"}
+          subtitle={totals.maintenanceRequests > 0 ? "Pending requests" : "No pending requests"}
+        />
+      </div>
+
+      {/* User Breakdown */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">User Breakdown</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <StatCard title="Landlords" value={totals.totalLandlords} icon={UserCog} color="blue" />
+          <StatCard title="Tenants" value={totals.totalTenants} icon={Users} color="green" />
+          <StatCard title="Agents" value={totals.totalAgents} icon={Users} color="purple" />
+          <StatCard title="Service Providers" value={totals.totalServiceProviders} icon={Wrench} color="orange" />
+          <StatCard title="Caretakers" value={totals.totalCaretakers} icon={UserCog} color="gray" />
+        </div>
+      </div>
+
+      {/* New User Registrations */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">New User Registrations</h2>
+          <select
+            value={selectedTimeRange}
+            onChange={(e) => setSelectedTimeRange(e.target.value as keyof SystemStats["newUsers"])}
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
+          >
+            {Object.entries(timeRangeLabels).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Landlords</p>
+                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                  {newUsers[selectedTimeRange].landlord || 0}
+                </p>
+              </div>
+              <UserCog className="h-8 w-8 text-blue-500" />
+            </div>
+          </div>
+
+          <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-green-600 dark:text-green-400">Tenants</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                  {newUsers[selectedTimeRange].tenant || 0}
+                </p>
+              </div>
+              <Users className="h-8 w-8 text-green-500" />
+            </div>
+          </div>
+
+          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Agents</p>
+                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                  {newUsers[selectedTimeRange].agent || 0}
+                </p>
+              </div>
+              <Users className="h-8 w-8 text-purple-500" />
+            </div>
+          </div>
+
+          <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Service Providers</p>
+                <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
+                  {newUsers[selectedTimeRange]["service-provider"] || 0}
+                </p>
+              </div>
+              <Wrench className="h-8 w-8 text-orange-500" />
+            </div>
+          </div>
+
+          <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Caretakers</p>
+                <p className="text-2xl font-bold text-gray-700 dark:text-gray-300">
+                  {newUsers[selectedTimeRange].caretaker || 0}
+                </p>
+              </div>
+              <UserCog className="h-8 w-8 text-gray-500" />
+            </div>
+          </div>
+        </div>
+
+        {/* Total new users for selected range */}
+        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              Total New Users ({timeRangeLabels[selectedTimeRange]})
+            </span>
+            <span className="text-lg font-bold text-gray-900 dark:text-white">
+              {Object.values(newUsers[selectedTimeRange]).reduce((sum, count) => sum + count, 0)}
             </span>
           </div>
-          <div className="flex flex-col flex-1 overflow-y-auto">
-            <nav className="flex-1 px-2 py-4 space-y-1">
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-md"
-              >
-                <BarChart className="w-5 h-5 mr-3" />
-                Dashboard
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Users className="w-5 h-5 mr-3" />
-                User Management
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Building className="w-5 h-5 mr-3" />
-                Properties
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <CreditCard className="w-5 h-5 mr-3" />
-                Payments
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Wrench className="w-5 h-5 mr-3" />
-                Service Providers
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Shield className="w-5 h-5 mr-3" />
-                Verifications
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Activity className="w-5 h-5 mr-3" />
-                Activity Logs
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <FileText className="w-5 h-5 mr-3" />
-                Reports
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <Settings2 className="w-5 h-5 mr-3" />
-                System Settings
-              </a>
-              <a
-                href="#"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-              >
-                <HelpCircle className="w-5 h-5 mr-3" />
-                Help & Support
-              </a>
-            </nav>
+        </div>
+      </div>
+
+      {/* Property & Unit Statistics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Property Statistics</h2>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-400">Total Properties</span>
+              <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                {totals.totalProperties.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-400">Total Units</span>
+              <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                {totals.totalUnits.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-400">Occupied Units</span>
+              <span className="text-lg font-semibold text-green-600 dark:text-green-400">
+                {totals.occupiedUnits.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-400">Vacant Units</span>
+              <span className="text-lg font-semibold text-orange-600 dark:text-orange-400">
+                {totals.vacantUnits.toLocaleString()}
+              </span>
+            </div>
+
+            {/* Occupancy Rate Progress Bar */}
+            <div className="mt-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-600 dark:text-gray-400">Occupancy Rate</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">{occupancyRate}%</span>
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${occupancyRate}%` }}
+                ></div>
+              </div>
+            </div>
           </div>
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-            <button
-              onClick={handleLogout}
-              className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500"
-            >
-              <LogOut className="w-5 h-5 mr-3" />
-              Sign out
-            </button>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">System Activity</h2>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-400">Active Users Today</span>
+              <span className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                {activeUsersToday.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-400">Pending Maintenance</span>
+              <span
+                className={`text-lg font-semibold ${
+                  totals.maintenanceRequests > 0
+                    ? "text-red-600 dark:text-red-400"
+                    : "text-green-600 dark:text-green-400"
+                }`}
+              >
+                {totals.maintenanceRequests.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-400">Occupancy Rate</span>
+              <span className="text-lg font-semibold text-green-600 dark:text-green-400">{occupancyRate}%</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-400">New Users ({timeRangeLabels[selectedTimeRange]})</span>
+              <span className="text-lg font-semibold text-purple-600 dark:text-purple-400">
+                {Object.values(newUsers[selectedTimeRange]).reduce((sum, count) => sum + count, 0)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="lg:pl-64 flex flex-col flex-1">
-        {/* Top navigation */}
-        <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white dark:bg-gray-800 shadow">
-          <button
-            type="button"
-            className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu className="h-6 w-6" />
+      {/* Quick Actions */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button className="flex items-center justify-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+            <Users className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
+            <span className="text-blue-700 dark:text-blue-300 font-medium">Manage Users</span>
           </button>
-          <div className="flex-1 flex justify-between px-4">
-            <div className="flex-1 flex items-center">
-              <div className="max-w-lg w-full lg:max-w-xs relative">
-                <label htmlFor="search" className="sr-only">
-                  Search
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="search"
-                    name="search"
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    placeholder="Search users, properties..."
-                    type="search"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="ml-4 flex items-center md:ml-6">
-              <button
-                type="button"
-                className="p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                onClick={toggleTheme}
-              >
-                {theme === "dark" ? (
-                  <span className="sr-only">Switch to light mode</span>
-                ) : (
-                  <span className="sr-only">Switch to dark mode</span>
-                )}
-                {theme === "dark" ? (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  </svg>
-                ) : (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                    />
-                  </svg>
-                )}
-              </button>
-
-              {/* Notification dropdown */}
-              <div className="ml-3 relative">
-                <button
-                  type="button"
-                  className="p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <Bell className="h-6 w-6" />
-                  <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-gray-800"></span>
-                </button>
-              </div>
-
-              {/* Profile dropdown */}
-              <div className="ml-3 relative">
-                <div>
-                  <button
-                    type="button"
-                    className="max-w-xs flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                  >
-                    <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src="https://randomuser.me/api/portraits/men/10.jpg"
-                      alt="Admin profile"
-                    />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <button className="flex items-center justify-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
+            <Building className="h-5 w-5 text-green-600 dark:text-green-400 mr-2" />
+            <span className="text-green-700 dark:text-green-300 font-medium">View Properties</span>
+          </button>
+          <button className="flex items-center justify-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors">
+            <Wrench className="h-5 w-5 text-orange-600 dark:text-orange-400 mr-2" />
+            <span className="text-orange-700 dark:text-orange-300 font-medium">Maintenance</span>
+          </button>
+          <button className="flex items-center justify-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
+            <BarChart3 className="h-5 w-5 text-purple-600 dark:text-purple-400 mr-2" />
+            <span className="text-purple-700 dark:text-purple-300 font-medium">View Reports</span>
+          </button>
         </div>
-
-        {/* Main content area */}
-        <main className="flex-1 pb-8">
-          <div className="bg-white dark:bg-gray-800 shadow">
-            <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
-              <div className="py-6 md:flex md:items-center md:justify-between">
-                <div className="flex-1 min-w-0">
-                  <h2 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
-                    Admin Dashboard
-                  </h2>
-                </div>
-                <div className="mt-4 flex md:mt-0 md:ml-4">
-                  <button
-                    type="button"
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                  >
-                    Export Reports
-                  </button>
-                  <button
-                    type="button"
-                    className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                  >
-                    System Settings
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              {/* System Overview */}
-              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">System Overview</h3>
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {/* Card 1 */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Users className="h-6 w-6 text-gray-400" />
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Users</dt>
-                          <dd>
-                            <div className="text-lg font-medium text-gray-900 dark:text-white">
-                              {systemStats.totalUsers}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card 2 */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Building className="h-6 w-6 text-gray-400" />
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                            Total Properties
-                          </dt>
-                          <dd>
-                            <div className="text-lg font-medium text-gray-900 dark:text-white">
-                              {systemStats.totalProperties}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card 3 */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Home className="h-6 w-6 text-gray-400" />
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                            Occupancy Rate
-                          </dt>
-                          <dd>
-                            <div className="text-lg font-medium text-gray-900 dark:text-white">
-                              {Math.round((systemStats.occupiedUnits / systemStats.totalUnits) * 100)}%
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card 4 */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <DollarSign className="h-6 w-6 text-gray-400" />
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                            Total Revenue
-                          </dt>
-                          <dd>
-                            <div className="text-lg font-medium text-gray-900 dark:text-white">
-                              {formatCurrency(financialStats.totalRevenue)}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* User Breakdown */}
-              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white mt-8 mb-4">User Breakdown</h3>
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {/* Card 1 */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <UserCog className="h-6 w-6 text-gray-400" />
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Landlords</dt>
-                          <dd>
-                            <div className="text-lg font-medium text-gray-900 dark:text-white">
-                              {systemStats.totalLandlords}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card 2 */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Users className="h-6 w-6 text-gray-400" />
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Tenants</dt>
-                          <dd>
-                            <div className="text-lg font-medium text-gray-900 dark:text-white">
-                              {systemStats.totalTenants}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card 3 */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Users className="h-6 w-6 text-gray-400" />
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Agents</dt>
-                          <dd>
-                            <div className="text-lg font-medium text-gray-900 dark:text-white">
-                              {systemStats.totalAgents}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card 4 */}
-                <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Wrench className="h-6 w-6 text-gray-400" />
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                            Service Providers
-                          </dt>
-                          <dd>
-                            <div className="text-lg font-medium text-gray-900 dark:text-white">
-                              {systemStats.totalServiceProviders}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Recent Activity and Pending Approvals */}
-              <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
-                {/* Recent Activity */}
-                <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
-                  <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">System Activity</h3>
-                  </div>
-                  <div className="px-4 py-5 sm:p-6">
-                    <div className="flow-root">
-                      <ul className="-my-5 divide-y divide-gray-200 dark:divide-gray-700">
-                        {recentActivities.map((activity) => (
-                          <li key={activity.id} className="py-4">
-                            <div className="flex items-center space-x-4">
-                              <div className="flex-shrink-0">
-                                {activity.type === "user_registration" ? (
-                                  <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                                    <UserCog className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                                  </div>
-                                ) : activity.type === "property_added" ? (
-                                  <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                                    <Building className="h-5 w-5 text-green-600 dark:text-green-400" />
-                                  </div>
-                                ) : activity.type === "payment" ? (
-                                  <div className="h-8 w-8 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
-                                    <CreditCard className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                                  </div>
-                                ) : activity.type === "maintenance" ? (
-                                  <div className="h-8 w-8 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center">
-                                    <Wrench className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-                                  </div>
-                                ) : (
-                                  <div className="h-8 w-8 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
-                                    <Wrench className="h-5 w-5 text-red-600 dark:text-red-400" />
-                                  </div>
-                                )}
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                  {activity.type === "user_registration"
-                                    ? `New ${activity.role}: ${activity.user}`
-                                    : activity.type === "property_added"
-                                      ? `New Property: ${activity.propertyName} (${activity.units} units)`
-                                      : activity.type === "payment"
-                                        ? `Payment: ${activity.tenant} to ${activity.landlord}`
-                                        : activity.type === "maintenance"
-                                          ? `Maintenance: ${activity.issue} at ${activity.property}`
-                                          : `New Service Provider: ${activity.name} (${activity.service})`}
-                                </p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                  {activity.date} at {activity.time}
-                                </p>
-                              </div>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="mt-6">
-                      <a
-                        href="#"
-                        className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                      >
-                        View all activity
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pending Approvals */}
-                <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
-                  <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Pending Approvals</h3>
-                  </div>
-                  <div className="px-4 py-5 sm:p-6">
-                    <div className="flow-root">
-                      <ul className="-my-5 divide-y divide-gray-200 dark:divide-gray-700">
-                        {pendingApprovals.map((approval) => (
-                          <li key={approval.id} className="py-4">
-                            <div className="flex items-center space-x-4">
-                              <div className="flex-shrink-0">
-                                {approval.type === "landlord_verification" ? (
-                                  <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                                    <UserCog className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                                  </div>
-                                ) : approval.type === "property_verification" ? (
-                                  <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                                    <Building className="h-5 w-5 text-green-600 dark:text-green-400" />
-                                  </div>
-                                ) : approval.type === "service_provider_verification" ? (
-                                  <div className="h-8 w-8 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center">
-                                    <Wrench className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-                                  </div>
-                                ) : (
-                                  <div className="h-8 w-8 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
-                                    <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                                  </div>
-                                )}
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                  {approval.type === "landlord_verification"
-                                    ? `Landlord: ${approval.name}`
-                                    : approval.type === "property_verification"
-                                      ? `Property: ${approval.name} (Owner: ${approval.owner})`
-                                      : approval.type === "service_provider_verification"
-                                        ? `Service Provider: ${approval.name} (${approval.service})`
-                                        : `Agent: ${approval.name}`}
-                                </p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                                  {approval.documents} documents • Submitted on {approval.date}
-                                </p>
-                              </div>
-                              <div>
-                                <button className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                                  Review
-                                </button>
-                              </div>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="mt-6">
-                      <a
-                        href="#"
-                        className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                      >
-                        View all approvals
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
       </div>
     </div>
   )

@@ -82,6 +82,8 @@ import CreateGigPage from "./features/service-provider/components/createGig.js"
 import ViewGigPage from "./features/service-provider/components/viewGig.js"
 import GigAnalyticsPage from "./features/service-provider/components/gigAnalytics.js"
 import EditGigPage from "./features/service-provider/components/editGig.js"
+import AdminDashboardLayout from "./features/admin/components/AdminDashboardLayout.js"
+import UsersPage from "./features/admin/pages/UserManagementPage.js"
 // -------- CaretakerRedirect Component --------
 // const CaretakerRedirect = () => {
 //   const { user } = useAuth()
@@ -417,13 +419,17 @@ const AppContent = () => {
 
       {/* Admin Dashboard */}
       <Route
-        path="/admin/dashboard"
+        path="/admin/dashboard*"
         element={
           <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminDashboard />
+            <AdminDashboardLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<AdminDashboard/>} />
+                <Route path="users" element={<UsersPage/>} />
+
+      </Route>
 
       {/* Redirects */}
       <Route path="/landlord/properties" element={<Navigate to="/landlord/dashboard/properties" replace />} />
