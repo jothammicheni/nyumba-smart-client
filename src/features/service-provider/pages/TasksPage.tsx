@@ -1,37 +1,106 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { getAuthHeaders } from '../../../services/authService.js'
-import { Briefcase, CheckCircle, Clock, MapPin } from 'lucide-react'
-import { Loader } from '../../../components/Loader.js'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { getAuthHeaders } from '../../../services/authService';
+import { Briefcase, CheckCircle, Clock, MapPin, ArrowRight, Calendar } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../../../components/ui/card';
+import { Badge } from '../../../components/ui/badge';
+import { Button } from '../../../components/ui/button';
+import { toast } from 'sonner';
+
+interface Job {
+  id: number;
+  client: string;
+  address: string;
+  service: string;
+  date: string;
+  status: 'scheduled' | 'in-progress' | 'completed';
+  amount: number;
+}
+
+interface ProviderStats {
+  totalTasks: number;
+  completedTasks: number;
+  completionRate: number;
+  pendingTasks?: number;
+}
 
 export default function Tasks() {
-  const [loading, setLoading] = useState(true)
-  const [providerInfo, setProviderInfo] = useState({
-    stats: {
-      totalTasks: 0,
-      completedTasks: 0,
-      completionRate: 0,
-    }
-  })
+  const [loading, setLoading] = useState(true);
+  const [providerStats, setProviderStats] = useState<ProviderStats>({
+    totalTasks: 0,
+    completedTasks: 0,
+    completionRate: 0,
+    pendingTasks: 0
+  });
+
+  const [activeJobs, setActiveJobs] = useState<Job[]>([]);
+  const [completedJobs, setCompletedJobs] = useState<Job[]>([]);
 
   useEffect(() => {
-    const fetchProviderInfo = async () => {
-      setLoading(true)
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const response = await axios.get('/api/providers/info', {
+        // Fetch stats
+        const statsResponse = await axios.get('/api/providers/info', {
           headers: getAuthHeaders(),
-          responseType: 'json'
-        })
-        console.log('API Response Tasks:', response.data.data)
-        setProviderInfo(response.data.data)
+        });
+        setProviderStats(statsResponse.data.data.stats);
+
+        const mockActiveJobs: Job[] = [
+          {
+            id: 1,
+            client: "Sunshine Apartments",
+            address: "123 Moi Avenue, Nairobi",
+            service: "WiFi Installation",
+            date: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
+            status: "scheduled",
+            amount: 15000,
+          },
+          {
+            id: 2,
+            client: "Green Valley Residences",
+            address: "456 Kenyatta Road, Nairobi",
+            service: "Network Troubleshooting",
+            date: new Date().toISOString(), // Today
+            status: "in-progress",
+            amount: 5000,
+          },
+        ];
+
+        const mockCompletedJobs: Job[] = [
+          {
+            id: 1,
+            client: "Mountain View Apartments",
+            address: "321 Mombasa Road, Nairobi",
+            service: "WiFi Installation",
+            date: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days ago
+            status: "completed",
+            amount: 15000,
+          },
+          {
+            id: 2,
+            client: "Serene Gardens",
+            address: "654 Ngong Road, Nairobi",
+            service: "Router Replacement",
+            date: new Date(Date.now() - 86400000 * 5).toISOString(), // 5 days ago
+            status: "completed",
+            amount: 8000,
+          },
+        ];
+
+        setActiveJobs(mockActiveJobs);
+        setCompletedJobs(mockCompletedJobs);
+        
       } catch (error) {
-        console.error("Error fetching provider info:", error)
+        console.error("Error fetching data:", error);
+        toast.error('Failed to load job data');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    fetchProviderInfo()
-  }, [])
+    };
+
+    fetchData();
+  }, []);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-KE", {
@@ -42,248 +111,193 @@ export default function Tasks() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+    const date = new Date(dateString);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return "Today";
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return "Tomorrow";
+    } else {
+      return date.toLocaleDateString("en-US", {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+      });
+    }
+  };
+
+  const handleJobAction = (jobId: number, action: 'start' | 'complete') => {
+    toast.info(`Job ${jobId} ${action === 'start' ? 'started' : 'completed'}`);
+  };
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[1, 2, 3].map(i => (
+          <Card key={i}>
+            <CardHeader>
+              <div className="h-6 w-1/2 bg-gray-200 rounded animate-pulse" />
+            </CardHeader>
+            <CardContent>
+              <div className="h-8 w-3/4 bg-gray-200 rounded animate-pulse" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
   }
 
-  if (loading) return <div><Loader/></div>
-
-  const activeJobs = [
-    {
-      id: 1,
-      client: "Sunshine Apartments",
-      address: "123 Moi Avenue, Nairobi",
-      service: "WiFi Installation",
-      date: "2023-05-20",
-      status: "scheduled",
-      amount: 15000,
-    },
-    {
-      id: 2,
-      client: "Green Valley Residences",
-      address: "456 Kenyatta Road, Nairobi",
-      service: "Network Troubleshooting",
-      date: "2023-05-18",
-      status: "in-progress",
-      amount: 5000,
-    },
-    {
-      id: 3,
-      client: "Riverside Homes",
-      address: "789 Uhuru Highway, Nairobi",
-      service: "WiFi Upgrade",
-      date: "2023-05-25",
-      status: "scheduled",
-      amount: 12000,
-    },
-  ]
-
-  const completedJobs = [
-    {
-      id: 1,
-      client: "Mountain View Apartments",
-      address: "321 Mombasa Road, Nairobi",
-      service: "WiFi Installation",
-      date: "2023-05-10",
-      amount: 15000,
-    },
-    {
-      id: 2,
-      client: "Serene Gardens",
-      address: "654 Ngong Road, Nairobi",
-      service: "Router Replacement",
-      date: "2023-05-05",
-      amount: 8000,
-    },
-    {
-      id: 3,
-      client: "Urban Heights",
-      address: "987 Thika Road, Nairobi",
-      service: "Network Setup",
-      date: "2023-04-28",
-      amount: 20000,
-    },
-  ]
-
   return (
-    <>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {/* Card 1 */}
-        <div className="bg-slate-100 dark:bg-gray-900 overflow-hidden shadow-md rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-primary-600/30 dark:bg-primary-600/30 rounded-full flex items-center justify-center mr-4">
-                <Briefcase className="w-6 h-6 text-primary-600 dark:text-primary-600" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Jobs</dt>
-                  <dd>
-                    <div className="text-lg font-medium text-gray-900 dark:text-white">
-                      {providerInfo?.stats?.totalTasks ?? 0}
-                    </div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className='dark:bg-gray-900/50 shadow-sm hover:shadow-md transition-shadow overflow-hidden'>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
+            <Briefcase className="h-4 w-4 text-primary-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{providerStats.totalTasks}</div>
+            <p className="text-xs text-muted-foreground">
+              All assigned jobs
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Card 2 */}
-        <div className="bg-white dark:bg-gray-900 overflow-hidden shadow-md rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-primary-600/30 dark:bg-primary-600/30 rounded-full flex items-center justify-center mr-4">
-                <CheckCircle className="w-6 h-6 text-primary-600 dark:text-primary-600" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                    Completed Jobs
-                  </dt>
-                  <dd>
-                    <div className="text-lg font-medium text-gray-900 dark:text-white">
-                      {providerInfo?.stats?.completedTasks ?? 0}
-                    </div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Card className='dark:bg-gray-900/50 shadow-sm hover:shadow-md transition-shadow overflow-hidden'>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Completed Jobs</CardTitle>
+            <CheckCircle className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{providerStats.completedTasks}</div>
+            <p className="text-xs text-muted-foreground">
+              {providerStats.completionRate}% completion rate
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Card 3 */}
-        <div className="bg-white dark:bg-gray-900 overflow-hidden shadow-md rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-primary-600/30 dark:bg-primary-600/30 rounded-full flex items-center justify-center mr-4">
-                <Clock className="w-6 h-6 text-primary-600 dark:text-primary-600" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                    Pending Jobs
-                  </dt>
-                  <dd>
-                    <div className="text-lg font-medium text-gray-900 dark:text-white">
-                      {providerInfo?.stats?.totalTasks - providerInfo?.stats?.completedTasks || '0'}
-                    </div>
-                  </dd>
-                </dl>
-              </div>
+        <Card className='dark:bg-gray-900/50 shadow-sm hover:shadow-md transition-shadow overflow-hidden'>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Pending Jobs</CardTitle>
+            <Clock className="h-4 w-4 text-yellow-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {providerStats.totalTasks - providerStats.completedTasks}
             </div>
-          </div>
-        </div>
+            <p className="text-xs text-muted-foreground">
+              Currently active
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Active jobs */}
-      <div className="mt-8 bg-slate-100 dark:bg-gray-900 shadow rounded-lg">
-        <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-primary-600/20 flex justify-between items-center">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Active Jobs</h3>
-          <a href="#"
-            className="text-sm font-medium text-primary-600 hover:text-primary-600 dark:hover:bg-primary-600/20 p-2 rounded">
-            View all
-          </a>
-        </div>
-        <div className="px-4 py-5 sm:p-6">
-          <div className="flow-root">
-            <ul className="-my-5 divide-y divide-gray-200 dark:divide-primary-600/10">
-              {activeJobs.map((job) => (
-                <li key={job.id} className="py-5">
-                  <div className="flex flex-col md:flex-row md:items-center">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center mb-1">
-                        <p className="text-lg font-medium text-gray-900 dark:text-white truncate">
-                          {job.service}
-                        </p>
-                        <span
-                          className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                  ${job.status === "scheduled"
-                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                              : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                            }`}
-                        >
-                          {job.status === "scheduled" ? "Scheduled" : "In Progress"}
-                        </span>
+      {/* Active Jobs */}
+      <Card className='dark:bg-gray-900/50 shadow-sm hover:shadow-md transition-shadow overflow-hidden'>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Active Jobs</CardTitle>
+              <CardDescription className='text-sm my-2'>Your current and upcoming assignments</CardDescription>
+            </div>
+            <Button variant="ghost" size="sm" className='dark:bg-primary-600/20 hover:dark:bg-primary-600/30'>
+              View all <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {activeJobs.length > 0 ? (
+              activeJobs.map((job) => (
+                <div key={job.id} className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 rounded-full bg-primary-100 dark:bg-primary-900/50">
+                      <Calendar className="h-5 w-5 text-primary-600" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium">{job.service}</h3>
+                        <Badge variant={job.status === 'scheduled' ? 'secondary' : 'default'}>
+                          {job.status === 'scheduled' ? 'Scheduled' : 'In Progress'}
+                        </Badge>
                       </div>
-                      <p className="text-sm text-gray-900 dark:text-white mb-1">
-                        <span className="font-medium">Client:</span> {job.client}
-                      </p>
-                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <MapPin className="flex-shrink-0 mr-1.5 h-4 w-4 text-primary-600 dark:text-primary-600" />
+                      <p className="text-sm text-muted-foreground">{job.client}</p>
+                      <div className="flex items-center mt-1 text-sm text-muted-foreground">
+                        <MapPin className="h-4 w-4 mr-1" />
                         {job.address}
                       </div>
                     </div>
-                    <div className="mt-4 md:mt-0 md:ml-6 flex flex-col items-end">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {formatCurrency(job.amount)}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(job.date)}</p>
-                      <div className="mt-2">
-                        <button
-                          type="button"
-                          className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        >
-                          {job.status === "scheduled" ? "Start Job" : "Complete Job"}
-                        </button>
-                      </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <p className="font-semibold">{formatCurrency(job.amount)}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {formatDate(job.date)}
+                    </p>
+                    <Button
+                      size="sm"
+                      onClick={() => handleJobAction(job.id, job.status === 'scheduled' ? 'start' : 'complete')}
+                    >
+                      {job.status === 'scheduled' ? 'Start Job' : 'Complete Job'}
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                No active jobs at the moment
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Completed Jobs */}
+      <Card className='dark:bg-gray-900/50 shadow-sm hover:shadow-md transition-shadow overflow-hidden'>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Recent Completed Jobs</CardTitle>
+              <CardDescription className='text-sm my-2'>Your recently finished assignments</CardDescription>
+            </div>
+            <Button variant="ghost" size="sm" className='dark:bg-primary-600/20 hover:dark:bg-primary-600/30'>
+              View all <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {completedJobs.length > 0 ? (
+              completedJobs.map((job) => (
+                <div key={job.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/50">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{job.service}</h3>
+                      <p className="text-sm text-muted-foreground">{job.client}</p>
                     </div>
                   </div>
-                </li>
-              ))}
-            </ul>
+                  <div className="text-right">
+                    <p className="font-semibold">{formatCurrency(job.amount)}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {formatDate(job.date)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                No completed jobs to show
+              </div>
+            )}
           </div>
-        </div>
-      </div>
-
-      {/* Recent Completed Jobs and Client Reviews */}
-      <div className="my-8 grid grid-cols-1 gap-8 lg:grid-cols-1">
-        {/* Recent Completed Jobs */}
-        <div className="bg-slate-100 dark:bg-gray-900 shadow-md rounded-lg">
-          <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-primary-600/20 flex justify-between items-center">
-            <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
-              Recent Completed Jobs
-            </h3>
-            <a href="#"
-              className="text-sm font-medium text-primary-600 hover:text-primary-600 dark:hover:bg-primary-600/20 p-2 rounded">
-              View all
-            </a>
-          </div>
-          <div className="px-4 py-5 sm:p-6">
-            <div className="flow-root">
-              <ul className="-my-5 divide-y divide-gray-200 dark:divide-primary-600/10">
-                {completedJobs.map((job) => (
-                  <li key={job.id} className="py-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
-                        <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                          <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                        </div>
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                          {job.service}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {job.client} - {formatDate(job.date)}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {formatCurrency(job.amount)}
-                        </p>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  )
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

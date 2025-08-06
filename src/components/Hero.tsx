@@ -3,12 +3,14 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { Building, Users, UserPlus, ArrowRight } from "lucide-react"
+import { Building, Users, UserPlus, ArrowRight, Play } from "lucide-react"
 import { motion, AnimatePresence, easeInOut } from "framer-motion"
+import VideoModal from "./ViewModal"
 
 const Hero: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isVideoOpen, setIsVideoOpen] = useState(false)
 
   const backgroundImages = [
     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1973&q=80",
@@ -186,13 +188,21 @@ const Hero: React.FC = () => {
               </motion.div>
 
               <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-                <Link
-                  to="/about"
-                  className="inline-flex items-center px-8 py-3 text-base font-medium rounded-xl text-primary-600 bg-white/90 backdrop-blur-sm hover:bg-white md:py-4 md:text-lg md:px-10 transition-all duration-300 shadow-lg hover:shadow-xl"
+                <button
+                  onClick={() => setIsVideoOpen(true)}
+                  className="inline-flex items-center px-8 py-3 gap-3 text-base font-medium rounded-xl text-primary-600 bg-white/90 backdrop-blur-sm hover:bg-white md:py-4 md:text-lg md:px-10 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                  Learn More
-                </Link>
+                  <Play size={20} className="text-gray-900" />
+                  Watch Demo
+                </button>
               </motion.div>
+
+              {/* Add the VideoModal at the bottom of your Hero component */}
+              <VideoModal
+                isOpen={isVideoOpen}
+                onClose={() => setIsVideoOpen(false)}
+                videoSrc="/videos/demo.mp4" 
+              />
             </motion.div>
           </div>
 
@@ -271,27 +281,9 @@ const Hero: React.FC = () => {
               })}
             </div>
           </motion.div>
+
         </motion.div>
       </div>
-
-      {/* Slide Indicators */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 1 }}
-      >
-        {backgroundImages.map((_, index) => (
-          <motion.button
-            key={index}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide ? "bg-white scale-125" : "bg-white/50 hover:bg-white/75"
-              }`}
-            onClick={() => setCurrentSlide(index)}
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
-          />
-        ))}
-      </motion.div>
 
       {/* Scroll Indicator */}
       <motion.div
