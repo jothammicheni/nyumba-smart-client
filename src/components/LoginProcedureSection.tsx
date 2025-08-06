@@ -106,7 +106,7 @@ const LoginProcedureSection: React.FC = () => {
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
             Join thousands of users who are already managing their properties efficiently
           </p>
-          <Button asChild size="lg" className="bg-gray-900 hover:bg-gray-950">
+          <Button asChild size="lg" className="bg:gray-900 hover:gray-950">
             <Link to="/register">
               {" "}
               Create Your Account Now
