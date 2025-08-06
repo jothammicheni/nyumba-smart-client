@@ -1,53 +1,36 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
+import { Dialog, DialogContent } from "./ui/dialog"
 import { X } from "lucide-react"
+import { Button } from "./ui/button"
 
 interface VideoModalProps {
   isOpen: boolean
   onClose: () => void
-  videoSrc: string
+  youtubeId: string
 }
 
-const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, videoSrc }) => {
+export const VideoModal = ({ isOpen, onClose, youtubeId }: VideoModalProps) => {
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/10 backdrop-blur-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <motion.div
-            className="relative w-full max-w-4xl border-b rounded border-primary-600/30 mx-4"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-4xl bg-transparent border-none shadow-none">
+        <div className="relative aspect-video w-full">
+          <Button
+            onClick={onClose}
+            className="absolute -right-2 -top-10 z-10 h-8 w-8 rounded-full p-0"
+            variant="ghost"
           >
-            <button
-              onClick={onClose}
-              className="absolute -top-12 right-0 text-white hover:text-primary-400 transition-colors"
-            >
-              <X size={24} />
-            </button>
-            
-            <div className="aspect-w-16 aspect-h-9 bg-gray-900 rounded-lg overflow-hidden">
-              <video 
-                controls 
-                autoPlay 
-                muted
-                className="w-full h-full object-cover"
-              >
-                <source src={videoSrc} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            <X className="h-5 w-5 text-white" />
+          </Button>
+          <iframe
+            className="h-full w-full rounded-lg"
+            src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1`}
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-export default VideoModal
