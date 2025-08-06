@@ -9,12 +9,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/
 import { Button } from "./ui/button"
 import { Badge } from "./ui/badge"
 import { motion } from "framer-motion"
-import VideoModal from "./ViewModal"
+import { VideoModal } from "./ViewModal"
 
 const CTASection: React.FC = () => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
   const [activeVideo, setActiveVideo] = useState<string | null>(null)
+
+  const youtubeVideoId = "7YHIRGpONBU"
 
   // Video demo URLs (replace with your actual video paths)
   const demoVideos = {
@@ -125,7 +127,7 @@ const CTASection: React.FC = () => {
                     className="flex items-center justify-center gap-2 px-6 py-3 bg-white rounded-lg shadow-lg"
                   >
                     <Play className="h-5 w-5 text-primary-600" />
-                    <span className="font-medium">Watch Demo</span>
+                    <span className="font-medium text-gray-900">Watch Demo</span>
                   </motion.div>
                 </div>
               </div>
@@ -204,7 +206,7 @@ const CTASection: React.FC = () => {
         <VideoModal
           isOpen={!!activeVideo}
           onClose={() => setActiveVideo(null)}
-          videoSrc="/videos/demo.mp4"
+          youtubeId={youtubeVideoId}
         />
       </div>
     </section>
