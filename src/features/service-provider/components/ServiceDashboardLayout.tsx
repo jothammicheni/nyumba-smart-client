@@ -33,7 +33,7 @@ export const ServicetDashboardLayout: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-100 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 overflow-hidden">
             {/* Mobile sidebar */}
             <div className={`fixed inset-0 z-40 lg:hidden ${sidebarOpen ? "block" : "hidden"}`}>
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)}></div>
@@ -60,7 +60,7 @@ export const ServicetDashboardLayout: React.FC = () => {
                             <Link
                                 to="manage/gigs"
                                 onClick={handleNavClick}
-                                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/service-provider/dashboard")}`}>
+                                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/service-provider/dashboard/manage/gigs")}`}>
                                 <Home className="w-5 h-5 mr-3" /> Manage Gigs
                             </Link>
                             <Link
@@ -113,7 +113,7 @@ export const ServicetDashboardLayout: React.FC = () => {
                             <Link
                                 to="manage/gigs"
                                 onClick={handleNavClick}
-                                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/service-provider/dashboard")}`}>
+                                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive("/service-provider/dashboard/manage/gigs")}`}>
                                 <Home className="w-5 h-5 mr-3" /> Manage Gigs
                             </Link>
                             <Link
@@ -152,7 +152,7 @@ export const ServicetDashboardLayout: React.FC = () => {
 
             {/* Main content */}
             <div className="flex flex-col flex-1 lg:pl-64">
-                <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-gradient-to-br from-primary-600/10 via-white to-blue-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950">
+                <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-gradient-to-br from-gray-100 via-white to-gray-100 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60 overflow-hidden">
                     <button
                         type="button"
                         className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 lg:hidden"
@@ -206,22 +206,6 @@ export const ServicetDashboardLayout: React.FC = () => {
                                     <span className="sr-only">View notifications</span>
                                     <Bell className="h-6 w-6" />
                                 </button>
-                            </div>
-
-                            {/* Profile dropdown */}
-                            <div className="ml-3 relative">
-                                <div>
-                                    <button
-                                        type="button"
-                                        className="max-w-xs flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                                        <span className="sr-only">Open user menu</span>
-                                        <img
-                                            className="h-8 w-8 rounded-full"
-                                            src="https://randomuser.me/api/portraits/women/44.jpg"
-                                            alt="User profile"
-                                        />
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>

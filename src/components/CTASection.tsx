@@ -1,15 +1,30 @@
+"use client"
+
 import type React from "react"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { useInView } from "framer-motion"
 import { Link } from "react-router-dom"
-import { Building, CreditCard, Users, Shield, ArrowRight, Wifi, Wrench, Zap, CircleDot } from "lucide-react"
+import { Building, CreditCard, Users, Shield, ArrowRight, Wifi, Wrench, Zap, CircleDot, Play } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card"
 import { Button } from "./ui/button"
 import { Badge } from "./ui/badge"
+import { motion } from "framer-motion"
+import { VideoModal } from "./ViewModal"
 
 const CTASection: React.FC = () => {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const [activeVideo, setActiveVideo] = useState<string | null>(null)
+
+  const youtubeVideoId = "7YHIRGpONBU"
+
+  // Video demo URLs (replace with your actual video paths)
+  const demoVideos = {
+    propertyManagement: "/videos/property-management-demo.mp4",
+    digitalSecureMobilePayments: "/videos/payments-demo.mp4",
+    advancedTenantManagement: "/videos/tenant-portal-demo.mp4",
+    profitableReferralSystem: "/videos/referral-demo.mp4"
+  }
 
   // Unsplash image URLs
   const unsplashImages = {
@@ -26,7 +41,8 @@ const CTASection: React.FC = () => {
       description: "End-to-end solutions for landlords and property managers",
       longDescription: "Our comprehensive property management tools help you automate routine tasks, track vacancies, and manage leases efficiently.",
       image: unsplashImages.propertyMgmt,
-      features: ["Automated rent collection", "Maintenance tracking", "Financial reporting"]
+      features: ["Automated rent collection", "Maintenance tracking", "Financial reporting"],
+      videoKey: "propertyManagement"
     },
     {
       icon: CreditCard,
@@ -34,7 +50,8 @@ const CTASection: React.FC = () => {
       description: "Secure, instant payment processing via M-Pesa",
       longDescription: "Streamline your rent collection with our seamless M-Pesa integration with automated receipts and real-time notifications.",
       image: unsplashImages.digitalPayments,
-      features: ["Automated receipts", "Payment reminders", "Transaction history"]
+      features: ["Automated receipts", "Payment reminders", "Transaction history"],
+      videoKey: "digitalSecureMobilePayments"
     },
     {
       icon: Users,
@@ -42,7 +59,8 @@ const CTASection: React.FC = () => {
       description: "Modern portal for tenant convenience",
       longDescription: "Enhance tenant experience with our self-service portal available 24/7 from any device.",
       image: unsplashImages.tenantServices,
-      features: ["Maintenance requests", "Document storage", "Direct messaging"]
+      features: ["Maintenance requests", "Document storage", "Direct messaging"],
+      videoKey: "advancedTenantManagement"
     },
     {
       icon: Users,
@@ -50,7 +68,8 @@ const CTASection: React.FC = () => {
       description: "Extensive network of trusted service providers",
       longDescription: "Build a sustainable income stream with our comprehensive referral program and partnership opportunities.",
       image: unsplashImages.referralServices,
-      features: ["Maintenance requests", "Document storage", "Direct messaging"]
+      features: ["Maintenance requests", "Document storage", "Direct messaging"],
+      videoKey: "profitableReferralSystem"
     }
   ]
 
@@ -60,6 +79,10 @@ const CTASection: React.FC = () => {
     { icon: Zap, title: "Electricians", badge: "Certified" },
     { icon: Shield, title: "Security", badge: "Trusted" }
   ]
+
+  const handleVideoOpen = (videoKey: string) => {
+    setActiveVideo(demoVideos[videoKey as keyof typeof demoVideos])
+  }
 
   return (
     <section ref={ref} className="py-20 bg-gradient-to-br from-white via-white to-gray-100 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
@@ -84,13 +107,29 @@ const CTASection: React.FC = () => {
               className={`grid grid-cols-1 lg:grid-cols-2 gap-8 p-0 overflow-hidden dark:bg-gray-950/40 transition-opacity duration-500 ${isInView ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: `${index * 100}ms` }}
             >
-              <div className={`${index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'} h-full`}>
+              <div
+                className={`${index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'} h-full relative group cursor-pointer`}
+              >
                 <img
                   src={service.image}
                   alt={service.title}
-                  className="w-full h-full object-cover hover:scale-105 duration-300 ease-in-out"
+                  className="w-full h-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-100"
                   loading="lazy"
                 />
+                <div
+                  className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                  onClick={() => handleVideoOpen(service.videoKey)}
+                >
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-white rounded-lg shadow-lg"
+                  >
+                    <Play className="h-5 w-5 text-primary-600" />
+                    <span className="font-medium text-gray-900">Watch Demo</span>
+                  </motion.div>
+                </div>
               </div>
               <div className={`${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'} p-8`}>
                 <div className="flex items-center mb-6">
@@ -162,6 +201,13 @@ const CTASection: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Video Modal */}
+        <VideoModal
+          isOpen={!!activeVideo}
+          onClose={() => setActiveVideo(null)}
+          youtubeId={youtubeVideoId}
+        />
       </div>
     </section>
   )

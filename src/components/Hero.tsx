@@ -1,14 +1,21 @@
 "use client"
 
 import type React from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Link } from "react-router-dom"
-import { Building, Users, UserPlus, ArrowRight } from "lucide-react"
+import { Building, Users, UserPlus, ArrowRight, Play, CircleChevronDown, CircleChevronUp } from "lucide-react"
 import { motion, AnimatePresence, easeInOut } from "framer-motion"
+import { VideoModal } from "./ViewModal"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./ui/card"
 
 const Hero: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isVideoOpen, setIsVideoOpen] = useState(false)
+  const [showUpArrow, setShowUpArrow] = useState(false)
+  const heroRef = useRef<HTMLDivElement>(null)
+
+  const youtubeVideoId = "7YHIRGpONBU"
 
   const backgroundImages = [
     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1973&q=80",
@@ -50,6 +57,33 @@ const Hero: React.FC = () => {
     return () => clearInterval(interval)
   }, [backgroundImages.length])
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > window.innerHeight / 2) {
+        setShowUpArrow(true)
+      } else {
+        setShowUpArrow(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollDown = () => {
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: 'smooth'
+    })
+  }
+
+  const scrollUp = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -74,27 +108,6 @@ const Hero: React.FC = () => {
     },
   }
 
-  const cardVariants = {
-    hidden: { opacity: 0, x: 50, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      scale: 1,
-      transition: {
-        duration: 0.5,
-        ease: easeInOut,
-      },
-    },
-    hover: {
-      scale: 1.05,
-      y: -5,
-      transition: {
-        duration: 0.2,
-        ease: easeInOut,
-      },
-    },
-  }
-
   const buttonVariants = {
     hover: {
       scale: 1.05,
@@ -109,7 +122,7 @@ const Hero: React.FC = () => {
   }
 
   return (
-    <div className="relative h-screen overflow-hidden">
+    <div className="relative h-screen overflow-hidden" ref={heroRef}>
       {/* Animated Background Images */}
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
@@ -186,129 +199,112 @@ const Hero: React.FC = () => {
               </motion.div>
 
               <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-                <Link
-                  to="/about"
-                  className="inline-flex items-center px-8 py-3 text-base font-medium rounded-xl text-primary-600 bg-white/90 backdrop-blur-sm hover:bg-white md:py-4 md:text-lg md:px-10 transition-all duration-300 shadow-lg hover:shadow-xl"
+                <button
+                  onClick={() => setIsVideoOpen(true)}
+                  className="inline-flex items-center px-8 py-3 gap-3 text-base font-medium rounded-xl text-primary-600 bg-white/90 backdrop-blur-sm hover:bg-white md:py-4 md:text-lg md:px-10 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                  Learn More
-                </Link>
+                  <Play size={20} className="text-gray-900" />
+                  Watch Demo
+                </button>
               </motion.div>
             </motion.div>
           </div>
 
           {/* Right side - User role options */}
           <motion.div className="hidden lg:flex flex-col gap-6" variants={itemVariants}>
-            <motion.div
-              className="text-center text-white text-2xl font-bold mb-2"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              Join Us As
-            </motion.div>
-
-            <div className="grid grid-cols-1 gap-6">
-              {userRoles.map((roleData, index) => {
-                const IconComponent = roleData.icon
-                return (
-                  <motion.div
-                    key={roleData.role}
-                    variants={cardVariants}
-                    whileHover="hover"
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ delay: 0.6 + index * 0.1 }}
-                  >
-                    <Link
-                      to={`/register?role=${roleData.role}`}
-                      className="block bg-white/10 backdrop-blur-md hover:bg-white/20 p-6 rounded-2xl border border-white/20 transform transition-all duration-300 group relative overflow-hidden"
+            <Card className="shadow-lg dark:bg-gray-900/70 backdrop-blur-sm border border-gray-100/20 dark:border-gray-800/50">
+              <CardHeader className="text-center pb-2">
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Join Our Community
+                </CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">
+                  Select your role to get started
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 gap-4 p-6 pt-0">
+                {userRoles.map((roleData, index) => {
+                  const IconComponent = roleData.icon;
+                  return (
+                    <motion.div
+                      key={roleData.role}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 * index }}
                     >
-                      {/* Animated Background Gradient */}
-                      <motion.div
-                        className={`absolute inset-0 bg-gradient-to-r ${roleData.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-                        initial={{ scale: 0, rotate: 45 }}
-                        whileHover={{ scale: 1.5, rotate: 0 }}
-                        transition={{ duration: 0.3 }}
-                      />
-
-                      <div className="flex items-center relative z-10">
-                        <motion.div
-                          className={`bg-gradient-to-r ${roleData.color} p-3 rounded-full mr-4 group-hover:scale-110 transition-transform duration-300`}
-                          whileHover={{ rotate: 360 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <IconComponent className="h-8 w-8 text-white" />
-                        </motion.div>
-                        <div>
-                          <motion.h3
-                            className="text-xl font-bold text-white mb-1"
-                            initial={{ opacity: 0.8 }}
-                            whileHover={{ opacity: 1 }}
-                          >
-                            {roleData.title}
-                          </motion.h3>
-                          <motion.p
-                            className="text-gray-200 group-hover:text-white transition-colors duration-300"
-                            initial={{ opacity: 0.7 }}
-                            whileHover={{ opacity: 1 }}
-                          >
-                            {roleData.description}
-                          </motion.p>
-                        </div>
-                      </div>
-
-                      {/* Hover Arrow */}
-                      <motion.div
-                        className="absolute top-1/2 right-4 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        initial={{ x: -10 }}
-                        whileHover={{ x: 0 }}
+                      <Link
+                        to={`/register?role=${roleData.role}`}
+                        className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 rounded-xl"
                       >
-                        <ArrowRight className="h-5 w-5 text-white" />
-                      </motion.div>
-                    </Link>
-                  </motion.div>
-                )
-              })}
-            </div>
+                        <Card className="h-full flex items-center hover:scale-105 p-5 rounded-xl border border-gray-200/50 dark:border-gray-800 hover:border-primary-500/30 transition-all duration-300 group hover:shadow-md bg-white dark:bg-gray-900">
+                          {/* Icon with subtle hover effect */}
+                          <div className={`bg-gradient-to-r ${roleData.color} p-3 rounded-xl mr-4 transition-all duration-300 group-hover:scale-105`}>
+                            <IconComponent className="h-6 w-6 text-white" />
+                          </div>
+
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                              {roleData.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
+                              {roleData.description}
+                            </p>
+                          </div>
+
+                          {/* Arrow with simple hover animation */}
+                          <div className="ml-4 text-primary-600 dark:text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <ArrowRight className="h-5 w-5" />
+                          </div>
+                        </Card>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </CardContent>
+            </Card>
           </motion.div>
         </motion.div>
       </div>
 
-      {/* Slide Indicators */}
+      {/* Floating Scroll Arrows */}
       <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 1 }}
-      >
-        {backgroundImages.map((_, index) => (
-          <motion.button
-            key={index}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide ? "bg-white scale-125" : "bg-white/50 hover:bg-white/75"
-              }`}
-            onClick={() => setCurrentSlide(index)}
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
-          />
-        ))}
-      </motion.div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-8 right-8 z-20"
+        className="fixed bottom-8 right-8 z-20 flex flex-col gap-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.5 }}
       >
-        <motion.div
-          className="flex flex-col items-center text-white/70"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+        {/* Down Arrow - Always visible */}
+        <motion.button
+          onClick={scrollDown}
+          className="p-3 rounded-full bg-white backdrop-blur-sm hover:bg-white/90 transition-colors"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
-          <span className="text-sm mb-2 rotate-90 origin-center">Scroll</span>
-          <div className="w-px h-8 bg-white/50"></div>
-        </motion.div>
+          <CircleChevronDown className="h-6 w-6 text-gray-900" />
+        </motion.button>
+
+        {/* Up Arrow - Only shows after scrolling down */}
+        <AnimatePresence>
+          {showUpArrow && (
+            <motion.button
+              onClick={scrollUp}
+              className="p-3 rounded-full bg-white backdrop-blur-sm hover:bg-white/90 transition-colors"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <CircleChevronUp className="h-6 w-6 text-gray-900" />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </motion.div>
+
+      <VideoModal
+        isOpen={isVideoOpen}
+        onClose={() => setIsVideoOpen(false)}
+        youtubeId={youtubeVideoId}
+      />
     </div>
   )
 }
