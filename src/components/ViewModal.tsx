@@ -3,7 +3,6 @@
 import { Dialog, DialogContent } from "./ui/dialog"
 import { X } from "lucide-react"
 import { Button } from "./ui/button"
-import React from "react"
 
 interface VideoModalProps {
   isOpen: boolean

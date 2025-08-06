@@ -7,7 +7,7 @@ import { ThemeProvider } from "./components/ThemeProvider.js"
 import { AuthProvider, useAuth } from "./context/AuthContext.js"
 import Layout from "./components/Layout.js"
 
-// Pagess
+// Pages
 import HomePage from "./pages/HomePage.js"
 import AboutPage from "./pages/AboutPage.js"
 import ContactPage from "./pages/ContactPage.js"

@@ -66,7 +66,7 @@ const AboutPage: React.FC = () => {
                 create opportunities for agents and service providers.
               </p>
               <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-                Founded in 2023, TenaHub has quickly grown to become a trusted solution for property management across
+                Founded in 2024, TenaHub has quickly grown to become a trusted solution for property management across
                 Kenya. Our platform combines innovative technology with local expertise to address the unique challenges of
                 the Kenyan real estate market.
               </p>

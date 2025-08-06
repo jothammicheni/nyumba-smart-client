@@ -67,7 +67,7 @@ const ServiceProvidersMarketplace = () => {
   );
 
   return (
-    <div className="p-4 mt-20 max-w-screen-xl mx-auto">
+    <div className="p-4 my-10 max-w-screen-xl mx-auto bg-gradient-to-br from-slate-100 via-white to-blue-50 dark:from-gray-950/60 dark:via-gray-950/70 dark:to-gray-950/60">
       <ServiceProvidersSeo/>
       <div className="flex justify-between items-center mb-6">
         <input
