@@ -240,7 +240,7 @@ export default function EditGigPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Gig not found</h1>
           <p className="text-gray-600 mb-4">The gig you're looking for doesn't exist or has been deleted.</p>
-          <Link to="/manage/gigs">
+          <Link to="/service-provider/dashboard/manage/gigs">
             <Button>Back to My Gigs</Button>
           </Link>
         </div>
@@ -255,7 +255,7 @@ export default function EditGigPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link to="/manage/gigs" className="flex items-center gap-2 text-gray-600 hover:text-primary-600">
+              <Link to="/service-provider/dashboard/manage" className="flex items-center gap-2 text-gray-600 hover:text-primary-600">
                 <ArrowLeft className="h-5 w-5" />
                 Back to My Gigs
               </Link>
@@ -265,7 +265,7 @@ export default function EditGigPage() {
                 <Save className="h-4 w-4 mr-2" />
                 Save Draft
               </Button>
-              <Link to={`/gig/${gigId}`}>
+              <Link to={`/service-provider/dashboard/manage/gig/${gigId}`}>
                 <Button variant="outline">
                   <Eye className="h-4 w-4 mr-2" />
                   Preview
