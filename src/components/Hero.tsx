@@ -212,12 +212,12 @@ const Hero: React.FC = () => {
 
           {/* Right side - User role options */}
           <motion.div className="hidden lg:flex flex-col gap-6" variants={itemVariants}>
-            <Card className="shadow-lg dark:bg-gray-900/70 backdrop-blur-sm border border-gray-100/20 dark:border-gray-800/50">
+            <Card className="shadow-lg bg-white backdrop-blur-sm border border-gray-100/20 dark:border-gray-800/50">
               <CardHeader className="text-center pb-2">
-                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                <CardTitle className="text-2xl font-bold text-gray-900">
                   Join Our Community
                 </CardTitle>
-                <CardDescription className="text-gray-600 dark:text-gray-400">
+                <CardDescription className="text-gray-600">
                   Select your role to get started
                 </CardDescription>
               </CardHeader>
@@ -235,17 +235,17 @@ const Hero: React.FC = () => {
                         to={`/register?role=${roleData.role}`}
                         className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 rounded-xl"
                       >
-                        <Card className="h-full flex items-center hover:scale-105 p-5 rounded-xl border border-gray-200/50 dark:border-gray-800 hover:border-primary-500/30 transition-all duration-300 group hover:shadow-md bg-white dark:bg-gray-900">
+                        <Card className="h-full flex items-center hover:scale-105 p-5 rounded-xl border border-gray-200/50 hover:border-primary-500/30 transition-all duration-300 group hover:shadow-md bg-white/900">
                           {/* Icon with subtle hover effect */}
                           <div className={`bg-gradient-to-r ${roleData.color} p-3 rounded-xl mr-4 transition-all duration-300 group-hover:scale-105`}>
                             <IconComponent className="h-6 w-6 text-white" />
                           </div>
 
                           <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-600 transition-colors">
                               {roleData.title}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
+                            <p className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors">
                               {roleData.description}
                             </p>
                           </div>
