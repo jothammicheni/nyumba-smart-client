@@ -20,7 +20,7 @@ const PropertyDetailSEO: React.FC<PropertyDetailSEOProps> = ({
     <meta name="description" content={description} />
     <meta name="keywords" content="Nairobi property, real estate details, property for Rent, home details" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={url} />
+    <link rel="canonical" href="https://www.tenaHub.co.ke/properties" />
 
     {/* Open Graph */}
     <meta property="og:title" content={`${title} - TenaHub Property Details`} />

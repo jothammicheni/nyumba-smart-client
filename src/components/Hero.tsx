@@ -34,9 +34,9 @@ const Hero: React.FC = () => {
       color: "from-primary-600 to-primary-600",
     },
     {
-      role: "tenant",
-      title: "Tenant",
-      description: "Pay rent, file maintenance issues, and receive important notifications",
+      role: "service-provider",
+      title: "Service Provider",
+      description: "Join the largest Blue color Jobs marketplace in kenya.Start free.Sell your services eg. Plumbing,cleaning,mama-Fua, movers(logistics),building,painting,electrecian,wifi services etc",
       icon: Users,
       color: "from-primary-600 to-primary-600",
     },

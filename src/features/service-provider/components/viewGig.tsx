@@ -9,7 +9,7 @@ import { Separator } from "../../../components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs"
 import {
   Star,
-  MapPin,
+ 
   Clock,
   Shield,
   Heart,
@@ -168,9 +168,9 @@ export default function ViewGigPage() {
       <header className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center gap-2 text-gray-600 hover:text-primary-600">
+            <Link to="/service-provider/dashboard/manage/gigs" className="flex items-center gap-2 text-gray-600 hover:text-primary-600">
               <ArrowLeft className="h-5 w-5" />
-              Back to Marketplace
+              Back to Gigs
             </Link>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={toggleLike}>
@@ -209,10 +209,10 @@ export default function ViewGigPage() {
                         <span className="font-medium">{mockProvider.rating}</span>
                         <span>({mockProvider.reviewCount} reviews)</span>
                       </div>
-                      <div className="flex items-center gap-1">
+                      {/* <div className="flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
                         <span>{gig.location.city}</span>
-                      </div>
+                      </div> */}
                       <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
                         <span>Response time: {mockProvider.responseTime}</span>
@@ -221,7 +221,7 @@ export default function ViewGigPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-gray-500">Starting at</p>
-                    <p className="text-3xl font-bold text-primary-600">${gig.price}</p>
+                    <p className="text-3xl font-bold text-primary-600">Ksh {gig.price}</p>
                   </div>
                 </div>
 
@@ -343,7 +343,7 @@ export default function ViewGigPage() {
             <Card className="sticky top-4">
               <CardContent className="p-6">
                 <div className="text-center mb-6">
-                  <p className="text-2xl font-bold text-primary-600 mb-2">${gig.price}</p>
+                  <p className="text-2xl font-bold text-primary-600 mb-2">Ksh {gig.price}</p>
                   <p className="text-sm text-gray-500">Starting price</p>
                 </div>
 

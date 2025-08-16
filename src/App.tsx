@@ -262,6 +262,7 @@ const AppContent = () => {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/blogs" element={<Blogs/>} />
         <Route path="/service/marketplace" element={<ServiceProvidersMarketplace/>} />
+        <Route path="/service/marketplace/:id" element={<ViewGigPage/>} />
 
         <Route path="/properties" element={<PropertiesPage />} />
         <Route path="/relocate-search-home" element={<RelocationHomeSearch/>} />
@@ -411,7 +412,7 @@ const AppContent = () => {
          <Route path="manage/gigs/create-gig" element={<CreateGigPage/>} />
          <Route path="manage/gigs/view/:id" element={<ViewGigPage/>} />
           <Route path="manage/gigs/edit/:id" element={<EditGigPage/>} />
-          <Route path="manage/analytics/analytics/:id" element={<GigAnalyticsPage/>} />
+          <Route path="manage/gigs/analytics/:id" element={<GigAnalyticsPage/>} />
         <Route path="tasks" element={<TasksPage />} />
 
         <Route path="settings" element={<ProviderSettings />} />

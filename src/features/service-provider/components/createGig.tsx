@@ -136,7 +136,7 @@ export default function CreateGigPage() {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
         <div className="max-w-4xl mx-auto py-4 px-6 flex justify-between items-center">
-          <Link to="/" className="flex items-center text-gray-700 hover:text-indigo-600">
+          <Link to="/service-provider/dashboard/manage/gigs" className="flex items-center text-gray-700 hover:text-indigo-600">
             <ArrowLeft className="h-6 w-6" /> <span className="ml-2">Back</span>
           </Link>
           <Button variant="outline" onClick={() => alert("Draft saved!")}>
