@@ -1,21 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Button } from "../../../components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../components/ui/card"
 import { Input } from "../../../components/ui/input"
 import { Label } from "../../../components/ui/label"
 import { Textarea } from "../../../components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
 import { Switch } from "../../../components/ui/switch"
 import { Badge } from "../../../components/ui/badge"
-import { Upload, X, ArrowLeft, Save, Eye, ImageIcon, AlertCircle, Loader2 } from "lucide-react"
+import { Upload, X, ArrowLeft, Save, Eye, ImageIcon, AlertCircle, Loader2, Info, CheckCircle } from "lucide-react"
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { AlertDialog, AlertDialogContent, AlertDialogDescription } from "../../../components/ui/alert-dialog"
 import { toast } from "sonner"
 import serviceGigService, { ServiceGig } from "../../../services/serviceGigService"
+import { Progress } from "../../../components/ui/progress"
 
 const categories = [
   { value: "plumbing", label: "Plumbing" },
@@ -194,8 +194,13 @@ export default function EditGigPage() {
       const response = await serviceGigService.updateGig(gigId, updateData, imageFile || undefined)
 
       if (response.success) {
-        toast.success("Gig updated successfully!")
-        router("/manage/gigs")
+        toast.success("Gig updated successfully!", {
+          action: {
+            label: "View Gig",
+            onClick: () => router(`/service-provider/dashboard/manage/gig/${gigId}`)
+          }
+        })
+        router("/service-provider/dashboard/manage/gigs")
       } else {
         toast.error("Failed to update gig")
       }
@@ -216,19 +221,25 @@ export default function EditGigPage() {
       }
 
       await serviceGigService.updateGig(gigId, updateData, imageFile || undefined)
-      toast.success("Draft saved!")
+      toast.success("Draft saved!", {
+        position: "bottom-right",
+        icon: <CheckCircle className="h-5 w-5 text-green-500" />
+      })
     } catch (error) {
       console.error("Error saving draft:", error)
-      toast.error("Failed to save draft")
+      toast.error("Failed to save draft", {
+        position: "bottom-right"
+      })
     }
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading gig...</span>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+          <span className="text-gray-600">Loading your gig details...</span>
+          <Progress value={0} className="w-48 h-2" />
         </div>
       </div>
     )
@@ -236,12 +247,15 @@ export default function EditGigPage() {
 
   if (!gig) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+        <div className="text-center max-w-md p-8 bg-white rounded-xl shadow-sm border">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Gig not found</h1>
-          <p className="text-gray-600 mb-4">The gig you're looking for doesn't exist or has been deleted.</p>
+          <p className="text-gray-600 mb-6">The gig you're looking for doesn't exist or has been deleted.</p>
           <Link to="/service-provider/dashboard/manage/gigs">
-            <Button>Back to My Gigs</Button>
+            <Button className="w-full">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to My Gigs
+            </Button>
           </Link>
         </div>
       </div>
@@ -249,26 +263,33 @@ export default function EditGigPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link to="/service-provider/dashboard/manage" className="flex items-center gap-2 text-gray-600 hover:text-primary-600">
+              <Link
+                to="/service-provider/dashboard/manage/gigs"
+                className="flex items-center gap-2 text-gray-600 hover:text-primary-600 transition-colors"
+              >
                 <ArrowLeft className="h-5 w-5" />
-                Back to My Gigs
+                <span className="hidden sm:inline">Back to My Gigs</span>
               </Link>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={handleSaveDraft}>
+              <Button
+                variant="outline"
+                onClick={handleSaveDraft}
+                className="hidden sm:flex"
+              >
                 <Save className="h-4 w-4 mr-2" />
                 Save Draft
               </Button>
               <Link to={`/service-provider/dashboard/manage/gig/${gigId}`}>
                 <Button variant="outline">
                   <Eye className="h-4 w-4 mr-2" />
-                  Preview
+                  <span className="hidden sm:inline">Preview</span>
                 </Button>
               </Link>
             </div>
@@ -284,13 +305,18 @@ export default function EditGigPage() {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Information */}
-          <Card>
+          <Card className="border border-gray-200 bg-white text-gray-900 hover:border-primary-300 transition-colors">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
                   1
                 </div>
-                Basic Information
+                <div>
+                  <h2>Basic Information</h2>
+                  <CardDescription className="mt-1">
+                    Tell customers what service you're offering
+                  </CardDescription>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -298,22 +324,33 @@ export default function EditGigPage() {
                 <Label htmlFor="title">Gig Title *</Label>
                 <Input
                   id="title"
-                  placeholder="I will provide professional plumbing services..."
+                  placeholder="e.g., Professional Plumbing Services for Homes and Offices"
                   value={formData.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
-                  className={errors.title ? "border-red-500" : ""}
+                  className={errors.title ? "border-red-500 mt-2" : "mt-2 bg-white/90 border-gray-300"}
                 />
-                {errors.title && <p className="text-sm text-red-500 mt-1">{errors.title}</p>}
-                <p className="text-sm text-gray-500 mt-1">{formData.title.length}/100 characters</p>
+                {errors.title && (
+                  <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.title}
+                  </p>
+                )}
+                <p className={`text-sm mt-1 ${formData.title.length > 90 ? "text-amber-600" : "text-gray-500"
+                  }`}>
+                  {formData.title.length}/100 characters
+                </p>
               </div>
 
               <div>
                 <Label htmlFor="category">Category *</Label>
-                <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                  <SelectTrigger className={errors.category ? "border-red-500" : ""}>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => handleInputChange("category", value)}
+                >
+                  <SelectTrigger className={errors.category ? "border-red-500 mt-2" : "mt-2 bg-white/90 border-gray-300"}>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-gray-950">
                     {categories.map((category) => (
                       <SelectItem key={category.value} value={category.value}>
                         {category.label}
@@ -321,69 +358,111 @@ export default function EditGigPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.category && <p className="text-sm text-red-500 mt-1">{errors.category}</p>}
+                {errors.category && (
+                  <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.category}
+                  </p>
+                )}
               </div>
 
               <div>
                 <Label htmlFor="description">Description *</Label>
                 <Textarea
                   id="description"
-                  placeholder="Describe your service in detail..."
+                  placeholder="Describe your service in detail. Include what makes your service special, your experience, and any important details customers should know."
                   value={formData.description}
                   onChange={(e) => handleInputChange("description", e.target.value)}
-                  className={`min-h-32 ${errors.description ? "border-red-500" : ""}`}
+                  className={`min-h-32 mt-2 ${errors.description ? "border-red-500" : "bg-white/90 border-gray-300"}`}
                 />
-                {errors.description && <p className="text-sm text-red-500 mt-1">{errors.description}</p>}
-                <p className="text-sm text-gray-500 mt-1">{formData.description.length} characters (minimum 50)</p>
+                {errors.description && (
+                  <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.description}
+                  </p>
+                )}
+                <p className={`text-sm mt-1 ${formData.description.length < 50 ? "text-amber-600" : "text-gray-500"
+                  }`}>
+                  {formData.description.length} characters (minimum 50)
+                </p>
               </div>
             </CardContent>
           </Card>
 
           {/* Pricing */}
-          <Card>
+          <Card className="border border-gray-200 bg-white text-gray-900 hover:border-primary-300 transition-colors">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
                   2
                 </div>
-                Pricing
+                <div>
+                  <h2>Pricing</h2>
+                  <CardDescription className="mt-1">
+                    Set your starting price and any additional pricing options
+                  </CardDescription>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div>
-                <Label htmlFor="price">Starting Price (USD) *</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-                  <Input
-                    id="price"
-                    type="number"
-                    placeholder="50"
-                    value={formData.price}
-                    onChange={(e) => handleInputChange("price", e.target.value)}
-                    className={`pl-8 ${errors.price ? "border-red-500" : ""}`}
-                    min="1"
-                    step="0.01"
-                  />
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="price">Starting Price (USD) *</Label>
+                  <div className="relative mt-2">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                    <Input
+                      id="price"
+                      type="number"
+                      placeholder="50.00"
+                      value={formData.price}
+                      onChange={(e) => handleInputChange("price", e.target.value)}
+                      className={`pl-8 ${errors.price ? "border-red-500" : "bg-white/90 border-gray-300"}`}
+                      min="1"
+                      step="0.01"
+                    />
+                  </div>
+                  {errors.price && (
+                    <p className="text-sm text-red-500 mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {errors.price}
+                    </p>
+                  )}
                 </div>
-                {errors.price && <p className="text-sm text-red-500 mt-1">{errors.price}</p>}
+
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                  <div className="flex items-start gap-3">
+                    <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-medium text-blue-800">Pricing Tip</h4>
+                      <p className="text-sm text-blue-600 mt-1">
+                        Consider researching competitors' prices in your area. A competitive price can help you get more customers.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Media */}
-          <Card>
+          <Card className="border border-gray-200 bg-white text-gray-900 hover:border-primary-300 transition-colors">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
                   3
                 </div>
-                Gig Image
+                <div>
+                  <h2>Gig Pictorial Illustration</h2>
+                  <CardDescription className="mt-1">
+                    Upload a high-quality image that represents your service
+                  </CardDescription>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {!imagePreview ? (
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary-600 transition-colors">
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary-600 transition-colors bg-gray-50">
                     <input
                       type="file"
                       accept="image/*"
@@ -391,89 +470,98 @@ export default function EditGigPage() {
                       className="hidden"
                       id="image-upload"
                     />
-                    <label htmlFor="image-upload" className="cursor-pointer">
+                    <label htmlFor="image-upload" className="cursor-pointer flex flex-col items-center">
                       <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                       <p className="text-lg font-medium text-gray-900 mb-2">Upload a gig image</p>
-                      <p className="text-gray-500 mb-4">Drag and drop an image, or click to browse</p>
-                      <Button type="button" variant="outline">
+                      <p className="text-gray-500 mb-4">JPG, PNG (Max 5MB)</p>
+                      <Button type="button" variant="outline" className="border-gray-300">
                         <Upload className="h-4 w-4 mr-2" />
                         Choose Image
                       </Button>
                     </label>
                   </div>
                 ) : (
-                  <div className="relative">
+                  <div className="relative group">
                     <img
                       src={imagePreview || "/placeholder.svg"}
                       alt="Gig preview"
                       width={400}
                       height={250}
-                      className="w-full max-w-md h-64 object-cover rounded-lg"
+                      className="w-full max-w-md h-64 object-cover rounded-lg border border-gray-200 shadow-sm"
                     />
                     <Button
                       type="button"
                       variant="destructive"
                       size="sm"
                       onClick={removeImage}
-                      className="absolute top-2 right-2"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <X className="h-4 w-4" />
                     </Button>
-                    {imageFile && <Badge className="absolute bottom-2 left-2 bg-green-600">New image selected</Badge>}
+                    {imageFile && (
+                      <Badge className="absolute bottom-2 left-2 bg-green-600">
+                        New image selected
+                      </Badge>
+                    )}
                   </div>
                 )}
                 {errors.image && (
-                 <AlertDialog>
-  <AlertDialogContent>
-    <div className="flex items-center space-x-2">
-      <AlertCircle className="h-4 w-4 text-red-600" />  {/* Add color here instead */}
-      <AlertDialogDescription>{errors.image}</AlertDialogDescription>
-    </div>
-  </AlertDialogContent>
-</AlertDialog>
-
+                  <div className="bg-red-50 p-3 rounded-lg border border-red-100">
+                    <div className="flex items-center gap-2 text-red-600">
+                      <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                      <p className="text-sm">{errors.image}</p>
+                    </div>
+                  </div>
                 )}
               </div>
             </CardContent>
           </Card>
 
           {/* Location */}
-          <Card>
+          <Card className="border border-gray-200 bg-white text-gray-900 hover:border-primary-300 transition-colors">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
                   4
                 </div>
-                Location
+                <div>
+                  <h2>Service Location</h2>
+                  <CardDescription className="mt-1">
+                    Let customers know where you provide this service
+                  </CardDescription>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="city">City</Label>
+                  <Label htmlFor="city">City *</Label>
                   <Input
                     id="city"
-                    placeholder="New York"
+                    placeholder="e.g., New York"
                     value={formData.location.city}
                     onChange={(e) => handleInputChange("location.city", e.target.value)}
+                    className="mt-2 bg-white/90 border-gray-300"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="state">State</Label>
+                  <Label htmlFor="state">State/Province *</Label>
                   <Input
                     id="state"
-                    placeholder="NY"
+                    placeholder="e.g., NY or California"
                     value={formData.location.state}
                     onChange={(e) => handleInputChange("location.state", e.target.value)}
+                    className="mt-2 bg-white/90 border-gray-300"
                   />
                 </div>
                 <div>
                   <Label htmlFor="country">Country</Label>
                   <Input
                     id="country"
-                    placeholder="USA"
+                    placeholder="e.g., USA"
                     value={formData.location.country}
                     onChange={(e) => handleInputChange("location.country", e.target.value)}
+                    className="mt-2 bg-white/90 border-gray-300"
                   />
                 </div>
               </div>
@@ -481,20 +569,27 @@ export default function EditGigPage() {
           </Card>
 
           {/* Settings */}
-          <Card>
+          <Card className="border border-gray-200 bg-white text-gray-900 hover:border-primary-300 transition-colors">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
                   5
                 </div>
-                Settings
+                <div>
+                  <h2>Gig Settings</h2>
+                  <CardDescription className="mt-1">
+                    Configure visibility and other options
+                  </CardDescription>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <Label htmlFor="featured">Featured Gig</Label>
-                  <p className="text-sm text-gray-500">Featured gigs get more visibility</p>
+                  <Label htmlFor="featured" className="font-medium">Featured Gig</Label>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Featured gigs appear at the top of search results
+                  </p>
                 </div>
                 <Switch
                   id="featured"
@@ -503,41 +598,76 @@ export default function EditGigPage() {
                 />
               </div>
 
-              <div>
-                <Label>Gig Status</Label>
+              <div className="p-5 bg-white rounded-2xl shadow-sm border border-gray-200">
+                <Label className="font-semibold text-gray-800 mb-3 block text-sm">Gig Status</Label>
                 <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
+                  <SelectTrigger className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    <SelectValue placeholder="Select the gig status..." />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white shadow-lg rounded-lg border border-gray-200">
                     {statusOptions.map((status) => (
-                      <SelectItem key={status.value} value={status.value}>
+                      <SelectItem
+                        key={status.value}
+                        value={status.value}
+                        className="hover:bg-gray-100 px-3 py-2 rounded-md cursor-pointer"
+                      >
                         <div className="flex items-center gap-2">
-                          <Badge className={status.color}>{status.label}</Badge>
+                          <Badge className={`${status.color} text-xs px-2 py-1 rounded-md`}>{status.label}</Badge>
                         </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-blue-600 mt-3 leading-relaxed p-1 rounded bg-blue-200">
+                  <span className="font-bold text-blue-600">Tip:</span> Active gigs are visible to customers, while inactive gigs remain private.
+                </p>
               </div>
+
             </CardContent>
           </Card>
 
           {/* Submit */}
-          <div className="flex items-center justify-between pt-6 border-t">
-            <Button type="button" variant="outline" asChild>
-              <Link to="/manage/gigs">Cancel</Link>
-            </Button>
-            <Button type="submit" disabled={isSubmitting} className="bg-primary-600 hover:bg-primary-700 min-w-32">
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Updating...
-                </>
-              ) : (
-                "Update Gig"
-              )}
-            </Button>
+          <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4 pt-8 border-t">
+            <div className="w-full sm:w-auto">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                asChild
+              >
+                <Link to="/manage/gigs">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Cancel
+                </Link>
+              </Button>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleSaveDraft}
+                className="w-full sm:w-auto"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save as Draft
+              </Button>
+
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full sm:w-auto bg-primary-600 text-white hover:bg-primary-700 min-w-32"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  "Update Gig"
+                )}
+              </Button>
+            </div>
           </div>
         </form>
       </div>

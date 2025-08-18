@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
 import { useState, useEffect } from "react"
@@ -30,23 +31,12 @@ const mockReviews = [
   {
     id: "1",
     user: {
-      name: "Sarah Johnson",
+      name: "Kimani Njuguna",
       avatar: "/placeholder.svg?height=40&width=40",
     },
     rating: 5,
     comment: "Excellent service! Very professional and completed the work on time.",
-    date: "2024-01-15",
-    verified: true,
-  },
-  {
-    id: "2",
-    user: {
-      name: "Mike Chen",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    rating: 4,
-    comment: "Good quality work, would recommend to others.",
-    date: "2024-01-10",
+    date: "2025-01-15",
     verified: true,
   },
 ]
@@ -167,7 +157,7 @@ export default function ViewGigPage() {
       {/* Header */}
       <header className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-16 my-8">
             <Link to="/service-provider/dashboard/manage/gigs" className="flex items-center gap-2 text-gray-600 hover:text-primary-600">
               <ArrowLeft className="h-5 w-5" />
               Back to Gigs
@@ -191,12 +181,12 @@ export default function ViewGigPage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Gig Header */}
-            <Card>
+            <Card className="bg-white border-gray-200 shadow-sm">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="outline" className="capitalize">
+                      <Badge variant="outline" className="bg-blue-100 text-blue-800 border-gray-300 capitalize">
                         {gig.category}
                       </Badge>
                       {gig.isFeatured && <Badge className="bg-primary-600">Featured</Badge>}
@@ -239,9 +229,9 @@ export default function ViewGigPage() {
                 )}
 
                 {/* Description */}
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-3">About This Gig</h2>
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{gig.description}</p>
+                <div className="border-t border-gray-100 pt-6">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">About The Gig</h2>
+                  <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-wrap">{gig.description}</p>
                 </div>
               </CardContent>
             </Card>
@@ -250,12 +240,12 @@ export default function ViewGigPage() {
             <Tabs defaultValue="reviews" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="reviews">Reviews ({mockReviews.length})</TabsTrigger>
-                <TabsTrigger value="faq">FAQ</TabsTrigger>
+                <TabsTrigger value="faq">FAQs</TabsTrigger>
                 <TabsTrigger value="similar">Similar Gigs</TabsTrigger>
               </TabsList>
 
               <TabsContent value="reviews" className="space-y-4">
-                <Card>
+                <Card className="bg-white-90 border-gray-900/20">
                   <CardContent className="p-6">
                     <div className="space-y-6">
                       {mockReviews.map((review) => (
@@ -267,9 +257,9 @@ export default function ViewGigPage() {
                             </Avatar>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="font-medium">{review.user.name}</span>
+                                <span className="font-medium text-gray-900">{review.user.name}</span>
                                 {review.verified && (
-                                  <Badge variant="secondary" className="text-xs">
+                                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
                                     <CheckCircle className="h-3 w-3 mr-1" />
                                     Verified
                                   </Badge>
@@ -299,7 +289,7 @@ export default function ViewGigPage() {
               </TabsContent>
 
               <TabsContent value="faq">
-                <Card>
+                <Card className="bg-white border-gray-200 shadow-sm">
                   <CardContent className="p-6">
                     <div className="space-y-4">
                       <div>
@@ -328,7 +318,7 @@ export default function ViewGigPage() {
               </TabsContent>
 
               <TabsContent value="similar">
-                <Card>
+                <Card className="bg-white border-gray-200 shadow-sm">
                   <CardContent className="p-6">
                     <p className="text-gray-600">Similar gigs will be displayed here based on category and location.</p>
                   </CardContent>
@@ -340,8 +330,8 @@ export default function ViewGigPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Order Card */}
-            <Card className="sticky top-4">
-              <CardContent className="p-6">
+            <Card className="sticky top-4 border-gray-200 shadow-sm">
+              <CardContent className="p-6 bg-white border-gray-200 shadow-sm">
                 <div className="text-center mb-6">
                   <p className="text-2xl font-bold text-primary-600 mb-2">Ksh {gig.price}</p>
                   <p className="text-sm text-gray-500">Starting price</p>
@@ -349,25 +339,25 @@ export default function ViewGigPage() {
 
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-gray-400" />
-                    <span>Delivery in 2-3 days</span>
+                    <Clock className="h-4 w-4 text-gray-900" />
+                    <span className="text-gray-800">Delivery in 2-3 days</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <Shield className="h-4 w-4 text-gray-400" />
-                    <span>30-day warranty included</span>
+                    <Shield className="h-4 w-4 text-gray-900" />
+                    <span className="text-gray-800">30-day warranty included</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-gray-400" />
-                    <span>Licensed & insured</span>
+                    <CheckCircle className="h-4 w-4 text-gray-900" />
+                    <span className="text-gray-800">Licensed & insured</span>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <Button onClick={handleOrderNow} className="w-full bg-primary-600 hover:bg-primary-700">
+                  <Button onClick={handleOrderNow} className="w-full text-white bg-primary-600 hover:bg-primary-700">
                     <DollarSign className="h-4 w-4 mr-2" />
                     Order Now
                   </Button>
-                  <Button variant="outline" onClick={handleContactProvider} className="w-full bg-transparent">
+                  <Button variant="outline" onClick={handleContactProvider} className="w-full text-gray-900 bg-transparent">
                     <MessageCircle className="h-4 w-4 mr-2" />
                     Contact Provider
                   </Button>
@@ -376,7 +366,7 @@ export default function ViewGigPage() {
             </Card>
 
             {/* Provider Card */}
-            <Card>
+            <Card className="sticky top-20 border-gray-200 z-0 shadow-sm bg-white">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4 mb-4">
                   <Avatar className="h-16 w-16">
@@ -388,7 +378,7 @@ export default function ViewGigPage() {
                       <h3 className="font-semibold text-gray-900">{mockProvider.name}</h3>
                       {mockProvider.verified && <CheckCircle className="h-4 w-4 text-green-500" />}
                     </div>
-                    <Badge variant="secondary">{mockProvider.level}</Badge>
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:none">{mockProvider.level}</Badge>
                   </div>
                 </div>
 
@@ -397,28 +387,28 @@ export default function ViewGigPage() {
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Member since:</span>
-                    <span>{new Date(mockProvider.memberSince).getFullYear()}</span>
+                    <span className="text-gray-800">{new Date(mockProvider.memberSince).getFullYear()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Completed jobs:</span>
-                    <span>{mockProvider.completedJobs}</span>
+                    <span className="text-gray-800">{mockProvider.completedJobs}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Response time:</span>
-                    <span>{mockProvider.responseTime}</span>
+                    <span className="text-gray-800">{mockProvider.responseTime}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Rating:</span>
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span>
+                      <span className="text-gray-800">
                         {mockProvider.rating} ({mockProvider.reviewCount})
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <Button variant="outline" className="w-full mt-4 bg-transparent">
+                <Button variant="outline" className="w-full text-gray-900 mt-4 bg-transparent">
                   View Profile
                 </Button>
               </CardContent>

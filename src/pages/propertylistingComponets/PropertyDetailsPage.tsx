@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
@@ -115,7 +116,7 @@ const PropertyDetailsPage = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <Loader />
-        <p className="mt-4 text-lg text-gray-600">Loading property details...</p>
+        <p className="mt-0 text-lg text-gray-600">Loading property details...</p>
       </div>
     )
   }
@@ -130,8 +131,8 @@ const PropertyDetailsPage = () => {
         >
           <RefreshCw size={18} /> Try Again
         </button>
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="mt-4 flex items-center gap-1 text-primary-600 hover:text-primary-800"
         >
           <ChevronLeft size={16} /> Back to listings
@@ -145,18 +146,18 @@ const PropertyDetailsPage = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 shadow-sm dark:bg-gray-950/20 px-1 py-20">
       {/* Breadcrumb Navigation */}
-      <Breadcrumb 
+      <Breadcrumb
         items={[
           { label: 'Home', path: '/' },
           { label: 'Properties', path: '/properties' },
           { label: listing.property?.name || 'Property', path: '', active: true }
-        ]} 
+        ]}
       />
 
       {/* Back button for mobile */}
       <div className="md:hidden mb-4">
-        <Link 
-          to="/properties" 
+        <Link
+          to="/properties"
           className="flex items-center gap-1 text-primary-600 hover:text-primary-800"
         >
           <ChevronLeft size={18} /> Back to listings
@@ -165,46 +166,64 @@ const PropertyDetailsPage = () => {
 
       {/* Property Image Display */}
       {listing.images?.length > 0 && (
-        <div className="relative mb-8 rounded-xl overflow-hidden shadow-lg">
-          <img
-            src={listing.images[currentImageIndex]}
-            alt={`Property ${currentImageIndex + 1}`}
-            className="w-full h-96 object-cover"
-          />
-          
+        <div className="relative mb-12 rounded-2xl overflow-hidden shadow-card group">
+          <div className="aspect-[16/9] bg-gradient-card">
+            <img
+              src={listing.images[currentImageIndex]}
+              alt={`Property ${currentImageIndex + 1}`}
+              className="w-full h-full object-cover transition-transform duration-700"
+            />
+          </div>
+
           {/* Navigation arrows */}
           {listing.images.length > 1 && (
             <>
               <button
                 onClick={prevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white/90 p-2 rounded-full shadow-md transition-all"
+                className="absolute left-6 top-1/2 -translate-y-1/2 bg-background/90 hover:bg-background backdrop-blur-sm p-3 rounded-full shadow-metric transition-all duration-300 hover:scale-110 group-hover:translate-x-0 -translate-x-2 opacity-0 group-hover:opacity-100"
                 aria-label="Previous image"
               >
-                <ChevronLeft className="h-6 w-6" />
+                <ChevronLeft className="h-6 w-6 text-foreground" />
               </button>
               <button
                 onClick={nextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white/90 p-2 rounded-full shadow-md transition-all"
+                className="absolute right-6 top-1/2 -translate-y-1/2 bg-background/90 hover:bg-background backdrop-blur-sm p-3 rounded-full shadow-metric transition-all duration-300 hover:scale-110 group-hover:translate-x-0 translate-x-2 opacity-0 group-hover:opacity-100"
                 aria-label="Next image"
               >
-                <ChevronRight className="h-6 w-6" />
+                <ChevronRight className="h-6 w-6 text-foreground" />
               </button>
             </>
           )}
 
           {/* Image counter */}
           {listing.images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-sm text-foreground px-4 py-2 rounded-full text-sm font-medium border border-border/50">
               {currentImageIndex + 1} / {listing.images.length}
+            </div>
+          )}
+
+          {/* Image dots indicator */}
+          {listing.images.length > 1 && (
+            <div className="absolute bottom-6 right-6 flex gap-2">
+              {listing.images.map((_: string, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentImageIndex
+                    ? 'bg-primary w-6'
+                    : 'bg-background/60 hover:bg-background/80'
+                    }`}
+                />
+              ))}
             </div>
           )}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 lg:gap-12">
+        <div className="xl:col-span-2 space-y-6">
           {/* Title and basic info */}
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start p-6 rounded-xl border border-border/50 ">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{listing.property?.name}</h1>
               <div className="flex items-center mt-2 text-gray-600">
@@ -212,20 +231,20 @@ const PropertyDetailsPage = () => {
                 <span>{listing.property?.specific_location || listing.property?.city}</span>
               </div>
             </div>
-            
-            <div className="flex gap-2">
-              <button 
+
+            <div className="flex flex-col gap-3 items-center">
+              <button
                 onClick={() => setIsFavorite(!isFavorite)}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-full hover:bg-gray-100 border border-gray-10 transition-colors"
                 aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
               >
-                <Heart 
-                  className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} 
+                <Heart
+                  className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
                 />
               </button>
-              <button 
+              <button
                 onClick={handleShare}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-full hover:bg-gray-100 border border-gray-10 transition-colors"
                 aria-label="Share property"
               >
                 <Share2 className="h-5 w-5 text-gray-500" />
@@ -239,51 +258,57 @@ const PropertyDetailsPage = () => {
               {formatCurrency(listing.property?.price || 0)}
               <span className="text-base font-normal text-gray-500"> / month</span>
             </p>
-            
+
             <div className="flex items-center bg-gray-100 px-3 py-1 rounded-full">
-              <Star className="h-5 w-5 text-yellow-500 fill-current" />
-              <span className="ml-1 font-medium">{listing.rating || 4.0}</span>
+              <Star className="h-5 w-5 text-orange-500 fill-current" />
+              <span className="ml-1 font-medium dark:text-gray-900">{listing.rating || 4.0}</span>
             </div>
           </div>
 
           {/* Features */}
-          <div className="mt-6 grid grid-cols-3 gap-4 border-t border-b border-gray-200 py-6">
-            <div className="flex flex-col items-center">
-              <div className="p-3 bg-primary-50 rounded-full">
-                <Bed className="h-6 w-6 text-primary-600" />
+          <div className="bg-gradient-card p-8 rounded-2xl border border-border/50 shadow-card">
+            <h3 className="text-xl font-semibold mb-6 text-foreground">Property Features</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl dark:bg-gray-950/60 dark:border-none border border-gray-200 transition-all duration-300">
+                <div className="p-4 bg-gray-200/30 dark:bg-primary-600/30 rounded-full mb-4">
+                  <Bed className="h-8 w-8 text-primary-600" />
+                </div>
+                <span className="text-2xl font-bold text-foreground">{listing.property?.bedrooms || 0}</span>
+                <span className="text-muted-foreground font-medium">Bedrooms</span>
               </div>
-              <span className="mt-2 font-medium">{listing.property?.bedrooms || 0} Bedrooms</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="p-3 bg-primary-50 rounded-full">
-                <Bath className="h-6 w-6 text-primary-600" />
+              <div className="flex flex-col items-center text-center p-6 bg-white dark:bg-gray-950/60 dark:border-none rounded-xl border border-gray-200 transition-all duration-300">
+                <div className="p-4 bg-gray-200/30 dark:bg-primary-600/30 rounded-full mb-4">
+                  <Bath className="h-8 w-8 text-primary-600" />
+                </div>
+                <span className="text-2xl font-bold text-foreground">{listing.property?.bathrooms || 0}</span>
+                <span className="text-muted-foreground font-medium">Bathrooms</span>
               </div>
-              <span className="mt-2 font-medium">{listing.property?.bathrooms || 0} Bathrooms</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="p-3 bg-primary-50 rounded-full">
-                <Square className="h-6 w-6 text-primary-600" />
+              <div className="flex flex-col items-center text-center p-6 bg-white dark:bg-gray-950/60 dark:border-none rounded-xl border border-gray-200 transition-all duration-300">
+                <div className="p-4 bg-gray-200/30 dark:bg-primary-600/30 rounded-full mb-4">
+                  <Square className="h-8 w-8 text-primary-600" />
+                </div>
+                <span className="text-2xl font-bold text-foreground">{listing.property?.area || 0}</span>
+                <span className="text-muted-foreground font-medium">m²</span>
               </div>
-              <span className="mt-2 font-medium">{listing.property?.area || 0} m²</span>
             </div>
           </div>
 
           {/* Description */}
-          <div className="mt-8">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Description</h3>
-            <p className="text-gray-700 leading-relaxed">
+          <div className="bg-gradient-card p-8 rounded-2xl border border-border/50 shadow-card">
+            <h3 className="text-2xl font-semibold mb-6 text-foreground">Description</h3>
+            <p className="text-muted-foreground leading-relaxed text-lg">
               {listing.description || "No description available."}
             </p>
           </div>
 
           {/* Amenities */}
           {listing.amenities?.length > 0 && (
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Amenities</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="bg-gradient-card p-8 rounded-2xl border border-border/50 shadow-card">
+              <h3 className="text-2xl font-semibold mb-6 text-foreground">Amenities</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {listing.amenities.map((amenity: string, i: number) => (
-                  <div key={i} className="flex items-center justify-center bg-gray-100 rounded-full w-1/2 p-1 gap-2">
-                    <span className="text-gray-700 text-center">{amenity}</span>
+                  <div key={i} className="flex items-center justify-center bg-gray-50 dark:bg-gray-950/60 hover:bg-accent/30 rounded-xl p-4 border border-accent/30 transition-all duration-300 hover:scale-105">
+                    <span className="text-foreground text-center font-medium">{amenity}</span>
                   </div>
                 ))}
               </div>
@@ -292,10 +317,10 @@ const PropertyDetailsPage = () => {
         </div>
 
         {/* Sidebar with action buttons */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-4 bg-white p-6 rounded-xl shadow-md border border-gray-100">
+        <div className="xl:col-span-1">
+          <div className="sticky top-4 bg-white p-6 rounded-xl border border-border/50 shadow-card backdrop-blur-sm">
             <h3 className="text-lg font-semibold mb-4 text-gray-900">Interested in this property?</h3>
-            <div className="space-y-3">
+            <div className="space-y-4">
               <button
                 onClick={() => {
                   handleClick("Contact Agent")
@@ -317,37 +342,38 @@ const PropertyDetailsPage = () => {
             </div>
 
             {/* Additional info */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">Property Details</h4>
-              <ul className="space-y-2 text-gray-600">
-                <li className="flex justify-between">
-                  <span>Property Type:</span>
-                  <span className="font-medium">{listing.property?.type || 'N/A'}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Year Built:</span>
-                  <span className="font-medium">{listing.property?.year_built || 'N/A'}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Furnishing:</span>
-                  <span className="font-medium">{listing.property?.furnishing || 'N/A'}</span>
-                </li>
-              </ul>
+            <div className="mt-8 pt-8 border-t border-border/50">
+              <h4 className="font-semibold text-foreground mb-6 text-lg">Property Details</h4>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-4 bg-muted/10 rounded-xl">
+                  <span className="text-muted-foreground">Property Type:</span>
+                  <span className="font-semibold text-foreground">{listing.property?.type || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between items-center p-4 bg-muted/10 rounded-xl">
+                  <span className="text-muted-foreground">Year Built:</span>
+                  <span className="font-semibold text-foreground">{listing.property?.year_built || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between items-center p-4 bg-muted/10 rounded-xl">
+                  <span className="text-muted-foreground">Furnishing:</span>
+                  <span className="font-semibold text-foreground">{listing.property?.furnishing || 'N/A'}</span>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
       </div>
 
       {/* Popups */}
-      <ContactAgentModal 
-        isOpen={showContactModal} 
-        onClose={() => setShowContactModal(false)} 
-        property={listing} 
+      <ContactAgentModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        property={listing}
       />
-      <ScheduleVisitModal 
-        isOpen={showVisitModal} 
-        onClose={() => setShowVisitModal(false)} 
-        property={listing} 
+      <ScheduleVisitModal
+        isOpen={showVisitModal}
+        onClose={() => setShowVisitModal(false)}
+        property={listing}
       />
     </div>
   )

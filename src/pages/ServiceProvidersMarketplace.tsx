@@ -75,7 +75,7 @@ const ServiceProvidersMarketplace = () => {
           placeholder="Search for plumber, wifi, mason..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-md"
+          className="border border-gray-300 dark:text-gray-900 rounded-lg px-4 py-2 w-full max-w-md"
         />
         <Button className="ml-4 whitespace-nowrap" onClick={() => navigate('/register')}>
           Sell Your Service

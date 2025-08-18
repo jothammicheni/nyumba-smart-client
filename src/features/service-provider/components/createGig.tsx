@@ -15,7 +15,6 @@ import {
   SelectValue,
 } from "../../../components/ui/select"
 import { Switch } from "../../../components/ui/switch"
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Badge } from "../../../components/ui/badge"
 import {
   Upload,
