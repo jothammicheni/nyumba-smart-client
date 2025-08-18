@@ -242,7 +242,7 @@ const Hero: React.FC = () => {
                           </div>
 
                           <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-600 transition-colors">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                               {roleData.title}
                             </h3>
                             <p className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors">

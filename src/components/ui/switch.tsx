@@ -83,7 +83,7 @@ const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         disabled={disabled}
         className={cn(
           switchVariants({ variant, size, className }),
-          isChecked ? "bg-opacity-100" : "bg-opacity-20"
+          isChecked ? "bg-opacity-100 bg-primary-600" : "bg-opacity-20 bg-gray-400"
         )}
         onClick={handleClick}
         ref={ref}
