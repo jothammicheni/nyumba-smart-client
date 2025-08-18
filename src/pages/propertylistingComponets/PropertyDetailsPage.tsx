@@ -116,10 +116,11 @@ const PropertyDetailsPage = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <Loader />
-        <p className="mt-0 text-lg text-gray-600">Loading property details...</p>
+        <p className="text-base text-gray-600">Loading property details...</p>
       </div>
     )
   }
+  
 
   if (error || !property) {
     return (

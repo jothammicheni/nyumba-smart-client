@@ -3,7 +3,7 @@
 import type React from "react"
 import { useEffect, useState, useRef } from "react"
 import { Link } from "react-router-dom"
-import { Building, Users, UserPlus, ArrowRight, Play, CircleChevronDown, CircleChevronUp } from "lucide-react"
+import { Building, Users, UserPlus, ArrowRight, Play, CircleChevronDown, CircleChevronUp, Volume2, VolumeX } from "lucide-react"
 import { motion, AnimatePresence, easeInOut } from "framer-motion"
 import { VideoModal } from "./ViewModal"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./ui/card"
@@ -13,6 +13,7 @@ const Hero: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isVideoOpen, setIsVideoOpen] = useState(false)
   const [showUpArrow, setShowUpArrow] = useState(false)
+  const [isMuted, setIsMuted] = useState(true)
   const heroRef = useRef<HTMLDivElement>(null)
 
   const youtubeVideoId = "7YHIRGpONBU"
@@ -304,6 +305,17 @@ const Hero: React.FC = () => {
         isOpen={isVideoOpen}
         onClose={() => setIsVideoOpen(false)}
         youtubeId={youtubeVideoId}
+        autoplay={1} // Enables autoplay
+        mute={isMuted ? 1 : 0} // Starts muted
+        muteToggle={
+          <button 
+            onClick={() => setIsMuted(!isMuted)}
+            className="absolute top-4 right-16 z-10 p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors"
+            aria-label={isMuted ? "Unmute video" : "Mute video"}
+          >
+            {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+          </button>
+        }
       />
     </div>
   )

@@ -20,8 +20,7 @@ const Navbar: React.FC = () => {
   const mainLinks = [
     { to: "/properties", label: "Property Listing" },
     { to: "/relocate-search-home", label: "Relocate" },
-        { to: "/service/marketplace", label: "Service Providers" },
-
+    { to: "/service/marketplace", label: "Service Providers" },
   ]
 
   const secondaryLinks = [
@@ -45,7 +44,7 @@ const Navbar: React.FC = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation - Visible on md screens and up */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Main Links */}
             {mainLinks.map((link) => (
@@ -59,31 +58,41 @@ const Navbar: React.FC = () => {
               </Link>
             ))}
 
-            {/* Dropdown Menu for Secondary Links */}
-            <div
-              className="relative"
+            {/* Dropdown Menu for Secondary Links - Fixed Version */}
+            <div 
+              className="relative group"
               onMouseEnter={() => setIsHoveringMenu(true)}
               onMouseLeave={() => setIsHoveringMenu(false)}
             >
-              <Button variant="ghost" className="flex items-center gap-1 dark:hover:bg-primary-600/20">
+              <Button 
+                variant="ghost" 
+                className="flex items-center gap-1 dark:hover:bg-primary-600/20"
+              >
                 <span>More</span>
-                <ChevronDown className={`h-4 w-4 transition-transform ${isHoveringMenu ? "rotate-180 duration-300" : ""}`} />
+                <ChevronDown className={`h-4 w-4 transition-transform ${isHoveringMenu ? "rotate-180" : ""}`} />
               </Button>
 
-              {isHoveringMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-950/90 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-800">
-                  {secondaryLinks.map((link) => (
-                    <Link
-                      key={link.to}
-                      to={link.to}
-                      className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-primary-600/20
-                        ${isActive(link.to) ? "text-primary-600 dark:text-primary-500" : "text-gray-700 dark:text-gray-300"}`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
+              {/* Dropdown with padding buffer */}
+              <div 
+                className={`absolute right-0 mt-0 w-48 bg-white dark:bg-gray-950 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-800
+                  transition-all duration-200 ease-out ${isHoveringMenu ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1 pointer-events-none"}`}
+                onMouseEnter={() => setIsHoveringMenu(true)}
+                onMouseLeave={() => setIsHoveringMenu(false)}
+              >
+                {/* Invisible buffer zone at top */}
+                <div className="absolute -top-2 left-0 right-0 h-2" />
+                
+                {secondaryLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors
+                      ${isActive(link.to) ? "text-primary-600 dark:text-primary-500" : "text-gray-700 dark:text-gray-300"}`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
             </div>
 
             {/* Login Button */}
@@ -111,7 +120,7 @@ const Navbar: React.FC = () => {
             </Button>
           </div>
 
-          {/* Mobile Navigation - Visible on sm screens and down */}
+          {/* Mobile Navigation */}
           <div className="flex md:hidden items-center space-x-2">
             <Button
               variant="ghost"
@@ -134,9 +143,9 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed top-0 left-0 w-full h-screen bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm
-          flex flex-col items-center justify-center transition-transform duration-300 ease-in-out
-          ${isMenuOpen ? "translate-y-0" : "-translate-y-full"} md:hidden`}
+        className={`fixed inset-0 w-full h-screen bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm
+          flex flex-col items-center justify-center transition-all duration-300 ease-in-out
+          ${isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"} md:hidden`}
         aria-hidden={!isMenuOpen}
       >
         <Button
@@ -144,7 +153,7 @@ const Navbar: React.FC = () => {
           size="icon"
           onClick={() => setIsMenuOpen(false)}
           aria-label="Close menu"
-          className="absolute top-10 right-10 hover:bg-red-600"
+          className="absolute top-6 right-6 hover:bg-red-100 dark:hover:bg-red-900/50"
         >
           <X className="h-7 w-7" />
         </Button>
@@ -155,8 +164,8 @@ const Navbar: React.FC = () => {
               key={link.to}
               to={link.to}
               onClick={() => setIsMenuOpen(false)}
-              className={`text-2xl font-medium text-gray-700 dark:text-gray-300 hover:text-white hover:bg-gray-900 p-2 rounded dark:hover:text-primary-600 transition-colors duration-300 ease-in-out
-                ${isActive(link.to) ? "text-primary-600 dark:text-primary-600 font-semibold" : "p-2"}`}
+              className={`text-2xl font-medium hover:text-primary-600 dark:hover:text-primary-500 transition-colors duration-300
+                ${isActive(link.to) ? "text-primary-600 dark:text-primary-500 font-semibold" : "text-gray-700 dark:text-gray-300"}`}
             >
               {link.label}
             </Link>
@@ -164,9 +173,9 @@ const Navbar: React.FC = () => {
           <Link
             to="/login"
             onClick={() => setIsMenuOpen(false)}
-            className="flex items-center justify-center p-2 text-white bg-primary-600/70 animate-pulse rounded-md mt-8 mx-auto w-fit"
+            className="flex items-center justify-center gap-2 px-6 py-3 text-white bg-primary-600 hover:bg-primary-700 rounded-md mt-8 mx-auto text-lg"
           >
-            <LogIn className="h-5 w-5 mr-2 text-white" />
+            <LogIn className="h-5 w-5" />
             Login
           </Link>
         </div>
