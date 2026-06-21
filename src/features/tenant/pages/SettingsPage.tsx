@@ -13,7 +13,7 @@ const TenantSettings = () => {
   useEffect(() => {
     const fetchTenantInfo = async () => {
       try {
-        const response = await axios.get("https://nyumba-smart-server.onrender.com/api/tenants/info", {
+        const response = await axios.get("https://nyumba-smart-server-1.onrender.com/api/tenants/info", {
           headers: getAuthHeaders(),
         })
         setTenantInfo(response.data)
@@ -29,7 +29,7 @@ const TenantSettings = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put('https://nyumba-smart-server.onrender.com/api/auth/update-me',
+      await axios.put('https://nyumba-smart-server-1.onrender.com/api/auth/update-me',
         {
           name: tenantInfo.tenantName,
           email: tenantInfo.tenentEmail,

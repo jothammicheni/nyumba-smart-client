@@ -59,7 +59,7 @@ export default function WelcomeInfo() {
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get('https://nyumba-smart-server.onrender.com/api/providers/info', {
+        const response = await axios.get('https://nyumba-smart-server-1.onrender.com/api/providers/info', {
           headers: getAuthHeaders(),
         });
         setProviderInfo(response.data.data);

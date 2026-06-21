@@ -79,7 +79,7 @@ const PropertiesPage = () => {
   useEffect(() => {
     setLoading(true)
     axios
-      .get("https://nyumba-smart-server.onrender.com/api/listings")
+      .get("https://nyumba-smart-server-1.onrender.com/api/listings")
       .then((res) => {
         setProperties(res.data.listings || [])
         setError(null)

@@ -38,7 +38,7 @@ const PropertiesPage = () => {
   const fetchProperties = async () => {
     setLoading(true)
     try {
-      const response = await axios.get("https://nyumba-smart-server.onrender.com/api/listings")
+      const response = await axios.get("https://nyumba-smart-server-1.onrender.com/api/listings")
       const fetchedProperties = response.data.listings || []
       setProperties(fetchedProperties)
       setError(null)

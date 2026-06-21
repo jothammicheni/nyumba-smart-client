@@ -22,7 +22,7 @@ const ReferralHistory = () => {
   useEffect(() => {
     const fetchReferrals = async () => {
       try {
-        const response = await axios.get("https://nyumba-smart-server.onrender.com/api/agents/referrals", {
+        const response = await axios.get("https://nyumba-smart-server-1.onrender.com/api/agents/referrals", {
           headers: getAuthHeaders(),
         })
         setReferrals(response.data.data)

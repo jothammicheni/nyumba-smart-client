@@ -20,7 +20,7 @@ export const ProviderSettings = () => {
     const fetchProviderInfo = async () => {
       try {
         setLoading(true)
-        const response = await axios.get('https://nyumba-smart-server.onrender.com/api/providers/info', {
+        const response = await axios.get('https://nyumba-smart-server-1.onrender.com/api/providers/info', {
           headers: getAuthHeaders(),
         })
         setProviderInfo(response.data.data)
@@ -36,7 +36,7 @@ export const ProviderSettings = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put('https://nyumba-smart-server.onrender.com/api/auth/update-me',
+      await axios.put('https://nyumba-smart-server-1.onrender.com/api/auth/update-me',
         {
           name: providerInfo.provider.name,
           email: providerInfo.provider.email,

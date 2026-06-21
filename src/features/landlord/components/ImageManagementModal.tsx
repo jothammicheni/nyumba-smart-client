@@ -64,7 +64,7 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
     setLoading(true)
     
     try {
-      const response = await axios.delete(`https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`, {
+      const response = await axios.delete(`https://nyumba-smart-server-1.onrender.com/api/listings/${listing?._id}`, {
         headers: getAuthHeaders(),
         data: { deleteImages: [imageUrl] }
       })
@@ -96,7 +96,7 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
       newImages.forEach((image) => formData.append("images", image))
 
       const response = await axios.put(
-        `https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`,
+        `https://nyumba-smart-server-1.onrender.com/api/listings/${listing?._id}`,
         formData,
         { headers: getAuthHeaders(true) }
       )
@@ -127,7 +127,7 @@ const ImageManagementModal: React.FC<ImageManagementModalProps> = ({ isOpen, onC
       }
 
       const response = await axios.put(
-        `https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`,
+        `https://nyumba-smart-server-1.onrender.com/api/listings/${listing?._id}`,
         formData,
         { headers: getAuthHeaders(true) }
       )

@@ -14,7 +14,7 @@ const RentSummary = () => {
   useEffect(() => {
     const fetchTenantInfo = async () => {
       try {
-        const response = await axios.get("https://nyumba-smart-server.onrender.com/api/tenants/info", {
+        const response = await axios.get("https://nyumba-smart-server-1.onrender.com/api/tenants/info", {
           headers: getAuthHeaders(),
         });
         setTenantInfo(response.data);

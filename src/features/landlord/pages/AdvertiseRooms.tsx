@@ -61,7 +61,7 @@ const AdvertiseRooms = () => {
     setLoading(true)
     try {
       const response = await axios(
-        `https://nyumba-smart-server.onrender.com/api/listings/landlord?page=${currentPage}&limit=${listingsPerPage}`,
+        `https://nyumba-smart-server-1.onrender.com/api/listings/landlord?page=${currentPage}&limit=${listingsPerPage}`,
         {
           headers: getAuthHeaders(),
         },
@@ -102,7 +102,7 @@ const AdvertiseRooms = () => {
 
   const handleDeleteListing = async (listingId: string) => {
     try {
-      const response = await axios.delete(`https://nyumba-smart-server.onrender.com/api/listings/${listingId}`, {
+      const response = await axios.delete(`https://nyumba-smart-server-1.onrender.com/api/listings/${listingId}`, {
         headers: getAuthHeaders(),
       })
 

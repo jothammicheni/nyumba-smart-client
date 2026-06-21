@@ -3,7 +3,7 @@ import axios from "axios";
 import { getAuthHeaders } from "../services/authService.js";
 
 const API = axios.create({
-  baseURL: "https://nyumba-smart-server.onrender.com/api/subscriptions",
+  baseURL: "https://nyumba-smart-server-1.onrender.com/api/subscriptions",
   headers:getAuthHeaders(),
   withCredentials: true,
   

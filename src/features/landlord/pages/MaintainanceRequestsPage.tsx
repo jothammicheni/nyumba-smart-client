@@ -139,7 +139,7 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
       }
 
       const response = await axios.put(
-        `https://nyumba-smart-server.onrender.com/api/maintenance/${selectedRequest._id}/assign-provider`,
+        `https://nyumba-smart-server-1.onrender.com/api/maintenance/${selectedRequest._id}/assign-provider`,
         data,
         { headers: getAuthHeaders() }
       )
@@ -168,7 +168,7 @@ const MaintenanceRequestsPage: React.FC<MaintenanceRequestsProps> = () => {
         : { status: newState }
 
       const response = await axios.put(
-        `https://nyumba-smart-server.onrender.com/api/maintenance/${requestId}/status`,
+        `https://nyumba-smart-server-1.onrender.com/api/maintenance/${requestId}/status`,
         payload,
         { headers: getAuthHeaders() }
       )

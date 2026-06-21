@@ -117,7 +117,7 @@ const AdvertisePropertyModal: React.FC<Props> = ({ isOpen, onClose, property, on
 
     try {
       setLoading(true)
-      const response = await axios.post("https://nyumba-smart-server.onrender.com/api/listings", submitData, {
+      const response = await axios.post("https://nyumba-smart-server-1.onrender.com/api/listings", submitData, {
         headers: getAuthHeaders(true),
       })
 

@@ -189,7 +189,7 @@ const PropertyDetailPage: React.FC = () => {
 
     try {
       await axios.delete(
-        `https://nyumba-smart-server.onrender.com/api/properties/${property?._id}`,
+        `https://nyumba-smart-server-1.onrender.com/api/properties/${property?._id}`,
         { headers: getAuthHeaders() }
       );
       toast.dismiss();

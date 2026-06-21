@@ -109,7 +109,7 @@ const EditListingModal: React.FC<EditListingModalProps> = ({ isOpen, onClose, li
       }
 
       const response = await axios.put(
-        `https://nyumba-smart-server.onrender.com/api/listings/${listing?._id}`,
+        `https://nyumba-smart-server-1.onrender.com/api/listings/${listing?._id}`,
         submitData,
         { headers: getAuthHeaders(true) }
       )

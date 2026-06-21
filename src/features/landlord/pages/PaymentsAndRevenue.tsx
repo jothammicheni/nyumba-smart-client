@@ -68,7 +68,7 @@ const PaymentsAndRevenue: React.FC = () => {
     setLoading(true)
     setError("")
     try {
-      const res = await axios.get("https://nyumba-smart-server.onrender.com/api/payment/landlord/revenue", {
+      const res = await axios.get("https://nyumba-smart-server-1.onrender.com/api/payment/landlord/revenue", {
         headers: getAuthHeaders(),
       })
       setPayments(res.data.payments)

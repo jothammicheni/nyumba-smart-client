@@ -4,7 +4,7 @@
 import axios, { AxiosResponse } from "axios"
 import { getAuthHeaders } from "./authService"
 
-const API_BASE = "https://nyumba-smart-server.onrender.com/api/provider/gigs"
+const API_BASE = "https://nyumba-smart-server-1.onrender.com/api/provider/gigs"
 
 export interface Location {
   city: string

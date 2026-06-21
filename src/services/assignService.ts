@@ -3,7 +3,7 @@
 import axios from "axios"
 import { getAuthHeaders } from "./authService.js"
 
-const API_URL = "https://nyumba-smart-server.onrender.com/api"
+const API_URL = "https://nyumba-smart-server-1.onrender.com/api"
 
 // assign a service provider
 export const createMaintananceRequests = async (requestData: {

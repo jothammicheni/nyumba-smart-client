@@ -151,7 +151,7 @@ const TenantsPage: React.FC = () => {
 
     try {
       await axios.post(
-        "https://nyumba-smart-server.onrender.com/api/payment/update",
+        "https://nyumba-smart-server-1.onrender.com/api/payment/update",
         {
           tenantId: tenant.user._id,
           roomId: tenant.room._id,

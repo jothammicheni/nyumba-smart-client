@@ -2,7 +2,7 @@
 
 import axios from "axios"
 
-const API_URL = "https://nyumba-smart-server.onrender.com/api"
+const API_URL = "https://nyumba-smart-server-1.onrender.com/api"
 
 // Types
 interface RegisterData {

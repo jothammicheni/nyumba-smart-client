@@ -32,7 +32,7 @@ const FinancialOverview = () => {
     setLoading(true)
     setError("")
     try {
-      const response = await axios.get("https://nyumba-smart-server.onrender.com/api/landlord/financeStats", {
+      const response = await axios.get("https://nyumba-smart-server-1.onrender.com/api/landlord/financeStats", {
         headers: getAuthHeaders(),
       })
       setFinancialStats(response.data.financialStats)

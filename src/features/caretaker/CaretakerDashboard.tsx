@@ -66,10 +66,10 @@ const CaretakerDashboard: React.FC = () => {
     const fetchDashboardData = async () => {
       try {
         const [tenantsRes, financeRes] = await Promise.all([
-          axios.get("https://nyumba-smart-server.onrender.com/api/tenants/", {
+          axios.get("https://nyumba-smart-server-1.onrender.com/api/tenants/", {
             headers: getAuthHeaders(),
           }),
-          axios.get("https://nyumba-smart-server.onrender.com/api/landlord/financeStats", {
+          axios.get("https://nyumba-smart-server-1.onrender.com/api/landlord/financeStats", {
             headers: getAuthHeaders(),
           }),
         ])

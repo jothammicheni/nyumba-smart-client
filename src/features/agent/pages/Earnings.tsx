@@ -19,7 +19,7 @@ const EarningsPage = () => {
         const fetchEarningsData = async () => {
             setLoading(true)
             try {
-                const response = await axios.get('https://nyumba-smart-server.onrender.com/api/agents/referrals', {
+                const response = await axios.get('https://nyumba-smart-server-1.onrender.com/api/agents/referrals', {
                     headers: getAuthHeaders()
                 })
 

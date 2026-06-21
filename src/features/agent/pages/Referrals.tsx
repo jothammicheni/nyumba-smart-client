@@ -21,7 +21,7 @@ function ReferralsPage() {
     useEffect(() => {
         const fetchReferralInfo = async () => {
             try {
-                const response = await axios.get("https://nyumba-smart-server.onrender.com/api/agents/referrals", {
+                const response = await axios.get("https://nyumba-smart-server-1.onrender.com/api/agents/referrals", {
                     headers: getAuthHeaders(),
                 });
                 setStats(response.data.stats);
